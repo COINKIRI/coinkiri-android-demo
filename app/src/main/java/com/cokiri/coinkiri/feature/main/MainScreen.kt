@@ -11,3 +11,4 @@ fun MainScreen() {
         Text(text = "메인 스크린")
     }
 }
+

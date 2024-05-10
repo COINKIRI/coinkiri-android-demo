@@ -29,6 +29,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", properties["kakao_native_app_key"] as String) // 카카오 네이티브 앱 키
+        resValue("string", "kakap_auoth_host", properties["kakao_native_app_key"] as String)
     }
 
     buildTypes {
@@ -73,6 +75,10 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+
+
+    // 카카오 로그인 API 모듈
+    implementation(libs.kakao.sdk.v2.user)
 
     // Hilt
     implementation(libs.hilt.android)
