@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.feature.main
+package com.cokiri.coinkiri.presentation.main
 
 import android.app.Application
 import android.util.Log
@@ -22,18 +22,18 @@ class KakaoViewModel(application: Application) : AndroidViewModel(application) {
     private val context = application.applicationContext
 
 
-    val isLogIn = MutableStateFlow<Boolean>(false)
+    val isLoggedIn = MutableStateFlow<Boolean>(false)
 
     fun kakaologin() {
         viewModelScope.launch {
-            isLogIn.emit(handleKakaoLogin())
+            isLoggedIn.emit(handleKakaoLogin())
         }
     }
 
     fun kakaoLogout() {
         viewModelScope.launch {
             if (handleKakaoLogout()) {
-                isLogIn.emit(false)
+                isLoggedIn.emit(false)
             }
         }
     }

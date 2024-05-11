@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.core.designsystem.theme
+package com.cokiri.coinkiri.ui.theme
 
 import android.app.Activity
 import android.os.Build
