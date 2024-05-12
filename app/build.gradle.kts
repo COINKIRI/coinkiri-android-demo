@@ -12,6 +12,9 @@ plugins {
 val properties = Properties()
 properties.load(project.rootProject.file("local.properties").inputStream())
 
+val KAKAO_OAUTH_HOST: String = properties.getProperty("kakao_oauth_host")     // 카카오 로그인 API 호스트
+
+
 
 android {
     namespace = "com.cokiri.coinkiri"
@@ -29,8 +32,18 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", properties["kakao_native_app_key"] as String) // 카카오 네이티브 앱 키
-        resValue("string", "kakap_auoth_host", properties["kakao_native_app_key"] as String)
+
+        buildConfigField(
+            "String",
+            "KAKAO_NATIVE_APP_KEY",
+            properties["kakao_native_app_key"] as String
+        )
+
+        resValue(
+            "string",
+            "kakao_oauth_host",
+            KAKAO_OAUTH_HOST
+        )
     }
 
     buildTypes {

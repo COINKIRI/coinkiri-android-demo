@@ -20,9 +20,6 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoginScreen(kakaoViewModel: KakaoViewModel) {
-
-
-
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -40,9 +37,6 @@ fun LoginScreen(kakaoViewModel: KakaoViewModel) {
 
 @Composable
 fun KakaoLoginBtn(kakaoViewModel: KakaoViewModel) {
-
-
-
     Card(
         onClick = { kakaoViewModel.kakaologin() },
         colors = CardDefaults.cardColors(Color.Yellow),
@@ -63,7 +57,6 @@ fun KakaoLoginBtn(kakaoViewModel: KakaoViewModel) {
 
 @Composable
 fun KakaoLogoutBtn(kakaoViewModel: KakaoViewModel) {
-
     Card(
         onClick = { kakaoViewModel.kakaoLogout()},
         colors = CardDefaults.cardColors(Color.Yellow),
@@ -81,6 +74,7 @@ fun KakaoLogoutBtn(kakaoViewModel: KakaoViewModel) {
         }
     }
 }
+
 
 @Composable
 fun NaverLoginBtn() {
