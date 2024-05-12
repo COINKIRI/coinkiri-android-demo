@@ -12,6 +12,9 @@ plugins {
 val properties = Properties()
 properties.load(project.rootProject.file("local.properties").inputStream())
 
+val KAKAO_OAUTH_HOST: String = properties.getProperty("kakao_oauth_host")     // 카카오 로그인 API 호스트
+
+
 
 android {
     namespace = "com.cokiri.coinkiri"
@@ -29,6 +32,18 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField(
+            "String",
+            "KAKAO_NATIVE_APP_KEY",
+            properties["kakao_native_app_key"] as String
+        )
+
+        resValue(
+            "string",
+            "kakao_oauth_host",
+            KAKAO_OAUTH_HOST
+        )
     }
 
     buildTypes {
@@ -65,7 +80,6 @@ dependencies {
 
     /* implementation */
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -74,8 +88,13 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
 
+
+    // 카카오 로그인 API 모듈
+    implementation(libs.kakao.sdk.v2.user)
+
     // Hilt
     implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
     kapt(libs.hilt.android.compiler)
 
 
