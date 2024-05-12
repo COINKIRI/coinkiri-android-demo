@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.presentation.main
+package com.cokiri.coinkiri.presentation.login
 
 import android.app.Application
 import android.util.Log
