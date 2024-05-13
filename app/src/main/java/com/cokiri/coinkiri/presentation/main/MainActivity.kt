@@ -18,7 +18,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             CoinkiriandroidTheme {
-            LoginScreen(kakaoViewModel)
+            //LoginScreen(kakaoViewModel)
+                MainScreen()
             }
         }
     }
