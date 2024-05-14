@@ -1,39 +1,23 @@
 package com.cokiri.coinkiri.ui.navigation
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.cokiri.coinkiri.R
+import com.cokiri.coinkiri.util.ANALYSIS
+import com.cokiri.coinkiri.util.HOME
+import com.cokiri.coinkiri.util.POST
+import com.cokiri.coinkiri.util.PRICE
+import com.cokiri.coinkiri.util.PROFILE
 
 sealed class BottomNavItem(
-    val title : Int,
-    val icon : Int,
+    @StringRes val title : Int,
+    @DrawableRes val icon : Int,
     val route : String
 ){
-    object Analysis : BottomNavItem(
-        title = R.string.analysis,
-        icon = R.drawable.ic_navi_analysis,
-        route = ANALYSIS
-    )
-    object Post : BottomNavItem(
-        title = R.string.post,
-        icon = R.drawable.ic_navi_post,
-        route = POST
-    )
-
-    object Home : BottomNavItem(
-        title = R.string.home,
-        icon = R.drawable.ic_navi_home,
-        route = HOME
-    )
-
-    object Price : BottomNavItem(
-        title = R.string.price,
-        icon = R.drawable.ic_navi_price,
-        route = PRICE
-    )
-
-    object Profile : BottomNavItem(
-        title = R.string.profile,
-        icon = R.drawable.ic_navi_profile,
-        route = PROFILE
-    )
+    object Analysis : BottomNavItem(R.string.analysis, R.drawable.ic_navi_analysis, ANALYSIS)
+    object Post : BottomNavItem(R.string.post, R.drawable.ic_navi_post, POST)
+    object Home : BottomNavItem(R.string.home, R.drawable.ic_navi_home, HOME)
+    object Price : BottomNavItem(R.string.price, R.drawable.ic_navi_price, PRICE)
+    object Profile : BottomNavItem(R.string.profile, R.drawable.ic_navi_profile, PROFILE)
 
 }

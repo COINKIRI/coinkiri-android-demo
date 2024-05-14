@@ -8,59 +8,57 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 
 @Composable
-fun BottomNavigation(navController: NavHostController) {
-    val items = listOf<BottomNavItem>(
-        BottomNavItem.Analysis,
-        BottomNavItem.Post,
-        BottomNavItem.Home,
-        BottomNavItem.Price,
-        BottomNavItem.Profile
-    )
+fun BottomNavBar(
+    navController: NavController,
+    tabs: List<BottomNavItem>
+) {
+    val navBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry.value?.destination?.route
 
     BottomNavigation(
-        backgroundColor = Color.White,
-        contentColor = Color(0xFF3F414E)
+        backgroundColor = CoinkiriBackground
     ) {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
 
-        items.forEach { item ->
+        tabs.forEach { tab ->
             BottomNavigationItem(
                 icon = {
                     Icon(
-                        painter = painterResource(id = item.icon),
-                        contentDescription = stringResource(id = item.title),
+                        painter = painterResource(id = tab.icon),
+                        contentDescription = stringResource(id = tab.title),
                         modifier = Modifier
-                            .width(26.dp)
-                            .height(26.dp)
+                            .width(25.dp)
+                            .height(25.dp)
                     )
                 },
-                label = { Text(stringResource(id = item.title), fontSize = 9.sp) },
-                selectedContentColor = MaterialTheme.colorScheme.primary,
-                unselectedContentColor = Gray,
-                selected = currentRoute == item.route,
-                alwaysShowLabel = false,
+                label = {
+                    Text(
+                        stringResource(id = tab.title),
+                        fontSize = 9.sp
+                    )
+                },
+                selected = currentRoute == tab.route,
                 onClick = {
-                    navController.navigate(item.route) {
+                    navController.navigate(tab.route) {
                         navController.graph.startDestinationRoute?.let {
                             popUpTo(it) { saveState = true }
                         }
                         launchSingleTop = true
                         restoreState = true
                     }
-                }
+                },
+                alwaysShowLabel = false
             )
         }
     }

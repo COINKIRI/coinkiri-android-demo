@@ -1,5 +1,6 @@
-package com.cokiri.coinkiri.ui.navigation
+package com.cokiri.coinkiri.util
 
+const val LOGIN = "LOGIN"
 const val ANALYSIS = "ANALYSIS"
 const val POST = "POST"
 const val HOME = "HOME"
