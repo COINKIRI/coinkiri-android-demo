@@ -1,5 +1,6 @@
 package com.cokiri.coinkiri.presentation.login
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,33 +13,67 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.cokiri.coinkiri.R
+import com.cokiri.coinkiri.util.HOME
+import com.cokiri.coinkiri.util.LOGIN
 
 
 @Composable
-fun LoginScreen(kakaoViewModel: KakaoViewModel) {
+fun LoginScreen(
+    viewModel: LoginViewModel = hiltViewModel(),
+    navController: NavController
+) {
+
+    val loginUiState by viewModel.loginUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(loginUiState) {
+        if (loginUiState is LoginUiState.LogInSuccess) {
+            navController.navigate(HOME) {
+                popUpTo(LOGIN) { inclusive = true }
+            }
+        }
+    }
+
+
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(16.dp)
         ) {
-            KakaoLoginBtn(kakaoViewModel = kakaoViewModel)
-            KakaoLogoutBtn(kakaoViewModel = kakaoViewModel)
-            NaverLoginBtn()
+            Text(text = "coinkiri")
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = "",
+            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                KakaoLoginBtn { viewModel.kakaoLogin() }
+            }
         }
     }
 }
 
+
 @Composable
-fun KakaoLoginBtn(kakaoViewModel: KakaoViewModel) {
+fun KakaoLoginBtn(
+    onClick: () -> Unit
+) {
     Card(
-        onClick = { kakaoViewModel.kakaologin() },
+        onClick = { onClick() },
         colors = CardDefaults.cardColors(Color.Yellow),
         elevation = CardDefaults.cardElevation(pressedElevation = 3.dp),
         modifier = Modifier
@@ -50,48 +85,7 @@ fun KakaoLoginBtn(kakaoViewModel: KakaoViewModel) {
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
-            Text(text = "Kakao Login")
-        }
-    }
-}
-
-@Composable
-fun KakaoLogoutBtn(kakaoViewModel: KakaoViewModel) {
-    Card(
-        onClick = { kakaoViewModel.kakaoLogout()},
-        colors = CardDefaults.cardColors(Color.Yellow),
-        elevation = CardDefaults.cardElevation(pressedElevation = 3.dp),
-        modifier = Modifier
-            .height(50.dp)
-            .fillMaxWidth()
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Text(text = "Kakao Logout")
-        }
-    }
-}
-
-
-@Composable
-fun NaverLoginBtn() {
-    Card(
-        onClick = { /* Handle Naver Login Click */ },
-        colors = CardDefaults.cardColors(Color.Green),
-        elevation = CardDefaults.cardElevation(pressedElevation = 3.dp),
-        modifier = Modifier
-            .height(50.dp)
-            .fillMaxWidth()
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Text(text = "네이버 로그인")
+            Text(text = "Kakao 로그인")
         }
     }
 }
