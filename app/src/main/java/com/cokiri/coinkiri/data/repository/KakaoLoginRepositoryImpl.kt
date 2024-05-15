@@ -12,23 +12,28 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * 카카오 로그인을 위한 KakaoLoginRepository 구현체
+ */
+
 class KakaoLoginRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : KakaoLoginRepository {
 
-    companion object {
-        private const val TAG = "KakaoLoginRepositoryImpl"
-    }
+    companion object { private const val TAG = "KakaoLoginRepositoryImpl" }
 
     // 카카오 로그인
-    override fun login(successCallback: () -> Unit, failureCallback: () -> Unit) {
+    override fun login(
+        successCallback: (String) -> Unit,  // 성공 시 호출할 콜백 (accessToken: String)을 인자로 받음
+        failureCallback: () -> Unit         // 실패 시 호출할 콜백
+    ) {
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
                 Log.e(TAG, "카카오계정으로 로그인 실패", error)
                 failureCallback()
             } else if (token != null) {
                 Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
-                successCallback()
+                successCallback(token.accessToken)
             }
         }
 
@@ -45,7 +50,7 @@ class KakaoLoginRepositoryImpl @Inject constructor(
                     UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
                 } else if (token != null) {
                     Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
-                    successCallback()
+                    successCallback(token.accessToken)
                 }
             }
         } else {
