@@ -2,6 +2,7 @@ package com.cokiri.coinkiri.data.repository
 
 import android.util.Log
 import com.cokiri.coinkiri.data.remote.api.SignUpApi
+import com.cokiri.coinkiri.data.remote.model.LoginRequest
 import com.cokiri.coinkiri.domain.repository.UserRepository
 import javax.inject.Inject
 
@@ -15,10 +16,15 @@ class UserRepositoryImpl @Inject constructor(
     companion object { private const val TAG = "UserRepositoryImpl" }
 
     override suspend fun signUpUser(
-        accessToken: String
+        accessToken: String,
+        loginType: String
     ): Result<Unit> {
         return try {
-            signUpApi.signUpUser(accessToken)             // accessToken을 서버로 전송하여 회원가입 요청
+            val loginRequest = LoginRequest(
+                token = accessToken,
+                loginType = loginType
+            )
+            signUpApi.signUpUser(loginRequest)
             Log.i(TAG, "회원가입 성공")
             Result.success(Unit)
         } catch (error : Exception) {

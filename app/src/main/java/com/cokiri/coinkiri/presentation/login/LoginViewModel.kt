@@ -30,7 +30,7 @@ class LoginViewModel @Inject constructor(
 
     private fun kakaoLoginSuccess(accessToken: String) {
         viewModelScope.launch {
-            val result = userRepository.signUpUser(accessToken)
+            val result = userRepository.signUpUser(accessToken, "KAKAO")
             if (result.isSuccess) {
                 _loginUiState.tryEmit(LoginUiState.LogInSuccess)
                 preferencesManager.isLoggedIn = true
