@@ -39,6 +39,12 @@ android {
             properties["kakao_native_app_key"] as String
         )
 
+        buildConfigField(
+            "String",
+            "LOCAL_URL",
+            properties["local_url"] as String
+        )
+
         resValue(
             "string",
             "kakao_oauth_host",
@@ -89,6 +95,13 @@ dependencies {
     implementation(libs.androidx.compose.material1)
     implementation(libs.androidx.compose.material3)
 
+    // Retrofit
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.moshi)
+
+    // Moshi
+    implementation(libs.moshi.core)
+    implementation(libs.moshi.kotlin)
 
     // 카카오 로그인 API 모듈
     implementation(libs.kakao.sdk.v2.user)
