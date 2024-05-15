@@ -17,12 +17,12 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun signUpUser(
         accessToken: String,
-        loginType: String
+        socialType: String
     ): Result<Unit> {
         return try {
             val loginRequest = LoginRequest(
                 token = accessToken,
-                loginType = loginType
+                socialType = socialType
             )
             signUpApi.signUpUser(loginRequest)
             Log.i(TAG, "회원가입 성공")

@@ -6,6 +6,6 @@ package com.cokiri.coinkiri.domain.repository
 interface UserRepository {
     suspend fun signUpUser(
         accessToken: String,
-        loginType: String
+        socialType: String
     ): Result<Unit>
 }
