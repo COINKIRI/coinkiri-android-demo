@@ -8,6 +8,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
@@ -24,21 +26,33 @@ object NetworkModule {
         .add(KotlinJsonAdapterFactory())
         .build()
 
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(
+            HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
+        )
+        .build()
+
 
     @Provides
     @Singleton
     fun provideRetrofit(
-        moshi: Moshi
+        moshi: Moshi,
+        okHttpClient: OkHttpClient
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.LOCAL_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(okHttpClient)
             .build()
     }
 
     @Provides
     @Singleton
-    fun provideUserApi(retrofit: Retrofit): SignUpApi {
+    fun provideSignUpApi(retrofit: Retrofit): SignUpApi {
         return retrofit.create(SignUpApi::class.java)
     }
 }
