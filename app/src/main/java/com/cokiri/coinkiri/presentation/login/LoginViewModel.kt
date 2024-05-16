@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cokiri.coinkiri.data.PreferencesManager
 import com.cokiri.coinkiri.domain.repository.KakaoLoginRepository
+import com.cokiri.coinkiri.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,6 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val kakaoLoginRepository: KakaoLoginRepository,
+    private val userRepository: UserRepository,
     private val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
@@ -26,10 +28,19 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun kakaoLoginSuccess() {
-        _loginUiState.tryEmit(LoginUiState.LogInSuccess)
-        preferencesManager.isLoggedIn = true
+    private fun kakaoLoginSuccess(accessToken: String) {
+        viewModelScope.launch {
+            val result = userRepository.signUpUser(accessToken, "KAKAO")
+            if (result.isSuccess) {
+                _loginUiState.tryEmit(LoginUiState.LogInSuccess)
+                preferencesManager.isLoggedIn = true
+            } else {
+                kakaoLoginFail()
+                kakaoLogout()
+            }
+        }
     }
+
     private fun kakaoLoginFail() {
         _loginUiState.tryEmit(LoginUiState.LogInFail)
     }
@@ -47,7 +58,7 @@ class LoginViewModel @Inject constructor(
     fun kakaoLogin() {
         _loginUiState.value = LoginUiState.Loading
         kakaoLoginRepository.login(
-            successCallback = { kakaoLoginSuccess() },
+            successCallback = { accessToken -> kakaoLoginSuccess(accessToken) },
             failureCallback = { kakaoLoginFail() }
         )
     }
