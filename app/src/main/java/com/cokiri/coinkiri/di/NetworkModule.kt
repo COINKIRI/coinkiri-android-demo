@@ -1,6 +1,7 @@
 package com.cokiri.coinkiri.di
 
 import com.cokiri.coinkiri.BuildConfig
+import com.cokiri.coinkiri.data.remote.api.CoinApi
 import com.cokiri.coinkiri.data.remote.api.SignUpApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -54,5 +55,11 @@ object NetworkModule {
     @Singleton
     fun provideSignUpApi(retrofit: Retrofit): SignUpApi {
         return retrofit.create(SignUpApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCoinApi(retrofit: Retrofit): CoinApi {
+        return retrofit.create(CoinApi::class.java)
     }
 }
