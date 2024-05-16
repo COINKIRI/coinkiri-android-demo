@@ -11,11 +11,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,17 +38,40 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriBlack
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PriceScreen() {
 
     Scaffold(
         topBar = {
-
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    // TopAppBar 색상 설정
+                    containerColor = CoinkiriBackground,     // AppBar 배경색을 메인 배경색으로 설정
+                    titleContentColor = CoinkiriBlack,       // AppBar 컨텐츠 색을 메인 검은색으로 설정
+                ),
+                title = {
+                    Text(text = "시세조회")
+                },
+                actions = {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = "Search Icon"
+                        )
+                    }
+                }
+            )
         },
         content = {
             Column(modifier = Modifier.padding(it)) {
-
+                LazyColumn {
+                    items(30) {
+                        CoinCard()
+                    }
+                }
             }
         }
     )
@@ -51,7 +83,8 @@ fun CoinCard() {
     Card(
         onClick = { /*TODO*/ },
         modifier = Modifier
-            .padding(horizontal = 3.dp)
+            .padding(horizontal = 5.dp)
+            .padding(vertical = 5.dp)
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(CoinkiriBackground),
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
@@ -86,6 +119,7 @@ fun CoinCard() {
                         contentScale = ContentScale.Crop
                     )
                 }
+
 
                 Column(
                     verticalArrangement = Arrangement.Center,
