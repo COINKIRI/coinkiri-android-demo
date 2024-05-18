@@ -6,4 +6,7 @@ data class Coin(
     val koreanName: String,
     val englishName: String,
     val symbolImage: String?
-)
+) {
+    val krwMarket: String
+        get() = "KRW-$market"
+}
