@@ -9,7 +9,7 @@ object CoinMapper {
     // CoinInfo Coin으로 변환하는 함수
     private fun mapToCoin(coinInfo: CoinInfo): Coin {
         return Coin(
-            id = coinInfo.id,
+            coinId = coinInfo.coinId,
             market = coinInfo.market,
             koreanName = coinInfo.koreanName,
             englishName = coinInfo.englishName,

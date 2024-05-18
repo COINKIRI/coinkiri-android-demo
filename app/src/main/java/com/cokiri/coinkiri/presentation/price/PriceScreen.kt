@@ -50,8 +50,8 @@ fun PriceScreen(
                 }
             )
         },
-        content = {
-            Column(modifier = Modifier.padding(it)) {
+        content = { paddingValues ->
+            Column(modifier = Modifier.padding(paddingValues)) {
                 LazyColumn {
                     items(coinList.size) {
                         CoinCard(coinList[it])

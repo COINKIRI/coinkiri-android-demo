@@ -12,9 +12,9 @@ data class CoinResponse(
 
 @JsonClass(generateAdapter = true)
 data class CoinInfo(
-    @Json(name = "id") val id: Int,
+    @Json(name = "coinId") val coinId: Long,
     @Json(name = "market") val market: String,
     @Json(name = "koreanName") val koreanName: String,
     @Json(name = "englishName") val englishName: String,
-    @Json(name = "symbolImage") val symbolImage: String
+    @Json(name = "symbolImage") val symbolImage: String?
 )

@@ -18,6 +18,10 @@ class PriceViewModel @Inject constructor(
     private val _coinList = MutableStateFlow<List<Coin>>(emptyList())      // 코인 데이터를 담는 StateFlow
     val coinList: StateFlow<List<Coin>> = _coinList
 
+    init {
+        loadCoins()             // 코인 데이터를 가져옴
+    }
+
     private fun loadCoins() {
         viewModelScope.launch {
             val coins = getCoinsUseCase()
