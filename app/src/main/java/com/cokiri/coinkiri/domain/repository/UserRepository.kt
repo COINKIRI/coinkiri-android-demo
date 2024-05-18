@@ -8,4 +8,5 @@ interface UserRepository {
         accessToken: String,
         socialType: String
     ): Result<Unit>
+    fun isLoggedIn(): Boolean
 }

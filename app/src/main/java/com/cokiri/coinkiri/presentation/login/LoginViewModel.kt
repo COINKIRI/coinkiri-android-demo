@@ -22,9 +22,18 @@ class LoginViewModel @Inject constructor(
     private val _loginUiState = MutableStateFlow<LoginUiState>(LoginUiState.Initial)
     val loginUiState = _loginUiState.asStateFlow()
 
-    init {
-        if (preferencesManager.isLoggedIn) {
-            _loginUiState.value = LoginUiState.LogInSuccess
+     // 초기에 로그인 상태 확인을 위한 init 블록
+    init { checkLoginStatus() }
+
+
+    /**
+     * 로그인 상태 확인을 위한 함수
+     */
+    private fun checkLoginStatus() {
+        if (userRepository.isLoggedIn()) {
+            loginSuccess()
+        } else {
+            loginFail()
         }
     }
 

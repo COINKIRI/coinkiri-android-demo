@@ -60,4 +60,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun isLoggedIn(): Boolean {
+        return !preferencesManager.getAccessToken().isNullOrEmpty()
+    }
 }

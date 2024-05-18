@@ -17,7 +17,6 @@ class PreferencesManager @Inject constructor(
      * @property KEY_REFRESH_TOKEN 리프레시 토큰 키
      */
     companion object {
-        private const val KEY_IS_LOGGED_IN = "is_logged_in"
         private const val KEY_ACCESS_TOKEN = "access_token"
         private const val KEY_REFRESH_TOKEN = "refresh_token"
     }
@@ -79,7 +78,4 @@ class PreferencesManager @Inject constructor(
             .apply()                    // 변경사항 저장
     }
 
-    var isLoggedIn: Boolean
-        get() = sharedPreferences.getBoolean(KEY_IS_LOGGED_IN, false)
-        set(value) { sharedPreferences.edit().putBoolean(KEY_IS_LOGGED_IN, value).apply() }
 }
