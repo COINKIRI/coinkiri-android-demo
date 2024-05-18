@@ -1,5 +1,7 @@
 package com.cokiri.coinkiri.di
 
+import com.cokiri.coinkiri.data.PreferencesManager
+import com.cokiri.coinkiri.data.remote.api.AuthApi
 import com.cokiri.coinkiri.data.repository.KakaoLoginRepositoryImpl
 import com.cokiri.coinkiri.data.repository.UserRepositoryImpl
 import com.cokiri.coinkiri.domain.repository.KakaoLoginRepository
@@ -18,12 +20,17 @@ object RepositoryModule {
     @Singleton
     fun provideKakaoLoginRepository(
         kakaoLoginRepositoryImpl: KakaoLoginRepositoryImpl
-    ): KakaoLoginRepository = kakaoLoginRepositoryImpl
+    ): KakaoLoginRepository{
+        return kakaoLoginRepositoryImpl
+    }
 
 
     @Provides
     @Singleton
     fun provideUserRepository(
-        userRepositoryImpl: UserRepositoryImpl
-    ): UserRepository = userRepositoryImpl
+        authApi: AuthApi,
+        preferencesManager: PreferencesManager
+    ): UserRepository {
+        return UserRepositoryImpl(authApi, preferencesManager)
+    }
 }

@@ -2,7 +2,6 @@ package com.cokiri.coinkiri.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cokiri.coinkiri.data.PreferencesManager
 import com.cokiri.coinkiri.domain.repository.KakaoLoginRepository
 import com.cokiri.coinkiri.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,11 +14,12 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val kakaoLoginRepository: KakaoLoginRepository,
     private val userRepository: UserRepository,
-    private val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
-
+    // 로그인 상태를 담는 StateFlow 객체 생성(초기값은 LoginUiState.Initial)
     private val _loginUiState = MutableStateFlow<LoginUiState>(LoginUiState.Initial)
+
+    // loginUiState를 StateFlow로 변환하여 외부에서 접근할 수 있도록 설정
     val loginUiState = _loginUiState.asStateFlow()
 
      // 초기에 로그인 상태 확인을 위한 init 블록
@@ -37,50 +37,38 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun kakaoLoginSuccess(accessToken: String) {
+
+    private fun kakaoSignUpSuccess(accessToken: String) {
+        _loginUiState.value = LoginUiState.Loading
         viewModelScope.launch {
             val result = userRepository.signUpUser(accessToken, "KAKAO")
             if (result.isSuccess) {
-                _loginUiState.tryEmit(LoginUiState.LogInSuccess)
-                preferencesManager.isLoggedIn = true
+                loginSuccess()
             } else {
-                kakaoLoginFail()
-                kakaoLogout()
+                loginFail()
             }
         }
     }
 
-    private fun kakaoLoginFail() {
-        _loginUiState.tryEmit(LoginUiState.LogInFail)
-    }
-    private fun initialLogin() {
-        _loginUiState.tryEmit(LoginUiState.Initial)
-        preferencesManager.isLoggedIn = false
-    }
 
-
-    /**
-     * 카카오 로그인
-     * 카카오 로그인 성공 시 _loginUiState 에 LogInSuccess 상태를 전달
-     * 카카오 로그인 실패 시 _loginUiState 에 LogInFail 상태를 전달
-     */
     fun kakaoLogin() {
         _loginUiState.value = LoginUiState.Loading
         kakaoLoginRepository.login(
-            successCallback = { accessToken -> kakaoLoginSuccess(accessToken) },
-            failureCallback = { kakaoLoginFail() }
+            successCallback = { accessToken -> kakaoSignUpSuccess(accessToken) },
+            failureCallback = { loginFail() }
         )
     }
 
-    /**
-     * 카카오 로그아웃
-     * 카카오 로그아웃 성공 시 _loginUiState 에 Initial 상태를 전달
-     */
     fun kakaoLogout() {
         viewModelScope.launch {
+            userRepository.logoutUser()
             kakaoLoginRepository.logout()
             initialLogin()
         }
     }
 
+
+    private fun loginSuccess() { _loginUiState.tryEmit(LoginUiState.LogInSuccess) } // 로그인 성공 시 호출 함수(LoginUiStated를 LogInSuccess로 상태 변경)
+    private fun loginFail() { _loginUiState.tryEmit(LoginUiState.LogInFail) }       // 로그인 실패 시 호출 함수(LoginUiStated를 LogInFail로 상태 변경)
+    private fun initialLogin() { _loginUiState.tryEmit(LoginUiState.Initial) }      // 초기 로그인 상태로 변경 함수(LoginUiStated를 Initial로 상태 변경)
 }
