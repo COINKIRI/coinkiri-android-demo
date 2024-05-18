@@ -1,12 +1,16 @@
 package com.cokiri.coinkiri.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.cokiri.coinkiri.BuildConfig
-import com.cokiri.coinkiri.data.remote.api.SignUpApi
+import com.cokiri.coinkiri.data.AuthInterceptor
+import com.cokiri.coinkiri.data.remote.api.AuthApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -19,22 +23,45 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(
+        @ApplicationContext context: Context
+    ): SharedPreferences {
+        return context.getSharedPreferences("coinkiri_prefs", Context.MODE_PRIVATE)
+    }
 
     @Provides
     @Singleton
-    fun provideMoshi(): Moshi = Moshi.Builder()
-        .add(KotlinJsonAdapterFactory())
-        .build()
+    fun provideMoshi(): Moshi {
+        return Moshi
+            .Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+    }
+
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(
-            HttpLoggingInterceptor().apply {
+    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
+        return HttpLoggingInterceptor()
+            .apply {
                 level = HttpLoggingInterceptor.Level.BODY
-            }
-        )
-        .build()
+        }
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(
+        authInterceptor: AuthInterceptor,
+        loggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient {
+        return OkHttpClient
+            .Builder()
+            .addInterceptor(authInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .build()
+    }
 
 
     @Provides
@@ -43,7 +70,8 @@ object NetworkModule {
         moshi: Moshi,
         okHttpClient: OkHttpClient
     ): Retrofit {
-        return Retrofit.Builder()
+        return Retrofit
+            .Builder()
             .baseUrl(BuildConfig.LOCAL_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(okHttpClient)
@@ -52,7 +80,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideSignUpApi(retrofit: Retrofit): SignUpApi {
-        return retrofit.create(SignUpApi::class.java)
+    fun provideSignUpApi(retrofit: Retrofit): AuthApi {
+        return retrofit.create(AuthApi::class.java)
     }
 }
