@@ -54,7 +54,10 @@ fun PriceScreen(
             Column(modifier = Modifier.padding(paddingValues)) {
                 LazyColumn {
                     items(coinList.size) {
-                        CoinCard(coinList[it])
+                        CoinCard(
+                            coinList[it],
+                            priceViewModel
+                        )
                     }
                 }
             }

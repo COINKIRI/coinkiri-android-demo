@@ -20,18 +20,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 
 @Composable
-fun CoinCard(coin: Coin) {
+fun CoinCard(
+    coin: Coin,
+    priceViewModel: PriceViewModel
+) {
+
+    val coinPainter = priceViewModel.byteArrayToPainter(coin.symbolImage)
+
     Card(
         onClick = { /*TODO*/ },
         modifier = Modifier
@@ -63,10 +66,10 @@ fun CoinCard(coin: Coin) {
                     elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                        painter = coinPainter,
                         contentDescription = "",
                         modifier = Modifier
-                            .size(35.dp)
+                            .size(25.dp)
                             .background(CoinkiriBackground),
                         contentScale = ContentScale.Crop
                     )
@@ -88,7 +91,7 @@ fun CoinCard(coin: Coin) {
                     )
                     Text(
                         // 코인 마켓명
-                        text = "KRW-BTC",
+                        text = coin.krwMarket,
                         fontWeight = FontWeight.Thin,
                         fontSize = 8.sp,
                         lineHeight = 1.sp // 줄간격

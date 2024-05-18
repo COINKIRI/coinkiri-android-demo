@@ -1,5 +1,8 @@
 package com.cokiri.coinkiri.presentation.price
 
+import android.graphics.BitmapFactory
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cokiri.coinkiri.domain.model.Coin
@@ -8,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.Base64
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,5 +31,11 @@ class PriceViewModel @Inject constructor(
             val coins = getCoinsUseCase()
             _coinList.value = coins
         }
+    }
+
+    fun byteArrayToPainter(string: String): BitmapPainter {
+        val byteArraySymbolImage = Base64.getDecoder().decode(string)
+        val bitmap = BitmapFactory.decodeByteArray(byteArraySymbolImage, 0, byteArraySymbolImage.size)
+        return BitmapPainter(bitmap.asImageBitmap())
     }
 }
