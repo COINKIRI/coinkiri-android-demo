@@ -6,11 +6,8 @@ import javax.inject.Singleton
 
 @Singleton
 class PreferencesManager @Inject constructor(
-    @ApplicationContext context: Context
     private val sharedPreferences: SharedPreferences
 ) {
-    private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
 
     /**
      * 동반 객체(Companion Object)

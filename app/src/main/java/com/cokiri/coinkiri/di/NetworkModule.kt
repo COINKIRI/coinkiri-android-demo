@@ -1,5 +1,7 @@
 package com.cokiri.coinkiri.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.cokiri.coinkiri.BuildConfig
 import com.cokiri.coinkiri.data.remote.api.SignUpApi
 import com.squareup.moshi.Moshi
@@ -7,6 +9,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -19,6 +22,13 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(
+        @ApplicationContext context: Context
+    ): SharedPreferences {
+        return context.getSharedPreferences("coinkiri_prefs", Context.MODE_PRIVATE)
+    }
 
     @Provides
     @Singleton
