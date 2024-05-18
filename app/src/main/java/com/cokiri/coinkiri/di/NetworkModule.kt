@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.cokiri.coinkiri.BuildConfig
 import com.cokiri.coinkiri.data.remote.api.SignUpApi
+import com.cokiri.coinkiri.data.AuthInterceptor
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -45,6 +46,18 @@ object NetworkModule {
             }
         )
         .build()
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(
+        authInterceptor: AuthInterceptor,
+        loggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient {
+        return OkHttpClient
+            .Builder()
+            .addInterceptor(authInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .build()
+    }
 
 
     @Provides
