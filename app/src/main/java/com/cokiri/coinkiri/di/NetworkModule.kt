@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.cokiri.coinkiri.BuildConfig
 import com.cokiri.coinkiri.data.AuthInterceptor
 import com.cokiri.coinkiri.data.remote.api.AuthApi
+import com.cokiri.coinkiri.data.remote.api.CoinApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -80,7 +81,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideSignUpApi(retrofit: Retrofit): AuthApi {
+    fun provideAuthApi(retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCoinApi(retrofit: Retrofit): CoinApi {
+        return retrofit.create(CoinApi::class.java)
     }
 }
