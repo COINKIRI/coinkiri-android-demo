@@ -33,7 +33,7 @@ class PriceViewModel @Inject constructor(
         }
     }
 
-    fun byteArrayToPainter(string: String): BitmapPainter {
+    fun byteArrayToPainter(string: String?): BitmapPainter {
         val byteArraySymbolImage = Base64.getDecoder().decode(string)
         val bitmap = BitmapFactory.decodeByteArray(byteArraySymbolImage, 0, byteArraySymbolImage.size)
         return BitmapPainter(bitmap.asImageBitmap())

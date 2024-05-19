@@ -38,8 +38,8 @@ fun CoinCard(
     Card(
         onClick = { /*TODO*/ },
         modifier = Modifier
-            .padding(horizontal = 5.dp)
-            .padding(vertical = 5.dp)
+            .padding(horizontal = 3.dp)
+            .padding(vertical = 2.dp)
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(CoinkiriBackground),
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
@@ -48,8 +48,8 @@ fun CoinCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
-                .padding(horizontal = 10.dp), // 가로 여백
+                .padding(10.dp)
+                .padding(horizontal = 5.dp), // 가로 여백
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -69,7 +69,7 @@ fun CoinCard(
                         painter = coinPainter,
                         contentDescription = "",
                         modifier = Modifier
-                            .size(25.dp)
+                            .size(28.dp)
                             .background(CoinkiriBackground),
                         contentScale = ContentScale.Crop
                     )
@@ -77,10 +77,10 @@ fun CoinCard(
 
 
                 Column(
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
                     horizontalAlignment = Alignment.Start,
                     modifier = Modifier
-                        .padding(start = 10.dp)
+                        .padding(start = 8.dp)
                 ) {
                     Text(
                         // 코인 이름
@@ -101,7 +101,7 @@ fun CoinCard(
 
 
             Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                horizontalArrangement = Arrangement.spacedBy(30.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -109,9 +109,7 @@ fun CoinCard(
                     text = "90,000,000",
                     fontWeight = FontWeight.Thin,
                     fontSize = 12.sp,
-                    textAlign = TextAlign.End,
-                    modifier = Modifier
-                        .padding(end = 15.dp)
+                    textAlign = TextAlign.End
                 )
                 Text(
                     // 전일 종가대비 현재가의 변화율
@@ -119,9 +117,6 @@ fun CoinCard(
                     fontWeight = FontWeight.Thin,
                     fontSize = 10.sp,
                     textAlign = TextAlign.End,
-                    modifier = Modifier
-                        .padding(end = 15.dp)
-                        .width(45.dp)
                 )
                 Text(
                     // 24시간 누적 거래대금
@@ -129,8 +124,6 @@ fun CoinCard(
                     fontWeight = FontWeight.Thin,
                     fontSize = 10.sp,
                     textAlign = TextAlign.End,
-                    modifier = Modifier
-                        .width(60.dp)
                 )
             }
         }
