@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.cokiri.coinkiri.BuildConfig
 import com.cokiri.coinkiri.data.AuthInterceptor
+import com.cokiri.coinkiri.data.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
 import com.cokiri.coinkiri.data.remote.api.CoinApi
 import com.squareup.moshi.Moshi
@@ -24,6 +25,9 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+    /**
+     * SharedPreferences를 제공하는 함수
+     */
     @Provides
     @Singleton
     fun provideSharedPreferences(
@@ -32,6 +36,30 @@ object NetworkModule {
         return context.getSharedPreferences("coinkiri_prefs", Context.MODE_PRIVATE)
     }
 
+
+    /**
+     * PreferencesManager를 제공하는 함수
+     */
+    @Provides
+    @Singleton
+    fun providePreferencesManager(sharedPreferences: SharedPreferences): PreferencesManager {
+        return PreferencesManager(sharedPreferences)
+    }
+
+
+    /**
+     * AuthInterceptor를 제공하는 함수
+     */
+    @Provides
+    @Singleton
+    fun provideAuthInterceptor(preferencesManager: PreferencesManager): AuthInterceptor {
+        return AuthInterceptor(preferencesManager)
+    }
+
+
+    /**
+     * Moshi를 제공하는 함수
+     */
     @Provides
     @Singleton
     fun provideMoshi(): Moshi {
@@ -42,6 +70,9 @@ object NetworkModule {
     }
 
 
+    /**
+     * HttpLoggingInterceptor를 제공하는 함수
+     */
     @Provides
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
@@ -51,6 +82,10 @@ object NetworkModule {
         }
     }
 
+
+    /**
+     * OkHttpClient를 제공하는 함수
+     */
     @Provides
     @Singleton
     fun provideOkHttpClient(
@@ -65,6 +100,9 @@ object NetworkModule {
     }
 
 
+    /**
+     * Retrofit을 제공하는 함수
+     */
     @Provides
     @Singleton
     fun provideRetrofit(
@@ -79,12 +117,20 @@ object NetworkModule {
             .build()
     }
 
+
+    /**
+     * AuthApi를 제공하는 함수
+     */
     @Provides
     @Singleton
     fun provideAuthApi(retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
     }
 
+
+    /**
+     * CoinApi를 제공하는 함수
+     */
     @Provides
     @Singleton
     fun provideCoinApi(retrofit: Retrofit): CoinApi {
