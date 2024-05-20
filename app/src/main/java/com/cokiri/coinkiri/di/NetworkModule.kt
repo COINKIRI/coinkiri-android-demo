@@ -3,10 +3,12 @@ package com.cokiri.coinkiri.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.cokiri.coinkiri.BuildConfig
-import com.cokiri.coinkiri.data.AuthInterceptor
-import com.cokiri.coinkiri.data.PreferencesManager
+import com.cokiri.coinkiri.data.remote.AuthInterceptor
+import com.cokiri.coinkiri.util.JsonParser
+import com.cokiri.coinkiri.data.remote.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
 import com.cokiri.coinkiri.data.remote.api.CoinApi
+import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -54,6 +56,16 @@ object NetworkModule {
     @Singleton
     fun provideAuthInterceptor(preferencesManager: PreferencesManager): AuthInterceptor {
         return AuthInterceptor(preferencesManager)
+    }
+
+
+    /**
+     * JsonParser를 제공하는 함수
+     */
+    @Provides
+    @Singleton
+    fun provideJsonParser(moshi: Moshi): JsonAdapter<JsonParser> {
+        return moshi.adapter(JsonParser::class.java)
     }
 
 
