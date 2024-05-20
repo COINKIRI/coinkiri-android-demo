@@ -5,7 +5,7 @@ import retrofit2.http.GET
 
 interface CoinApi {
 
-    @GET("/coin/all/v1")
+    @GET("/api/v1/coin/all")
     suspend fun getCoins(): CoinResponse
 
 }

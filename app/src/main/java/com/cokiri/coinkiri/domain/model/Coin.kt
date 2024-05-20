@@ -1,9 +1,12 @@
 package com.cokiri.coinkiri.domain.model
 
 data class Coin(
-    val id: Int,
+    val coinId: Long,
     val market: String,
     val koreanName: String,
     val englishName: String,
-    val symbolImage: String
-)
+    val symbolImage: String?
+) {
+    val krwMarket: String
+        get() = "KRW-$market"
+}
