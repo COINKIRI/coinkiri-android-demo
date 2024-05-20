@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.data
+package com.cokiri.coinkiri.data.remote
 
 import android.content.SharedPreferences
 import javax.inject.Inject

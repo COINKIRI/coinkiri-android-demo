@@ -1,6 +1,6 @@
 package com.cokiri.coinkiri.di
 
-import com.cokiri.coinkiri.data.PreferencesManager
+import com.cokiri.coinkiri.data.remote.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
 import com.cokiri.coinkiri.data.repository.CoinRepositoryImpl
 import com.cokiri.coinkiri.data.repository.KakaoLoginRepositoryImpl
