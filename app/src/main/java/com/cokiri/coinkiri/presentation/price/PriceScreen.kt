@@ -27,7 +27,8 @@ fun PriceScreen(
     priceViewModel: PriceViewModel = hiltViewModel()
 ) {
 
-    val coinList by priceViewModel.coinList.collectAsState()
+    val coinInfoDetailList by priceViewModel.coinInfoDetailList.collectAsState()
+
 
     Scaffold(
         topBar = {
@@ -53,10 +54,10 @@ fun PriceScreen(
         content = { paddingValues ->
             Column(modifier = Modifier.padding(paddingValues)) {
                 LazyColumn {
-                    items(coinList.size) {
+                    items(coinInfoDetailList.size) {
                         CoinCard(
-                            coinList[it],
-                            priceViewModel
+                            priceViewModel,
+                            coinInfoDetailList[it]
                         )
                     }
                 }

@@ -24,16 +24,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cokiri.coinkiri.data.remote.model.CoinInfoDetail
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 
 @Composable
 fun CoinCard(
-    coin: Coin,
-    priceViewModel: PriceViewModel
+    priceViewModel: PriceViewModel,
+    coinInfoDetail: CoinInfoDetail,
 ) {
 
-    val coinPainter = priceViewModel.byteArrayToPainter(coin.symbolImage)
+    val coinPainter = priceViewModel.byteArrayToPainter(coinInfoDetail.coin.symbolImage)
+
 
     Card(
         onClick = { /*TODO*/ },
@@ -84,14 +86,14 @@ fun CoinCard(
                 ) {
                     Text(
                         // 코인 이름
-                        text = coin.koreanName,
+                        text = coinInfoDetail.coin.koreanName,
                         fontWeight = FontWeight.Thin,
                         fontSize = 10.sp,
                         lineHeight = 1.sp // 줄간격
                     )
                     Text(
                         // 코인 마켓명
-                        text = coin.krwMarket,
+                        text = coinInfoDetail.coin.krwMarket,
                         fontWeight = FontWeight.Thin,
                         fontSize = 8.sp,
                         lineHeight = 1.sp // 줄간격
