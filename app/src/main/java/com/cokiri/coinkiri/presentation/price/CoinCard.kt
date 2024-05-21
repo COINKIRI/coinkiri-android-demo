@@ -107,21 +107,21 @@ fun CoinCard(
             ) {
                 Text(
                     // 실시간 가격
-                    text = coinInfoDetail.ticker?.tradePrice.toString(),
+                    text = coinInfoDetail.ticker?.formattedTradePrice.toString(),
                     fontWeight = FontWeight.Thin,
                     fontSize = 12.sp,
                     textAlign = TextAlign.End
                 )
                 Text(
                     // 전일 종가대비 현재가의 변화율
-                    text = coinInfoDetail.ticker?.changeRate.toString(),
+                    text = coinInfoDetail.ticker?.formattedSignedChangeRate.toString(),
                     fontWeight = FontWeight.Thin,
                     fontSize = 10.sp,
                     textAlign = TextAlign.End,
                 )
                 Text(
                     // 24시간 누적 거래대금
-                    text = coinInfoDetail.ticker?.accTradePrice.toString(),
+                    text = coinInfoDetail.ticker?.formattedAccTradePrice24h.toString(),
                     fontWeight = FontWeight.Thin,
                     fontSize = 10.sp,
                     textAlign = TextAlign.End,
