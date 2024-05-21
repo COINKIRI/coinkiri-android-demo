@@ -1,5 +1,7 @@
 package com.cokiri.coinkiri.domain.model
 
+import java.text.DecimalFormat
+
 data class Ticker(
     val type : String,                      // ticker
     val code : String,                      // KRW-BTC
@@ -34,4 +36,16 @@ data class Ticker(
     val accTradePrice24h : Double?,         // 누적 거래대금(UTC 0시 기준)
     val accTradeVolume24h : Double?,        // 누적 거래량(UTC 0시 기준)
     val streamType : String?                // 스트림 타입
-)
+) {
+
+    val formattedSignedChangeRate : String
+        get() = String.format("%.2f", signedChangeRate?.times(100) ?: 0.0) + "%"
+
+    private val valueInMillions = accTradePrice24h?.div(1_000_000)
+    private val formattedValue: String = DecimalFormat("#,###").format(valueInMillions)
+    val formattedAccTradePrice24h : String
+        get() = "${formattedValue}백만"
+
+    val formattedTradePrice : String
+        get() = tradePrice?.let { DecimalFormat("#,###").format(it) } ?: "0"
+}

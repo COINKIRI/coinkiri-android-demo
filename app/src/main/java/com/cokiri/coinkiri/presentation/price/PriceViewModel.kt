@@ -23,16 +23,16 @@ import javax.inject.Inject
 class PriceViewModel @Inject constructor(
     private val getCoinsUseCase: GetCoinsUseCase,
     private val webSocketUseCase: WebSocketUseCase
-) : ViewModel(), UpbitWebSocketCallback {
+) : ViewModel() {
 
     private val _coinList = MutableStateFlow<List<Coin>>(emptyList())
-    val coinList: StateFlow<List<Coin>> = _coinList
+    //val coinList: StateFlow<List<Coin>> = _coinList
 
     private val _krwMarketString = MutableStateFlow("")
     private val krwMarketString: StateFlow<String> = _krwMarketString.asStateFlow()
 
     private val _tickers = MutableStateFlow<Map<String, Ticker>>(emptyMap())
-    private val tickers: StateFlow<Map<String, Ticker>> = _tickers.asStateFlow()
+    //private val tickers: StateFlow<Map<String, Ticker>> = _tickers.asStateFlow()
 
     private val _coinInfoDetailList = MutableStateFlow<List<CoinInfoDetail>>(emptyList())
     val coinInfoDetailList: StateFlow<List<CoinInfoDetail>> = _coinInfoDetailList.asStateFlow()
@@ -55,16 +55,41 @@ class PriceViewModel @Inject constructor(
         viewModelScope.launch {
             krwMarketString.collect { krwMarket ->
                 if (krwMarket.isNotBlank()) {
-                    webSocketUseCase.startConnection(krwMarket)
+                    webSocketUseCase.startConnection(krwMarket) { ticker ->
+                        handleTickerResponse(
+                            ticker
+                        )
+                    }
                 }
             }
         }
     }
 
-    override fun onUpbitTickerResponseReceived(ticker: Ticker) {
-        val updatedResponses = _tickers.value.toMutableMap()
-        updatedResponses[ticker.code] = ticker
-        _tickers.value = updatedResponses
+
+    // 람다 콜백
+    private fun handleTickerResponse(ticker: Ticker) {
+        viewModelScope.launch {
+            val updatedResponses = _tickers.value.toMutableMap()
+            updatedResponses[ticker.code] = ticker
+            _tickers.value = updatedResponses
+            updateCoinInfoDetails(ticker)
+        }
+    }
+
+
+    // coin + ticker 정보를 coinInfoDetailList에 업데이트
+    private fun updateCoinInfoDetails(ticker: Ticker) {
+        val coinInfoDetails = _coinInfoDetailList.value.toMutableList()
+        val coin = _coinList.value.find { it.krwMarket == ticker.code }
+        if (coin != null) {
+            val index = coinInfoDetails.indexOfFirst { it.coin == coin }
+            if (index != -1) {
+                coinInfoDetails[index] = CoinInfoDetail(coin, ticker)
+            } else {
+                coinInfoDetails.add(CoinInfoDetail(coin, ticker))
+            }
+            _coinInfoDetailList.value = coinInfoDetails
+        }
     }
 
 
