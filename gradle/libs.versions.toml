@@ -32,6 +32,10 @@ hilt = "2.51.1"
 hiltNavigationCompose = "1.2.0"
 
 
+## Room
+# https://developer.android.com/jetpack/androidx/releases/room
+room = "2.6.1"
+
 ## Compose
 # https://developer.android.com/develop/ui/compose/bom/bom-mapping
 androidxComposeBom = "2024.05.00"
@@ -40,7 +44,7 @@ androidxActivity = "1.9.0"
 # https://developer.android.com/jetpack/androidx/releases/compose-material3
 androidxComposeMaterial3 = "1.2.1"
 # https://developer.android.com/jetpack/androidx/releases/compose-material
-androidxComposeMaterial1 = "1.6.6"
+androidxComposeMaterial1 = "1.6.7"
 
 
 ## license
@@ -86,6 +90,12 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+
+
+## Room
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 
 
 ## Network
