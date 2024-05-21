@@ -1,5 +1,6 @@
 package com.cokiri.coinkiri.di
 
+import com.cokiri.coinkiri.data.local.database.AppDatabase
 import com.cokiri.coinkiri.data.remote.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
 import com.cokiri.coinkiri.data.repository.CoinRepositoryImpl
@@ -51,8 +52,12 @@ object RepositoryModule {
      */
     @Provides
     @Singleton
-    fun provideUserRepository(authApi: AuthApi, preferencesManager: PreferencesManager): UserRepository {
-        return UserRepositoryImpl(authApi, preferencesManager)
+    fun provideUserRepository(
+        authApi: AuthApi,
+        preferencesManager: PreferencesManager,
+        appDatabase: AppDatabase
+    ): UserRepository {
+        return UserRepositoryImpl(authApi, preferencesManager, appDatabase)
     }
 
 
