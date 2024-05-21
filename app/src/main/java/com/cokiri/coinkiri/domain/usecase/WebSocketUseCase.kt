@@ -2,8 +2,6 @@ package com.cokiri.coinkiri.domain.usecase
 
 import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.domain.repository.WebSocketRepository
-import com.cokiri.coinkiri.presentation.price.PriceViewModel
-import com.cokiri.coinkiri.presentation.price.UpbitWebSocketCallback
 import javax.inject.Inject
 
 /**

@@ -23,16 +23,16 @@ import javax.inject.Inject
 class PriceViewModel @Inject constructor(
     private val getCoinsUseCase: GetCoinsUseCase,
     private val webSocketUseCase: WebSocketUseCase
-) : ViewModel(), UpbitWebSocketCallback {
+) : ViewModel() {
 
     private val _coinList = MutableStateFlow<List<Coin>>(emptyList())
-    val coinList: StateFlow<List<Coin>> = _coinList
+    //val coinList: StateFlow<List<Coin>> = _coinList
 
     private val _krwMarketString = MutableStateFlow("")
     private val krwMarketString: StateFlow<String> = _krwMarketString.asStateFlow()
 
     private val _tickers = MutableStateFlow<Map<String, Ticker>>(emptyMap())
-    private val tickers: StateFlow<Map<String, Ticker>> = _tickers.asStateFlow()
+    //private val tickers: StateFlow<Map<String, Ticker>> = _tickers.asStateFlow()
 
     private val _coinInfoDetailList = MutableStateFlow<List<CoinInfoDetail>>(emptyList())
     val coinInfoDetailList: StateFlow<List<CoinInfoDetail>> = _coinInfoDetailList.asStateFlow()
@@ -65,20 +65,10 @@ class PriceViewModel @Inject constructor(
         }
     }
 
-    // 인터페이스 콜백
-    override fun onUpbitTickerResponseReceived(ticker: Ticker) {
-        viewModelScope.launch {
-            val updatedResponses = _tickers.value.toMutableMap()
-            updatedResponses[ticker.code] = ticker
-            _tickers.value = updatedResponses
-            updateCoinInfoDetails(ticker)
-        }
-    }
 
     // 람다 콜백
     private fun handleTickerResponse(ticker: Ticker) {
         viewModelScope.launch {
-            Log.d("PriceViewModel", "Received ticker: $ticker")
             val updatedResponses = _tickers.value.toMutableMap()
             updatedResponses[ticker.code] = ticker
             _tickers.value = updatedResponses
