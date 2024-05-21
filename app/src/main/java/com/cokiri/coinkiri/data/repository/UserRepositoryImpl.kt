@@ -1,9 +1,10 @@
 package com.cokiri.coinkiri.data.repository
 
 import android.util.Log
+import com.cokiri.coinkiri.data.local.database.AppDatabase
+import com.cokiri.coinkiri.data.local.entity.MemberInfoEntity
 import com.cokiri.coinkiri.data.remote.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
-import com.cokiri.coinkiri.data.remote.model.MemberInfo
 import com.cokiri.coinkiri.data.remote.model.SignUpRequest
 import com.cokiri.coinkiri.domain.repository.UserRepository
 import javax.inject.Inject
@@ -13,7 +14,8 @@ import javax.inject.Inject
  */
 class UserRepositoryImpl @Inject constructor(
     private val authApi: AuthApi,
-    private val preferencesManager: PreferencesManager
+    private val preferencesManager: PreferencesManager,
+    private val appDatabase: AppDatabase
 ) : UserRepository {
 
     companion object {
@@ -59,6 +61,7 @@ class UserRepositoryImpl @Inject constructor(
                 Log.d(TAG, "로그아웃 요청 토큰: $accessToken")
                 authApi.logoutUser("Bearer $accessToken")
                 preferencesManager.clearTokens()
+                deleteMemberInfo()
                 Log.i(TAG, "로그아웃 성공")
                 Result.success(Unit)
             }
@@ -69,7 +72,7 @@ class UserRepositoryImpl @Inject constructor(
     }
 
 
-    private suspend fun getMemberInfo(): MemberInfo? {
+    override suspend fun getMemberInfo(): MemberInfoEntity? {
         return try {
             val accessToken = preferencesManager.getAccessToken()
             if (accessToken.isNullOrEmpty()) {
@@ -78,9 +81,8 @@ class UserRepositoryImpl @Inject constructor(
             } else {
                 val response = authApi.getMemberInfo("Bearer $accessToken")
                 if (response.code == "OK") {
-                    // 응답이 성공적으로 받아졌을 때, 결과를 UserInfo 객체로 변환하여 반환합니다.
                     val result = response.result
-                    MemberInfo(
+                    val memberInfoEntity = MemberInfoEntity(
                         id = result.id,
                         nickname = result.nickname,
                         exp = result.exp,
@@ -88,6 +90,8 @@ class UserRepositoryImpl @Inject constructor(
                         mileage = result.mileage,
                         pic = result.pic
                     )
+                    insertMemberInfo(memberInfoEntity)
+                    memberInfoEntity
                 } else {
                     Log.e(TAG, "서버 응답 오류: ${response.message}")
                     null
@@ -103,4 +107,20 @@ class UserRepositoryImpl @Inject constructor(
     override fun isLoggedIn(): Boolean {
         return !preferencesManager.getAccessToken().isNullOrEmpty()
     }
+
+    private suspend fun insertMemberInfo(memberInfoEntity: MemberInfoEntity) {
+        appDatabase.memberInfoDao().insertMemberInfo(memberInfoEntity)
+    }
+
+    private suspend fun deleteMemberInfo() {
+        appDatabase.memberInfoDao().deleteAll()
+    }
+
+    override suspend fun updateMemberInfo(memberInfo: MemberInfoEntity) {
+        appDatabase.memberInfoDao().updateMemberInfo(memberInfo)
+    }
+
+
+
+
 }
