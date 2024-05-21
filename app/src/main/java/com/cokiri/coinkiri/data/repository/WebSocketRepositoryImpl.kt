@@ -1,6 +1,7 @@
 package com.cokiri.coinkiri.data.repository
 
 import com.cokiri.coinkiri.data.remote.UpbitWebSocketListener
+import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.domain.repository.WebSocketRepository
 import com.cokiri.coinkiri.presentation.price.UpbitWebSocketCallback
 import com.cokiri.coinkiri.util.JsonParser
@@ -25,12 +26,12 @@ class WebSocketRepositoryImpl @Inject constructor(
     private val NORMAL_CLOSURE_STATUS = 1000
     private lateinit var webSocket: WebSocket
 
-    override fun startWebSocketConnection(krwMarkets: String) {
+    override fun startWebSocketConnection(krwMarkets: String, onTickerReceived: (Ticker) -> Unit){
         val request = Request.Builder()
             .url("https://api.upbit.com/websocket/v1")
             .build()
 
-        webSocket = client.newWebSocket(request, UpbitWebSocketListener(callback, krwMarkets, jsonParser, NORMAL_CLOSURE_STATUS))
+        webSocket = client.newWebSocket(request, UpbitWebSocketListener(callback, onTickerReceived ,krwMarkets, jsonParser, NORMAL_CLOSURE_STATUS))
     }
 
     override fun closeWebSocketConnection() {

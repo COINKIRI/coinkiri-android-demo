@@ -31,11 +31,10 @@ import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 @Composable
 fun CoinCard(
     priceViewModel: PriceViewModel,
-    coinInfoDetail: CoinInfoDetail,
+    coinInfoDetail: CoinInfoDetail
 ) {
 
     val coinPainter = priceViewModel.byteArrayToPainter(coinInfoDetail.coin.symbolImage)
-
 
     Card(
         onClick = { /*TODO*/ },
@@ -108,21 +107,21 @@ fun CoinCard(
             ) {
                 Text(
                     // 실시간 가격
-                    text = "90,000,000",
+                    text = coinInfoDetail.ticker?.tradePrice.toString(),
                     fontWeight = FontWeight.Thin,
                     fontSize = 12.sp,
                     textAlign = TextAlign.End
                 )
                 Text(
                     // 전일 종가대비 현재가의 변화율
-                    text = "+12.3%",
+                    text = coinInfoDetail.ticker?.changeRate.toString(),
                     fontWeight = FontWeight.Thin,
                     fontSize = 10.sp,
                     textAlign = TextAlign.End,
                 )
                 Text(
                     // 24시간 누적 거래대금
-                    text = "300백만",
+                    text = coinInfoDetail.ticker?.accTradePrice.toString(),
                     fontWeight = FontWeight.Thin,
                     fontSize = 10.sp,
                     textAlign = TextAlign.End,

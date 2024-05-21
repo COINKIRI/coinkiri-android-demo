@@ -28,7 +28,7 @@ fun PriceScreen(
 ) {
 
     val coinInfoDetailList by priceViewModel.coinInfoDetailList.collectAsState()
-
+//    val coin by priceViewModel.coinList.collectAsState()
 
     Scaffold(
         topBar = {

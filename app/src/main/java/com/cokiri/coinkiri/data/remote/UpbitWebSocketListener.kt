@@ -2,6 +2,7 @@ package com.cokiri.coinkiri.data.remote
 
 import android.util.Log
 import com.cokiri.coinkiri.data.remote.mapper.TickerMapper
+import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.presentation.price.UpbitWebSocketCallback
 import com.cokiri.coinkiri.util.JsonParser
 import okhttp3.Response
@@ -22,6 +23,7 @@ import java.util.UUID
 
 class UpbitWebSocketListener(
     private val callback: UpbitWebSocketCallback,
+    private val onTickerReceived: (Ticker) -> Unit,
     private val krwMarkets: String,
     private val jsonParser: JsonParser,
     private val normalClosureStatus: Int
@@ -41,16 +43,17 @@ class UpbitWebSocketListener(
 
     // 웹소켓으로부터 바이트 메시지를 받았을 때 호출
     override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-        Log.d("WebSocket", "Received bytes: ${bytes.hex()}")
+//        Log.d("WebSocket", "Received bytes: ${bytes.hex()}")
 
         val jsonString = bytes.string(StandardCharsets.UTF_8)
-        Log.d("WebSocket", "Received json: $jsonString")
+//        Log.d("WebSocket", "Received json: $jsonString")
 
         val upbitTickerResponse = jsonParser.fromJsonToUpbitTickerResponse(jsonString)   // JsonParser를 통해 UpbitTickerResponse로 변환
         if (upbitTickerResponse != null) {
-            Log.d("WebSocket", "Parsed response: $upbitTickerResponse")
+//            Log.d("WebSocket", "Parsed response: $upbitTickerResponse")
             val ticker = TickerMapper.UpbitTickerResponseToTicker(upbitTickerResponse)   // UpbitTickerResponse를 Ticker로 변환
             callback.onUpbitTickerResponseReceived(ticker)                               // 콜백을 통해 viewModel에 ticker 전달
+            onTickerReceived(ticker)
             Log.d("WebSocket", "Ticker: $ticker")
         } else {
             Log.d("WebSocket", "Failed to parse response")

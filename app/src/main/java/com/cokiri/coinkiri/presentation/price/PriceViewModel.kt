@@ -55,16 +55,51 @@ class PriceViewModel @Inject constructor(
         viewModelScope.launch {
             krwMarketString.collect { krwMarket ->
                 if (krwMarket.isNotBlank()) {
-                    webSocketUseCase.startConnection(krwMarket)
+                    webSocketUseCase.startConnection(krwMarket) { ticker ->
+                        handleTickerResponse(
+                            ticker
+                        )
+                    }
                 }
             }
         }
     }
 
+    // 인터페이스 콜백
     override fun onUpbitTickerResponseReceived(ticker: Ticker) {
-        val updatedResponses = _tickers.value.toMutableMap()
-        updatedResponses[ticker.code] = ticker
-        _tickers.value = updatedResponses
+        viewModelScope.launch {
+            val updatedResponses = _tickers.value.toMutableMap()
+            updatedResponses[ticker.code] = ticker
+            _tickers.value = updatedResponses
+            updateCoinInfoDetails(ticker)
+        }
+    }
+
+    // 람다 콜백
+    private fun handleTickerResponse(ticker: Ticker) {
+        viewModelScope.launch {
+            Log.d("PriceViewModel", "Received ticker: $ticker")
+            val updatedResponses = _tickers.value.toMutableMap()
+            updatedResponses[ticker.code] = ticker
+            _tickers.value = updatedResponses
+            updateCoinInfoDetails(ticker)
+        }
+    }
+
+
+    // coin + ticker 정보를 coinInfoDetailList에 업데이트
+    private fun updateCoinInfoDetails(ticker: Ticker) {
+        val coinInfoDetails = _coinInfoDetailList.value.toMutableList()
+        val coin = _coinList.value.find { it.krwMarket == ticker.code }
+        if (coin != null) {
+            val index = coinInfoDetails.indexOfFirst { it.coin == coin }
+            if (index != -1) {
+                coinInfoDetails[index] = CoinInfoDetail(coin, ticker)
+            } else {
+                coinInfoDetails.add(CoinInfoDetail(coin, ticker))
+            }
+            _coinInfoDetailList.value = coinInfoDetails
+        }
     }
 
 
