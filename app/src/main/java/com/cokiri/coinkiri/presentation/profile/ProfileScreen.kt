@@ -42,13 +42,16 @@ import com.cokiri.coinkiri.ui.theme.CoinkiriBlack
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    viewModel: LoginViewModel = hiltViewModel(),
+    loginViewModel: LoginViewModel = hiltViewModel(),
+    profileViewModel: ProfileViewModel = hiltViewModel(),
     navController: NavHostController,
 ) {
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
-    val loginUiState by viewModel.loginUiState.collectAsStateWithLifecycle()
+    val loginUiState by loginViewModel.loginUiState.collectAsStateWithLifecycle()
+
+    val memberInfo by profileViewModel.memberInfo.collectAsStateWithLifecycle()
 
     LaunchedEffect(loginUiState) {
         if (loginUiState is LoginUiState.Initial) {
@@ -89,13 +92,18 @@ fun ProfileScreen(
                     sheetState = sheetState,
                     onDismissSheet = { showBottomSheet = false },
                     onLogoutClick = {
-                        viewModel.kakaoLogout()
+                        loginViewModel.kakaoLogout()
                         showBottomSheet = false
                     }
                 )
             }
             Column(modifier = Modifier.padding(it)) {
                 // Profile screen content goes here
+                memberInfo?.let { it1 ->
+                    Text(
+                        text = it1.nickname
+                    )
+                }
             }
         }
     )

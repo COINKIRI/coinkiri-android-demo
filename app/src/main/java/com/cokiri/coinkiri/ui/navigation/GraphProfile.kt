@@ -13,7 +13,7 @@ fun NavGraphBuilder.profileNavGraph(
 ) {
     composable(PROFILE) {
         ProfileScreen(
-            viewModel = loginViewModel,
+            loginViewModel = loginViewModel,
             navController = navController
         )
     }
