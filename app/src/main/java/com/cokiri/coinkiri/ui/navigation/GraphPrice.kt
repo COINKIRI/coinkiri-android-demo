@@ -10,6 +10,8 @@ fun NavGraphBuilder.priceNavGraph(
     navController: NavHostController
 ) {
     composable(PRICE) {
-        PriceScreen()
+        PriceScreen(
+
+        )
     }
 }

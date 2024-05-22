@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
@@ -35,13 +36,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.cokiri.coinkiri.util.COMMUNITYDETAIL
+import com.cokiri.coinkiri.util.FOLLOW
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostScreen() {
+fun PostScreen(
+    navController: NavHostController
+) {
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf("커뮤니티", "뉴스", "미션")
@@ -74,7 +79,7 @@ fun PostScreen() {
         content = {
             Column(modifier = Modifier.padding(it)) {
                 when (selectedTabIndex) {
-                    0 -> CommunityList()
+                    0 -> CommunityList(navController = navController)
                     1 -> NewsList()
                     2 -> MissionList()
                 }
@@ -166,8 +171,12 @@ fun FloatingActionButtonWithLabel(
 }
 
 @Composable
-fun CommunityList() {
-    Text(text = "CommunityList")
+fun CommunityList(navController: NavHostController) {
+    LazyColumn {
+        items(30) {
+            CommunityCard(onclick = {navController.navigate(COMMUNITYDETAIL)})
+        }
+    }
 }
 
 @Composable
@@ -178,12 +187,4 @@ fun NewsList() {
 @Composable
 fun MissionList() {
     Text(text = "MissionList")
-}
-
-
-
-@Preview
-@Composable
-fun PostScreenPreview() {
-    PostScreen()
 }

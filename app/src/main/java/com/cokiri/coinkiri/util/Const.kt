@@ -8,3 +8,6 @@ const val PRICE = "PRICE"
 const val PROFILE = "PROFILE"
 
 const val FOLLOW = "FOLLOW"
+
+
+const val COMMUNITYDETAIL = "COMMUNITYDETAIL"
