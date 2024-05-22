@@ -50,7 +50,6 @@ fun ProfileScreen(
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     val loginUiState by loginViewModel.loginUiState.collectAsStateWithLifecycle()
-
     val memberInfo by profileViewModel.memberInfo.collectAsStateWithLifecycle()
 
     LaunchedEffect(loginUiState) {
@@ -98,12 +97,10 @@ fun ProfileScreen(
                 )
             }
             Column(modifier = Modifier.padding(it)) {
-                // Profile screen content goes here
-                memberInfo?.let { it1 ->
-                    Text(
-                        text = it1.nickname
-                    )
-                }
+                MemberInfoCard(
+                    memberInfo = memberInfo,
+                    navController = navController
+                )
             }
         }
     )
@@ -155,3 +152,4 @@ fun ModalBottomSheetBtn(
         )
     }
 }
+
