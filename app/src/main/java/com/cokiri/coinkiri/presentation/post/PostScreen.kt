@@ -1,12 +1,8 @@
 package com.cokiri.coinkiri.presentation.post
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -34,13 +30,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.cokiri.coinkiri.util.COMMUNITYDETAIL
-import com.cokiri.coinkiri.util.FOLLOW
+import com.cokiri.coinkiri.util.COMMUNITY_DETAIL
+import com.cokiri.coinkiri.util.COMMUNITY_WRITE
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,24 +81,30 @@ fun PostScreen(
             }
         },
         floatingActionButton = {
-            FloatingActionMenu(isMenuExpanded) { isMenuExpanded = !isMenuExpanded }
+            FloatingActionMenu(
+                isMenuExpanded,
+                navController
+            ) {
+                isMenuExpanded = !isMenuExpanded
+            }
         }
     )
 
-    // 배경이 어두운 투명색으로 변하는 효과
-    if (isMenuExpanded) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f))
-                .clickable(onClick = { isMenuExpanded = false })
-        )
-    }
+//    // 배경이 어두운 투명색으로 변하는 효과
+//    if (isMenuExpanded) {
+//        Box(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .background(Color.Black.copy(alpha = 0.5f))
+//                .clickable(onClick = { isMenuExpanded = false })
+//        )
+//    }
 }
 
 @Composable
 fun FloatingActionMenu(
     isMenuExpanded: Boolean,
+    navController: NavHostController,
     onMenuToggle: () -> Unit
 ) {
     if (!isMenuExpanded) {
@@ -125,7 +126,7 @@ fun FloatingActionMenu(
             FloatingActionButtonWithLabel(
                 label = "커뮤니티 글작성",
                 icon = Icons.Default.Create,
-                onClick = { /*TODO*/ }
+                onClick = { navController.navigate(COMMUNITY_WRITE) }
             )
             FloatingActionButtonWithLabel(
                 label = "미션 생성",
@@ -174,7 +175,7 @@ fun FloatingActionButtonWithLabel(
 fun CommunityList(navController: NavHostController) {
     LazyColumn {
         items(30) {
-            CommunityCard(onclick = {navController.navigate(COMMUNITYDETAIL)})
+            CommunityCard(onclick = {navController.navigate(COMMUNITY_DETAIL)})
         }
     }
 }

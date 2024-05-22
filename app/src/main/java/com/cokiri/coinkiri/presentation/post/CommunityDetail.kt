@@ -16,7 +16,7 @@ import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommunityDetailScreen(
+fun CommunityDetail(
     navController: NavHostController
 ) {
     Scaffold(
