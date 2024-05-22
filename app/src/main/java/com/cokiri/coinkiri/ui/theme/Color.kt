@@ -16,3 +16,4 @@ val CoinkiriPointGreen = Color(0xFF829F8A)
 val CoinkiriGreen = Color(0xFFE0E5E0)
 val CoinkiriBackground = Color(0xFFF8F8F8)  // 앱의 배경 색
 
+val kakaoColor = Color(0xFFFCEC5C)
