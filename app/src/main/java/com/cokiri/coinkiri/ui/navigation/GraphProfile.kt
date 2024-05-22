@@ -4,7 +4,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.cokiri.coinkiri.presentation.login.LoginViewModel
+import com.cokiri.coinkiri.presentation.profile.FollowScreen
 import com.cokiri.coinkiri.presentation.profile.ProfileScreen
+import com.cokiri.coinkiri.util.FOLLOW
 import com.cokiri.coinkiri.util.PROFILE
 
 fun NavGraphBuilder.profileNavGraph(
@@ -17,4 +19,9 @@ fun NavGraphBuilder.profileNavGraph(
             navController = navController
         )
     }
+
+    composable(FOLLOW) {
+        FollowScreen(navController)
+    }
+
 }

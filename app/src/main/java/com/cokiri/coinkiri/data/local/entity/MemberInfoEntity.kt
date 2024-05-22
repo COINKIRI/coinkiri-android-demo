@@ -10,5 +10,8 @@ data class MemberInfoEntity(
     val exp: Int,
     val level: Int,
     val mileage: Int,
-    val pic: String?
+    val pic: String?,
+    val statusMessage: String,
+    val followingCount: Int,
+    val followerCount: Int
 )

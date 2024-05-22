@@ -88,7 +88,10 @@ class UserRepositoryImpl @Inject constructor(
                         exp = result.exp,
                         level = result.level,
                         mileage = result.mileage,
-                        pic = result.pic
+                        pic = result.pic,
+                        statusMessage = result.statusMessage,
+                        followingCount = result.followingCount,
+                        followerCount = result.followerCount
                     )
                     insertMemberInfo(memberInfoEntity)
                     memberInfoEntity

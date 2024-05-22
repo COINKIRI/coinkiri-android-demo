@@ -5,7 +5,9 @@ import androidx.room.RoomDatabase
 import com.cokiri.coinkiri.data.local.dao.MemberInfoDao
 import com.cokiri.coinkiri.data.local.entity.MemberInfoEntity
 
-@Database(entities = [MemberInfoEntity::class], version = 1)
+@Database(entities = [MemberInfoEntity::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun memberInfoDao(): MemberInfoDao
+
+
 }
