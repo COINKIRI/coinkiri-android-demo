@@ -152,11 +152,3 @@ fun CommunityWritePreview() {
     val navController = rememberNavController() // 임시 NavController 생성
     CommunityWrite(navController = navController)
 }
-
-@Preview
-@Composable
-fun WriteContentPreview() {
-    WriteContent(
-        communityWriteViewModel = CommunityWriteViewModel()
-    )
-}
