@@ -1,8 +1,11 @@
 package com.cokiri.coinkiri.presentation.main
 
+import android.net.Uri
 import android.os.Bundle
+import android.webkit.ValueCallback
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,6 +22,14 @@ class MainActivity : ComponentActivity() {
 
     private val loginViewModel: LoginViewModel by viewModels()
 
+    private var filePathCallback: ValueCallback<Array<Uri>>? = null
+
+    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        val result = if (uri != null) arrayOf(uri) else null
+        filePathCallback?.onReceiveValue(result)
+        filePathCallback = null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -33,5 +44,9 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+    fun openFileChooser(callback: ValueCallback<Array<Uri>>?) {
+        filePathCallback = callback
+        getContent.launch("image/*")
     }
 }

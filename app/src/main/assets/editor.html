@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 작성</title>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #F8F8F8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        #editor-container {
+            flex: 1;
+        }
+        #editor {
+            width: 100%;
+            min-height: 500px;
+            background-color: #F8F8F8;
+        }
+        .ql-toolbar {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="editor-container">
+    <div id="editor"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+    const toolbarOptions = [
+        [{'size': ['small', false, 'large', 'huge']}],    // 글자 크기
+        ['bold', 'italic', 'underline', 'strike'],        // 텍스트 스타일
+        [{'color': []}, {'background': []}],              // 글자색, 배경색
+        [{'align': []}],                                  // 텍스트 정렬
+        ['link', 'image'],                                // 링크, 이미지
+    ];
+
+    const quill = new Quill('#editor', {
+        modules: {
+            toolbar: toolbarOptions
+        },
+        theme: 'snow'
+    });
+
+    // 에디터 내용을 Android로 전송하는 함수
+    function sendEditorContentToAndroid() {
+        var content = quill.root.innerHTML;
+        if (window.Android) {
+            window.Android.getEditorContent(content);
+        }
+    }
+
+    // 내용을 클릭하면 툴바 표시
+    document.getElementById('editor').addEventListener('click', function() {
+        document.querySelector('.ql-toolbar').style.display = 'block';
+    });
+
+    // 다른 곳을 클릭하면 툴바 숨기기
+    document.addEventListener('click', function(event) {
+        var editorContainer = document.getElementById('editor-container');
+        var toolbar = document.querySelector('.ql-toolbar');
+        if (!editorContainer.contains(event.target)) {
+            toolbar.style.display = 'none';
+        }
+    });
+</script>
+</body>
+</html>
