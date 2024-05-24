@@ -50,20 +50,17 @@
         theme: 'snow'
     });
 
-    // 에디터 내용을 Android로 전송하는 함수
-    function sendEditorContentToAndroid() {
+
+    function sendContent() {
         var content = quill.root.innerHTML;
-        if (window.Android) {
-            window.Android.getEditorContent(content);
-        }
+        AndroidInterface.receiveContent(content);
+        return content;
     }
 
-    // 내용을 클릭하면 툴바 표시
     document.getElementById('editor').addEventListener('click', function() {
         document.querySelector('.ql-toolbar').style.display = 'block';
     });
 
-    // 다른 곳을 클릭하면 툴바 숨기기
     document.addEventListener('click', function(event) {
         var editorContainer = document.getElementById('editor-container');
         var toolbar = document.querySelector('.ql-toolbar');
@@ -72,5 +69,8 @@
         }
     });
 </script>
+
+
+
 </body>
 </html>

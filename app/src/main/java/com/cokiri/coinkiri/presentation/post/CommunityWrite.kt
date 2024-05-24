@@ -2,6 +2,7 @@ package com.cokiri.coinkiri.presentation.post
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
@@ -33,6 +34,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.cokiri.coinkiri.presentation.main.MainActivity
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import org.json.JSONException
+import org.json.JSONObject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,10 +59,14 @@ fun CommunityWrite(
                 },
                 actions = {
                     TextButton(onClick = {
-                        // JavaScript 함수 호출하여 에디터 내용 가져오기
-                        webView.evaluateJavascript("sendEditorContentToAndroid();", null)
-                        // 뷰모델의 submitPost 함수 호출
-                        communityWriteViewModel.submitPost()
+                        webView.evaluateJavascript("sendContent()") { result ->
+                            val content = result?.removeSurrounding("\"")
+                            if (content != null) {
+                                communityWriteViewModel.onContentChange(content)
+                                communityWriteViewModel.submitPost()
+                                navController.popBackStack()
+                            }
+                        }
                     }) {
                         Text(text = "등록")
                     }
@@ -70,18 +77,15 @@ fun CommunityWrite(
             Column(modifier = Modifier
                 .padding(it)
                 .background(CoinkiriBackground)) {
-                WriteContent(communityWriteViewModel)
+                WriteContent(communityWriteViewModel, webView)
             }
-        },
-        bottomBar = {
-
         }
     )
 }
 
 
 @Composable
-fun WriteContent(communityWriteViewModel: CommunityWriteViewModel) {
+fun WriteContent(communityWriteViewModel: CommunityWriteViewModel, webView: WebView) {
 
     val title by communityWriteViewModel.title.collectAsState()
 
@@ -90,26 +94,26 @@ fun WriteContent(communityWriteViewModel: CommunityWriteViewModel) {
             .fillMaxSize()
             .background(CoinkiriBackground)
     ) {
-        // 제목입력
         TextField(
             value = title,
             onValueChange = { newTitle -> communityWriteViewModel.onTitleChange(newTitle) },
+            modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("제목을 입력해주세요.") },
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = CoinkiriBackground,
                 unfocusedContainerColor = CoinkiriBackground,
-            ),
-            modifier = Modifier.fillMaxWidth()
+            )
         )
-        WebViewComponent(communityWriteViewModel)
+        WebViewComponent(communityWriteViewModel, webView)
     }
 }
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun WebViewComponent(communityWriteViewModel: CommunityWriteViewModel) {
-    val context = LocalContext.current
-    val webView = remember { WebView(context) }
+fun WebViewComponent(
+    communityWriteViewModel: CommunityWriteViewModel,
+    webView: WebView
+) {
 
     AndroidView(
         modifier = Modifier
@@ -130,21 +134,24 @@ fun WebViewComponent(communityWriteViewModel: CommunityWriteViewModel) {
                         return true
                     }
                 }
+                addJavascriptInterface(JavaScriptInterface(communityWriteViewModel), "AndroidInterface")
                 loadUrl("file:///android_asset/editor.html")
-                addJavascriptInterface(object {
-                    @JavascriptInterface
-                    fun getEditorContent(content: String) {
-                        communityWriteViewModel.onContentChange(content)
-                    }
-                }, "Android")
             }
         },
-        update = { webView ->
-            webView.settings.javaScriptEnabled = true
-            webView.loadUrl("file:///android_asset/editor.html")
+        update = {
+            it.loadUrl("file:///android_asset/editor.html")
         }
     )
 }
+
+class JavaScriptInterface(private val viewModel: CommunityWriteViewModel) {
+    @JavascriptInterface
+    fun receiveContent(content: String) {
+        Log.d("JavaScriptInterface", "receiveContent: $content")
+        viewModel.onContentChange(content)
+    }
+}
+
 
 @Preview
 @Composable

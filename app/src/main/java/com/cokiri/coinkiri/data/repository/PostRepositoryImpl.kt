@@ -1,5 +1,6 @@
 package com.cokiri.coinkiri.data.repository
 
+import android.util.Log
 import com.cokiri.coinkiri.data.remote.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.PostApi
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
@@ -18,11 +19,11 @@ class PostRepositoryImpl @Inject constructor(
             if (accessToken.isNullOrEmpty()) {
                 return Result.failure(Exception("로그인이 필요합니다."))
             } else {
-                // 로그인이 필요한 API 요청에는 토큰을 헤더에 추가하여 전송합니다.
+
                 val response = postApi.submitPost("Bearer $accessToken", postDataRequest)
+                Log.d("PostRepositoryImpl", "submitPost: $response")
 
                 if (response.isSuccessful) {
-                    // 응답이 성공적으로 수신되었을 때만 응답 데이터를 추출하여 반환합니다.
                     val responseBody = response.body()
                     if (responseBody != null) {
                         Result.success(responseBody)
