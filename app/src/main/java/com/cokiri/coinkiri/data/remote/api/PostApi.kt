@@ -16,6 +16,6 @@ interface PostApi {
     @POST("/api/v1/post/community/save")
     suspend fun submitPost(
         @Header("Authorization") accessToken: String,
-        @Body postDataRequest: PostDataRequest): Response<ApiResponse>
-
+        @Body postDataRequest: PostDataRequest
+    ): Response<ApiResponse>
 }

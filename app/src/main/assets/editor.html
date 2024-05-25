@@ -50,11 +50,35 @@
         theme: 'snow'
     });
 
+    function extractImages(content) {
+        let images = [];
+        let regex = /<img src="data:image\/[^;]+;base64,[^"]+">/g;
+        let match;
+
+        while ((match = regex.exec(content)) !== null) {
+            images.push({
+                position: match.index,
+                base64: match[0]
+            });
+        }
+        return images;
+    }
+
+    function prepareContent(content) {
+        let images = extractImages(content);
+        let cleanedContent = content.replace(/<img src="data:image\/[^;]+;base64,[^"]+">/g, '');
+
+        return {
+            content: cleanedContent,
+            images: images
+        };
+    }
 
     function sendContent() {
-        var content = quill.root.innerHTML;
-        AndroidInterface.receiveContent(content);
-        return content;
+        let content = quill.root.innerHTML;
+        let preparedContent = prepareContent(content);
+        AndroidInterface.receiveContent(JSON.stringify(preparedContent));
+        return preparedContent;
     }
 
     document.getElementById('editor').addEventListener('click', function() {
@@ -69,8 +93,5 @@
         }
     });
 </script>
-
-
-
 </body>
 </html>

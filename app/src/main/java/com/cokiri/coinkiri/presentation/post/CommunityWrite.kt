@@ -43,10 +43,8 @@ fun CommunityWrite(
     navController: NavHostController,
     communityWriteViewModel: CommunityWriteViewModel = hiltViewModel()
 ) {
-
     val context = LocalContext.current
     val webView = remember { WebView(context) }
-
 
     Scaffold(
         topBar = {
@@ -59,14 +57,7 @@ fun CommunityWrite(
                 },
                 actions = {
                     TextButton(onClick = {
-                        webView.evaluateJavascript("sendContent()") { result ->
-                            val content = result?.removeSurrounding("\"")
-                            if (content != null) {
-                                communityWriteViewModel.onContentChange(content)
-                                communityWriteViewModel.submitPost()
-                                navController.popBackStack()
-                            }
-                        }
+                        handleContentSubmission(webView, communityWriteViewModel, navController)
                     }) {
                         Text(text = "등록")
                     }
@@ -74,19 +65,19 @@ fun CommunityWrite(
             )
         },
         content = {
-            Column(modifier = Modifier
-                .padding(it)
-                .background(CoinkiriBackground)) {
+            Column(
+                modifier = Modifier
+                    .padding(it)
+                    .background(CoinkiriBackground)
+            ) {
                 WriteContent(communityWriteViewModel, webView)
             }
         }
     )
 }
 
-
 @Composable
 fun WriteContent(communityWriteViewModel: CommunityWriteViewModel, webView: WebView) {
-
     val title by communityWriteViewModel.title.collectAsState()
 
     Column(
@@ -114,7 +105,6 @@ fun WebViewComponent(
     communityWriteViewModel: CommunityWriteViewModel,
     webView: WebView
 ) {
-
     AndroidView(
         modifier = Modifier
             .fillMaxSize()
@@ -122,20 +112,7 @@ fun WebViewComponent(
             .background(CoinkiriBackground),
         factory = {
             webView.apply {
-                settings.javaScriptEnabled = true
-                webViewClient = WebViewClient()
-                webChromeClient = object : WebChromeClient() {
-                    override fun onShowFileChooser(
-                        webView: WebView?,
-                        filePathCallback: ValueCallback<Array<Uri>>?,
-                        fileChooserParams: FileChooserParams?
-                    ): Boolean {
-                        (context as MainActivity).openFileChooser(filePathCallback)
-                        return true
-                    }
-                }
-                addJavascriptInterface(JavaScriptInterface(communityWriteViewModel), "AndroidInterface")
-                loadUrl("file:///android_asset/editor.html")
+                setupWebView(communityWriteViewModel)
             }
         },
         update = {
@@ -144,18 +121,83 @@ fun WebViewComponent(
     )
 }
 
+private fun WebView.setupWebView(viewModel: CommunityWriteViewModel) {
+    settings.javaScriptEnabled = true
+    webViewClient = WebViewClient()
+    webChromeClient = object : WebChromeClient() {
+        override fun onShowFileChooser(
+            webView: WebView?,
+            filePathCallback: ValueCallback<Array<Uri>>?,
+            fileChooserParams: FileChooserParams?
+        ): Boolean {
+            (context as MainActivity).openFileChooser(filePathCallback)
+            return true
+        }
+    }
+    addJavascriptInterface(JavaScriptInterface(viewModel), "AndroidInterface")
+    loadUrl("file:///android_asset/editor.html")
+}
+
+private fun handleContentSubmission(
+    webView: WebView,
+    viewModel: CommunityWriteViewModel,
+    navController: NavHostController
+) {
+    webView.evaluateJavascript("sendContent()") { result ->
+        val content = result?.removeSurrounding("\"")
+        if (content != null) {
+            val jsonObject = JSONObject(content)
+            val bodyContent = jsonObject.getString("content")
+            val images = jsonObject.getJSONArray("images")
+
+            // 본문 내용 업데이트
+            viewModel.onContentChange(bodyContent)
+
+            // 이미지 업데이트
+            val imageList = mutableListOf<Pair<Int, String>>()
+            for (i in 0 until images.length()) {
+                val imageObject = images.getJSONObject(i)
+                val position = imageObject.getInt("position")
+                val base64 = imageObject.getString("base64")
+                imageList.add(Pair(position, base64))
+            }
+            viewModel.onImagesChange(imageList)
+
+            // 포스트 제출
+            viewModel.submitPost()
+            navController.popBackStack()
+        }
+    }
+}
+
+/**
+ * JavaScriptInterface
+ * 웹뷰에서 자바스크립트와 안드로이드 네이티브 코드 간의 통신을 위한 인터페이스
+ * - receiveContent: 웹뷰에서 받은 컨텐츠를 처리하는 함수
+ */
 class JavaScriptInterface(private val viewModel: CommunityWriteViewModel) {
     @JavascriptInterface
     fun receiveContent(content: String) {
         Log.d("JavaScriptInterface", "receiveContent: $content")
-        viewModel.onContentChange(content)
+        handleReceivedContent(content, viewModel)
     }
 }
 
+private fun handleReceivedContent(content: String, viewModel: CommunityWriteViewModel) {
+    val jsonObject = JSONObject(content)
+    val bodyContent = jsonObject.getString("content")
+    val images = jsonObject.getJSONArray("images")
 
-@Preview
-@Composable
-fun CommunityWritePreview() {
-    val navController = rememberNavController() // 임시 NavController 생성
-    CommunityWrite(navController = navController)
+    // 본문 내용 업데이트
+    viewModel.onContentChange(bodyContent)
+
+    // 이미지 업데이트
+    val imageList = mutableListOf<Pair<Int, String>>()
+    for (i in 0 until images.length()) {
+        val imageObject = images.getJSONObject(i)
+        val position = imageObject.getInt("position")
+        val base64 = imageObject.getString("base64")
+        imageList.add(Pair(position, base64))
+    }
+    viewModel.onImagesChange(imageList)
 }
