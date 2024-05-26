@@ -1,5 +1,6 @@
 package com.cokiri.coinkiri.presentation.post
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,9 +32,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.util.COMMUNITY_DETAIL
 import com.cokiri.coinkiri.util.COMMUNITY_WRITE
 
@@ -72,7 +76,11 @@ fun PostScreen(
             )
         },
         content = {
-            Column(modifier = Modifier.padding(it)) {
+            Column(
+                modifier = Modifier
+                    .padding(it)
+                    .background(CoinkiriBackground)
+            ) {
                 when (selectedTabIndex) {
                     0 -> CommunityList(navController = navController)
                     1 -> NewsList()
@@ -90,15 +98,6 @@ fun PostScreen(
         }
     )
 
-//    // 배경이 어두운 투명색으로 변하는 효과
-//    if (isMenuExpanded) {
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .background(Color.Black.copy(alpha = 0.5f))
-//                .clickable(onClick = { isMenuExpanded = false })
-//        )
-//    }
 }
 
 @Composable
@@ -173,7 +172,9 @@ fun FloatingActionButtonWithLabel(
 
 @Composable
 fun CommunityList(navController: NavHostController) {
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier.background(CoinkiriBackground)
+    ) {
         items(30) {
             CommunityCard(onclick = {navController.navigate(COMMUNITY_DETAIL)})
         }
@@ -188,4 +189,11 @@ fun NewsList() {
 @Composable
 fun MissionList() {
     Text(text = "MissionList")
+}
+
+@Preview
+@Composable
+fun PostScreenPreview() {
+    val navController = rememberNavController()
+    PostScreen(navController)
 }
