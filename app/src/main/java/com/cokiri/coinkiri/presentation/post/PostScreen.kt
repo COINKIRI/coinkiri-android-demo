@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.cokiri.coinkiri.presentation.post.community.CommunityList
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.util.COMMUNITY_DETAIL
@@ -56,8 +57,8 @@ fun PostScreen(
     navController: NavHostController,
     postViewModel: PostViewModel = hiltViewModel()
 ) {
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = remember { listOf("커뮤니티", "뉴스", "미션") }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
     var isMenuExpanded by remember { mutableStateOf(false) }
 
     // 초기 화면 로드 시 게시글 리스트 불러오기
@@ -93,6 +94,8 @@ fun PostScreen(
         }
     )
 }
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -193,9 +196,9 @@ fun FloatingActionButtonWithLabel(
     onClick: () -> Unit
 ) {
     Row(
-        modifier = Modifier.wrapContentSize(),               // Row의 크기를 컨텐츠에 맞게 설정
-        horizontalArrangement = Arrangement.spacedBy(10.dp), // 아이콘 간의 간격 설정
-        verticalAlignment = Alignment.CenterVertically       // 아이콘을 세로로 중앙 정렬
+        modifier = Modifier.wrapContentSize(),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = label,
@@ -212,58 +215,7 @@ fun FloatingActionButtonWithLabel(
     }
 }
 
-@Composable
-fun CommunityList(
-    navController: NavHostController,
-    postViewModel: PostViewModel
-) {
-    val communityPostList by postViewModel.communityPostList.collectAsState()
-    val isLoading by postViewModel.isLoading.collectAsState()
-    val errorMessage by postViewModel.errorMessage.collectAsState()
-    var isRefreshing by remember { mutableStateOf(false) }
-    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing)
 
-    SwipeRefresh(
-        state = swipeRefreshState,
-        onRefresh = {
-            isRefreshing = true
-            postViewModel.fetchCommunityPostList()
-            isRefreshing = false
-        },
-        indicator = { state, trigger ->
-            SwipeRefreshIndicator(
-                state = state,
-                refreshTriggerDistance = trigger,
-                contentColor = CoinkiriPointGreen
-            )
-        }
-    ) {
-        if (isLoading) {
-            // 로딩 상태일 때 로딩 인디케이터 표시
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else if (errorMessage != null) {
-            // 에러 상태일 때 에러 메시지 표시
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = errorMessage ?: "Unknown error")
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.background(CoinkiriBackground)
-            ) {
-                items(communityPostList.size) { index ->
-                    val communityResponseDto = communityPostList[index]
-                    val postId = communityResponseDto.postResponseDto.id
-                    CommunityCard(
-                        onclick = { navController.navigate("$COMMUNITY_DETAIL/$postId") },
-                        communityResponseDto = communityResponseDto
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun NewsList() {

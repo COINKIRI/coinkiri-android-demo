@@ -1,6 +1,5 @@
 package com.cokiri.coinkiri.presentation.post
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cokiri.coinkiri.data.remote.model.CommunityResponseDto

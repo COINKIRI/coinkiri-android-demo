@@ -175,7 +175,7 @@ fun TitleSection() {
     }
 }
 
-@SuppressLint("SetJavaScriptEnabled")
+@SuppressLint("SetJavaScriptEnabled", "SuspiciousIndentation")
 @Composable
 fun ContentSection(content: String) {
     val context = LocalContext.current

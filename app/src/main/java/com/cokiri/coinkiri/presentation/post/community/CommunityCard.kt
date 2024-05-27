@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.presentation.post
+package com.cokiri.coinkiri.presentation.post.community
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
