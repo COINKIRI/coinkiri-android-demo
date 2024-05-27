@@ -1,9 +1,12 @@
 package com.cokiri.coinkiri.presentation.post
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -13,6 +16,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -24,6 +28,8 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,61 +38,50 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.util.COMMUNITY_DETAIL
 import com.cokiri.coinkiri.util.COMMUNITY_WRITE
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
-@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("RememberReturnType")
 @Composable
 fun PostScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    postViewModel: PostViewModel = hiltViewModel()
 ) {
-
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("커뮤니티", "뉴스", "미션")
-    var isMenuExpanded by remember { mutableStateOf(false) } // 메뉴가 확장되었는지 여부를 저장하는 변수
+    val tabs = remember { listOf("커뮤니티", "뉴스", "미션") }
+    var isMenuExpanded by remember { mutableStateOf(false) }
+
+    // 초기 화면 로드 시 게시글 리스트 불러오기
+    LaunchedEffect(Unit) {
+        postViewModel.fetchCommunityPostList()
+    }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    TabRow(selectedTabIndex = selectedTabIndex) {
-                        tabs.forEachIndexed { index, title ->
-                            Tab(
-                                selected = selectedTabIndex == index,
-                                onClick = { selectedTabIndex = index },
-                                text = { Text(title) }
-                            )
-                        }
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            Icons.Default.Search,
-                            contentDescription = "Search"
-                        )
-                    }
-                }
+            PostScreenTopBar(
+                selectedTabIndex = selectedTabIndex,
+                onTabSelected = { selectedTabIndex = it },
+                tabs = tabs
             )
         },
-        content = {
-            Column(
+        content = { paddingValues ->
+            PostScreenContent(
+                selectedTabIndex = selectedTabIndex,
+                navController = navController,
+                postViewModel = postViewModel,
                 modifier = Modifier
-                    .padding(it)
+                    .padding(paddingValues)
                     .background(CoinkiriBackground)
-            ) {
-                when (selectedTabIndex) {
-                    0 -> CommunityList(navController = navController)
-                    1 -> NewsList()
-                    2 -> MissionList()
-                }
-            }
+            )
         },
         floatingActionButton = {
             FloatingActionMenu(
@@ -97,7 +92,54 @@ fun PostScreen(
             }
         }
     )
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PostScreenTopBar(
+    selectedTabIndex: Int,
+    onTabSelected: (Int) -> Unit,
+    tabs: List<String>
+) {
+    TopAppBar(
+        title = {
+            TabRow(selectedTabIndex = selectedTabIndex) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = { onTabSelected(index) },
+                        text = { Text(title) }
+                    )
+                }
+            }
+        },
+        actions = {
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = "Search"
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun PostScreenContent(
+    selectedTabIndex: Int,
+    navController: NavHostController,
+    postViewModel: PostViewModel,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        when (selectedTabIndex) {
+            0 -> CommunityList(navController = navController, postViewModel = postViewModel)
+            1 -> NewsList()
+            2 -> MissionList()
+        }
+    }
 }
 
 @Composable
@@ -171,12 +213,54 @@ fun FloatingActionButtonWithLabel(
 }
 
 @Composable
-fun CommunityList(navController: NavHostController) {
-    LazyColumn(
-        modifier = Modifier.background(CoinkiriBackground)
+fun CommunityList(
+    navController: NavHostController,
+    postViewModel: PostViewModel
+) {
+    val communityPostList by postViewModel.communityPostList.collectAsState()
+    val isLoading by postViewModel.isLoading.collectAsState()
+    val errorMessage by postViewModel.errorMessage.collectAsState()
+    var isRefreshing by remember { mutableStateOf(false) }
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing)
+
+    SwipeRefresh(
+        state = swipeRefreshState,
+        onRefresh = {
+            isRefreshing = true
+            postViewModel.fetchCommunityPostList()
+            isRefreshing = false
+        },
+        indicator = { state, trigger ->
+            SwipeRefreshIndicator(
+                state = state,
+                refreshTriggerDistance = trigger,
+                contentColor = CoinkiriPointGreen
+            )
+        }
     ) {
-        items(30) {
-            CommunityCard(onclick = {navController.navigate(COMMUNITY_DETAIL)})
+        if (isLoading) {
+            // 로딩 상태일 때 로딩 인디케이터 표시
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        } else if (errorMessage != null) {
+            // 에러 상태일 때 에러 메시지 표시
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = errorMessage ?: "Unknown error")
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.background(CoinkiriBackground)
+            ) {
+                items(communityPostList.size) { index ->
+                    val communityResponseDto = communityPostList[index]
+                    val postId = communityResponseDto.postResponseDto.id
+                    CommunityCard(
+                        onclick = { navController.navigate("$COMMUNITY_DETAIL/$postId") },
+                        communityResponseDto = communityResponseDto
+                    )
+                }
+            }
         }
     }
 }
@@ -189,11 +273,4 @@ fun NewsList() {
 @Composable
 fun MissionList() {
     Text(text = "MissionList")
-}
-
-@Preview
-@Composable
-fun PostScreenPreview() {
-    val navController = rememberNavController()
-    PostScreen(navController)
 }
