@@ -7,12 +7,14 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.cokiri.coinkiri.presentation.login.LoginViewModel
+import com.cokiri.coinkiri.presentation.post.PostViewModel
 import com.cokiri.coinkiri.util.HOME
 
 @Composable
 fun MainGraph(
     navController: NavHostController,
-    loginViewModel: LoginViewModel
+    loginViewModel: LoginViewModel,
+    postViewModel: PostViewModel
 ) {
     val tabs = listOf(
         BottomNavItem.Analysis,
@@ -36,7 +38,7 @@ fun MainGraph(
             modifier = Modifier.padding(innerPadding)
         ) {
             analysisNavGraph(navController)
-            postNavGraph(navController)
+            postNavGraph(navController,postViewModel)
             homeNavGraph(navController)
             priceNavGraph(navController)
             profileNavGraph(navController, loginViewModel)

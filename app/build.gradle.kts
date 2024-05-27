@@ -116,6 +116,7 @@ dependencies {
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)
 
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.24.13-rc")
 
     /* testImplementation */
     testImplementation(libs.junit)

@@ -3,12 +3,15 @@ package com.cokiri.coinkiri.di
 import com.cokiri.coinkiri.data.local.database.AppDatabase
 import com.cokiri.coinkiri.data.remote.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
+import com.cokiri.coinkiri.data.remote.api.PostApi
 import com.cokiri.coinkiri.data.repository.CoinRepositoryImpl
 import com.cokiri.coinkiri.data.repository.KakaoLoginRepositoryImpl
+import com.cokiri.coinkiri.data.repository.PostRepositoryImpl
 import com.cokiri.coinkiri.data.repository.UserRepositoryImpl
 import com.cokiri.coinkiri.data.repository.WebSocketRepositoryImpl
 import com.cokiri.coinkiri.domain.repository.CoinRepository
 import com.cokiri.coinkiri.domain.repository.KakaoLoginRepository
+import com.cokiri.coinkiri.domain.repository.PostRepository
 import com.cokiri.coinkiri.domain.repository.UserRepository
 import com.cokiri.coinkiri.domain.repository.WebSocketRepository
 import dagger.Module
@@ -68,5 +71,14 @@ object RepositoryModule {
     @Singleton
     fun provideWebSocketRepository(webSocketRepositoryImpl: WebSocketRepositoryImpl): WebSocketRepository{
         return webSocketRepositoryImpl
+    }
+
+    @Provides
+    @Singleton
+    fun providePostRepository(
+        postApi: PostApi,
+        preferencesManager: PreferencesManager
+    ): PostRepository {
+        return PostRepositoryImpl(postApi,preferencesManager)
     }
 }
