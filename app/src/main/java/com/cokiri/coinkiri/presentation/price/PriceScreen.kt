@@ -13,30 +13,37 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriBlack
+import com.cokiri.coinkiri.util.COIN_DETAIL
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PriceScreen(
-    priceViewModel: PriceViewModel = hiltViewModel()
+    priceViewModel: PriceViewModel = hiltViewModel(),
+    navController: NavHostController
 ) {
 
+    LaunchedEffect(Unit) {
+        // WebSocket 연결 시작
+        priceViewModel.observeKrwMarketString()
+    }
+
     val coinInfoDetailList by priceViewModel.coinInfoDetailList.collectAsState()
-//    val coin by priceViewModel.coinList.collectAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    // TopAppBar 색상 설정
-                    containerColor = CoinkiriBackground,     // AppBar 배경색을 메인 배경색으로 설정
-                    titleContentColor = CoinkiriBlack,       // AppBar 컨텐츠 색을 메인 검은색으로 설정
+                    containerColor = CoinkiriBackground,
+                    titleContentColor = CoinkiriBlack,
                 ),
                 title = {
                     Text(text = "시세조회")
@@ -54,23 +61,22 @@ fun PriceScreen(
         content = { paddingValues ->
             Column(modifier = Modifier.padding(paddingValues)) {
                 LazyColumn {
-                    items(coinInfoDetailList.size) {
+                    items(coinInfoDetailList.size) { index ->
+                        val coinInfoDetail = coinInfoDetailList[index]
+                        val coinMarket = coinInfoDetail.coin.krwMarket
+                        val coinKoreanName = coinInfoDetail.coin.koreanName
+                        val coinId = coinInfoDetail.coin.coinId
                         CoinCard(
-                            priceViewModel,
-                            coinInfoDetailList[it]
+                            coinInfoDetail = coinInfoDetail,
+                            onClick = {
+                                priceViewModel.stopWebSocketConnection()
+                                navController.navigate("$COIN_DETAIL/$coinMarket/$coinId/$coinKoreanName")
+                            }
+
                         )
                     }
                 }
             }
         }
     )
-}
-
-
-
-
-@Preview
-@Composable
-fun PriceScreenPreview() {
-    PriceScreen()
 }
