@@ -95,6 +95,9 @@ dependencies {
     implementation(libs.androidx.compose.material1)
     implementation(libs.androidx.compose.material3)
 
+    // MPAndroidChart
+    implementation(libs.mpAndroidChart)
+
     // Retrofit
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.moshi)
