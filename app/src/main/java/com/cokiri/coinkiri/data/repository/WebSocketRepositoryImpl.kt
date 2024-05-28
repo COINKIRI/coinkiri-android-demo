@@ -24,7 +24,7 @@ class WebSocketRepositoryImpl @Inject constructor(
     private val NORMAL_CLOSURE_STATUS = 1000
     private lateinit var webSocket: WebSocket
 
-    override fun startWebSocketConnection(krwMarkets: String, onTickerReceived: (Ticker) -> Unit){
+    override fun startWebSocketConnection(krwMarkets: List<String>, onTickerReceived: (Ticker) -> Unit) {
         val request = Request.Builder()
             .url("https://api.upbit.com/websocket/v1")
             .build()

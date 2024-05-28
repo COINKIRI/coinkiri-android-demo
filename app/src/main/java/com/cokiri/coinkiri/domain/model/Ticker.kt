@@ -48,4 +48,10 @@ data class Ticker(
 
     val formattedTradePrice : String
         get() = tradePrice?.let { DecimalFormat("#,###").format(it) } ?: "0"
+
+    val formattedHighPrice : String
+        get() = highPrice?.let { DecimalFormat("#,###").format(it) } ?: "0"
+
+    val formattedLowPrice : String
+        get() = lowPrice?.let { DecimalFormat("#,###").format(it) } ?: "0"
 }

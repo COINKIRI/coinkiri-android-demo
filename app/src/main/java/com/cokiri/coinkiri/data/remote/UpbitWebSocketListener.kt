@@ -21,9 +21,8 @@ import java.util.UUID
  */
 
 class UpbitWebSocketListener(
-    //private val callback: UpbitWebSocketCallback,
     private val onTickerReceived: (Ticker) -> Unit,
-    private val krwMarkets: String,
+    private val krwMarkets: List<String>,
     private val jsonParser: JsonParser,
     private val normalClosureStatus: Int
 ) : WebSocketListener() {
@@ -31,7 +30,9 @@ class UpbitWebSocketListener(
     // 웹소켓이 연결되었을 때 호출
     override fun onOpen(webSocket: WebSocket, response: Response) {
         val uniqueTicket = UUID.randomUUID().toString()
-        val json = """[{"ticket":"$uniqueTicket"},{"type":"ticker","codes":[$krwMarkets]}]"""
+        val marketsJsonArray = krwMarkets.joinToString(",") { "\"$it\"" }
+        val replaceMarketsJsonArray = marketsJsonArray.replace("\"", "")
+        val json = """[{"ticket":"$uniqueTicket"},{"type":"ticker","codes":[$replaceMarketsJsonArray]}]"""
         webSocket.send(json)
     }
 
@@ -49,7 +50,7 @@ class UpbitWebSocketListener(
         if (upbitTickerResponse != null) {
             val ticker = TickerMapper.UpbitTickerResponseToTicker(upbitTickerResponse)   // UpbitTickerResponse를 Ticker로 변환
             onTickerReceived(ticker)
-            Log.d("WebSocket", "Ticker: $ticker")
+            //Log.d("WebSocket", "Ticker: $ticker")
         } else {
             Log.d("WebSocket", "Failed to parse response")
         }

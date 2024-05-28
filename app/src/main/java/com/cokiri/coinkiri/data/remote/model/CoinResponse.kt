@@ -12,7 +12,7 @@ data class CoinResponse(
 
 @JsonClass(generateAdapter = true)
 data class CoinInfo(
-    @Json(name = "coinId") val coinId: Long,
+    @Json(name = "id") val coinId: Long,
     @Json(name = "market") val market: String,
     @Json(name = "koreanName") val koreanName: String,
     @Json(name = "englishName") val englishName: String,

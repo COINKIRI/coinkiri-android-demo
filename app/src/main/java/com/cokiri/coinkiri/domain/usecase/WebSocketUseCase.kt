@@ -11,7 +11,7 @@ import javax.inject.Inject
 class WebSocketUseCase @Inject constructor(
     private val webSocketRepository: WebSocketRepository
 ) {
-    fun startConnection(krwMarkets: String, onTickerReceived: (Ticker) -> Unit) {
+    fun startConnection(krwMarkets: List<String>, onTickerReceived: (Ticker) -> Unit) {
         webSocketRepository.startWebSocketConnection(krwMarkets, onTickerReceived)
     }
 
