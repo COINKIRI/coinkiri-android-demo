@@ -59,7 +59,7 @@
 
         while ((match = regex.exec(content)) !== null) {
             images.push({
-                position: match.index,
+                position: match.index + 5,
                 base64: match[0]
             });
         }

@@ -4,6 +4,8 @@ import android.util.Log
 import com.cokiri.coinkiri.data.remote.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.PostApi
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
+import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponse
+import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.CommunityResponseDto
 import com.cokiri.coinkiri.data.remote.model.PostDataRequest
 import com.cokiri.coinkiri.domain.repository.PostRepository
@@ -44,7 +46,8 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    // 커뮤니티 글 목록 요청(GET)
+
+    // 전체 커뮤니티 글 목록 요청(GET)
     override suspend fun getCommunityPostList(): List<CommunityResponseDto> {
         return if (cachedCommunityPostList.isNullOrEmpty()) {
             val response = postApi.getAllCommunityPost()
@@ -58,6 +61,16 @@ class PostRepositoryImpl @Inject constructor(
     // 필요에 따라 캐시를 지우는 함수 추가
     fun clearCache() {
         cachedCommunityPostList = null
+    }
+
+    // 커뮤니티 글 상세 요청(GET)
+    override suspend fun getCommunityPostDetail(postId: Long): CommunityDetailResponseDto {
+        return try {
+            val response = postApi.getCommunityPostDetail(postId)
+            response.result
+        } catch (e: Exception) {
+            throw e
+        }
     }
 
 }
