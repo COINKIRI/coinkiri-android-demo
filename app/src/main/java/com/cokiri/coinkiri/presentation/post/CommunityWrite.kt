@@ -2,6 +2,7 @@ package com.cokiri.coinkiri.presentation.post
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
@@ -31,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.presentation.main.MainActivity
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import org.json.JSONException
 import org.json.JSONObject
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -160,26 +162,34 @@ private fun handleContentSubmission(
     webView.evaluateJavascript("sendContent()") { result ->
         val content = result?.removeSurrounding("\"")
         if (content != null) {
-            val jsonObject = JSONObject(content)
-            val bodyContent = jsonObject.getString("content")
-            val images = jsonObject.getJSONArray("images")
+            try {
+                val jsonObject = JSONObject(content)
+                val bodyContent = jsonObject.getString("content")
+                val images = jsonObject.getJSONArray("images")
 
-            // 본문 내용 업데이트
-            viewModel.onContentChange(bodyContent)
+                // 본문 내용 업데이트
+                viewModel.onContentChange(bodyContent)
 
-            // 이미지 업데이트
-            val imageList = mutableListOf<Pair<Int, String>>()
-            for (i in 0 until images.length()) {
-                val imageObject = images.getJSONObject(i)
-                val position = imageObject.getInt("position")
-                val base64 = imageObject.getString("base64")
-                imageList.add(Pair(position, base64))
+                // 이미지 업데이트
+                val imageList = mutableListOf<Pair<Int, String>>()
+                for (i in 0 until images.length()) {
+                    val imageObject = images.getJSONObject(i)
+                    val position = imageObject.getInt("position")
+                    val base64 = imageObject.getString("base64")
+                    imageList.add(Pair(position, base64))
+                }
+                viewModel.onImagesChange(imageList)
+
+                // 포스트 제출
+                viewModel.submitPost()
+                navController.popBackStack()
+            } catch (e: JSONException) {
+                e.printStackTrace()
+                Log.e("handleContentSubmission", "JSON parsing error: ${e.message}")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("handleContentSubmission", "Error: ${e.message}")
             }
-            viewModel.onImagesChange(imageList)
-
-            // 포스트 제출
-            viewModel.submitPost()
-            navController.popBackStack()
         }
     }
 }
@@ -203,20 +213,28 @@ private fun handleReceivedContent(
     content: String,
     viewModel: CommunityWriteViewModel
 ) {
-    val jsonObject = JSONObject(content)
-    val bodyContent = jsonObject.getString("content")
-    val images = jsonObject.getJSONArray("images")
+    try {
+        val jsonObject = JSONObject(content)
+        val bodyContent = jsonObject.getString("content")
+        val images = jsonObject.getJSONArray("images")
 
-    // 본문 내용 업데이트
-    viewModel.onContentChange(bodyContent)
+        // 본문 내용 업데이트
+        viewModel.onContentChange(bodyContent)
 
-    // 이미지 업데이트
-    val imageList = mutableListOf<Pair<Int, String>>()
-    for (i in 0 until images.length()) {
-        val imageObject = images.getJSONObject(i)
-        val position = imageObject.getInt("position")
-        val base64 = imageObject.getString("base64")
-        imageList.add(Pair(position, base64))
+        // 이미지 업데이트
+        val imageList = mutableListOf<Pair<Int, String>>()
+        for (i in 0 until images.length()) {
+            val imageObject = images.getJSONObject(i)
+            val position = imageObject.getInt("position")
+            val base64 = imageObject.getString("base64")
+            imageList.add(Pair(position, base64))
+        }
+        viewModel.onImagesChange(imageList)
+    } catch (e: JSONException) {
+        e.printStackTrace()
+        Log.e("handleReceivedContent", "JSON parsing error: ${e.message}")
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Log.e("handleReceivedContent", "Error: ${e.message}")
     }
-    viewModel.onImagesChange(imageList)
 }

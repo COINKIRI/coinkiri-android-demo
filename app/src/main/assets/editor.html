@@ -55,16 +55,26 @@
     function extractImages(content) {
         let images = [];
         let regex = /<img src="data:image\/[^;]+;base64,[^"]+">/g;
+        let paragraphRegex = /<\/?p>/gi;
+        let paragraphs = content.split(paragraphRegex);
         let match;
+        let currentParagraph = 0;
+        let position = 0;
 
         while ((match = regex.exec(content)) !== null) {
+            while (position + paragraphs[currentParagraph].length < match.index) {
+                position += paragraphs[currentParagraph].length + 3;
+                currentParagraph++;
+            }
+
             images.push({
-                position: match.index + 5,
-                base64: match[0]
+                base64: match[0],
+                position: currentParagraph
             });
         }
         return images;
     }
+
 
     function removeBase64Images(content) {
         return content.replace(/<img src="data:image\/[^;]+;base64,[^"]+">/g, '');
