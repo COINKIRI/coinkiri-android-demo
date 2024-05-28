@@ -67,10 +67,6 @@ fun CommunityDetail(
     Log.d("CommunityDetail", "postId: $postId")
     val communityDetail by postViewModel.communityDetail.collectAsState()
     val title = communityDetail?.postResponseDto?.title
-    val content = communityDetail?.postResponseDto?.content ?: ""
-    val images = communityDetail?.postResponseDto?.images ?: emptyList()
-    Log.d("CommunityDetail", "content: $content")
-    Log.d("CommunityDetail", "images: $images")
 
 
 
@@ -101,7 +97,7 @@ fun CommunityDetail(
                     .background(CoinkiriBackground)
             ) {
                 TitleSection()
-                ContentSection(content)
+//                ContentSection(content)
             }
         }
     )

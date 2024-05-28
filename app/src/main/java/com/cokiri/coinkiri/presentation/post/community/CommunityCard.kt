@@ -33,11 +33,12 @@ fun CommunityCard(
     communityResponseDto: CommunityResponseDto,
 ) {
     val title = communityResponseDto.postResponseDto.title
-    val name = communityResponseDto.postResponseDto.member.nickname
-    val level = communityResponseDto.postResponseDto.member.level.toString()
+    val name = communityResponseDto.postResponseDto.memberNickname
+    val level = communityResponseDto.postResponseDto.memberLevel.toString()
+    val date = communityResponseDto.postResponseDto.formattedDateTime
     val viewCnt = communityResponseDto.postResponseDto.viewCnt.toString()
-    //TODO : likeCnt
-    val commentCnt = communityResponseDto.postResponseDto.comments.size.toString()
+    val likeCnt = communityResponseDto.postResponseDto.likeCount.toString()
+    val commentCnt = communityResponseDto.postResponseDto.commentCount.toString()
 
     Card(
         onClick = onclick,
@@ -54,7 +55,7 @@ fun CommunityCard(
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             TitleRow(title = title, commentCnt = commentCnt)
-            InfoRow(level = level, name = name, viewCnt = viewCnt)
+            InfoRow(level = level, name = name, data = date, likeCnt = likeCnt, viewCnt = viewCnt)
             HorizontalDivider(thickness = 1.dp, color = CoinkiriGreen)
         }
     }
@@ -80,7 +81,13 @@ fun TitleRow(title: String, commentCnt: String) {
 }
 
 @Composable
-fun InfoRow(level: String, name: String, viewCnt: String) {
+fun InfoRow(
+    level: String,
+    name: String,
+    data: String,
+    likeCnt: String,
+    viewCnt: String
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start,
@@ -90,11 +97,11 @@ fun InfoRow(level: String, name: String, viewCnt: String) {
             Text(text = "Lv.$level")
             Text(text = name)
             VerticalDivider(thickness = 1.dp, color = CoinkiriPointGreen,modifier = Modifier.size(1.dp, 20.dp))
-            Text(text = "date")
+            Text(text = data)
             VerticalDivider(thickness = 1.dp, color = CoinkiriPointGreen,modifier = Modifier.size(1.dp, 20.dp))
             InfoIconWithText(
                 iconResId = R.drawable.ic_post_baseline_thumb_up,
-                text = "likeCnt",
+                text = likeCnt,
                 tint = CoinkiriPointGreen,
             )
             VerticalDivider(thickness = 1.dp, color = CoinkiriPointGreen,modifier = Modifier.size(1.dp, 20.dp))

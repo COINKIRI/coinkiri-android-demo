@@ -1,6 +1,8 @@
 package com.cokiri.coinkiri.data.remote.model
 
 import com.squareup.moshi.JsonClass
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 @JsonClass(generateAdapter = true)
@@ -10,41 +12,28 @@ data class CommunityResponse(
     val result: List<CommunityResponseDto>
 )
 
-@JsonClass(generateAdapter = true)
-data class PostResponseDto(
-    val id: Long,
-    val title: String,
-    val content: String,
-    val images: List<ImageData>,
-    val viewCnt: Int,
-    val createdAt: String,
-    val modifiedAt: String,
-    val member: Member,
-    val comments: List<Comment>
-)
-
 data class CommunityResponseDto(
     val postResponseDto : PostResponseDto,
     val category : String
 )
 
-data class Member(
-    val id : Long,
-    val nickname : String,
-    val exp : Int,
-    val level : Int,
-    val mileage : Int,
-    val pic : String?,
-    val statusMessage : String
-)
 
 @JsonClass(generateAdapter = true)
-data class Comment(
+data class PostResponseDto(
     val id: Long,
-    val content: String,
-    val createdAt: String,
-    val modifiedAt: String,
-    val member: Member
-)
+    val title: String,
+    val viewCnt: Int,
+    val createdAt : String,
+    val memberNickname: String,
+    val memberLevel: Int,
+    val commentCount: Int,
+    val likeCount: Int
+) {
+    val formattedDateTime: String
+        get() {
+            val dateTime = LocalDateTime.parse(createdAt, DateTimeFormatter.ISO_DATE_TIME)
+            return dateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+        }
+}
 
 
