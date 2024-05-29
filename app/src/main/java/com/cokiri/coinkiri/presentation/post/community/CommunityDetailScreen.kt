@@ -40,6 +40,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -53,21 +54,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.data.remote.model.CommentList
+import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
 import com.cokiri.coinkiri.presentation.post.PostViewModel
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.util.buildHtmlContent
+import com.cokiri.coinkiri.util.byteArrayToPainter
 import com.cokiri.coinkiri.util.byteArrayToString
 import com.cokiri.coinkiri.util.insertImagesIntoContent
 import kotlinx.coroutines.launch
@@ -159,12 +164,6 @@ fun CommunityDetailScreen(
             when {
                 communityDetail != null -> {
                     val detail = communityDetail
-                    val content = detail?.postDetailResponseDto?.content
-                    val imagesList = detail?.postDetailResponseDto?.images
-                    val pairImagesList = imagesList?.map {
-                        it.position to byteArrayToString(it.base64)
-                    }
-                    val newContent = insertImagesIntoContent(content, pairImagesList)
 
                     LazyColumn(
                         modifier = Modifier
@@ -175,14 +174,15 @@ fun CommunityDetailScreen(
                     ) {
                         item {
                             if (detail != null) {
-                                TitleSection(title = detail.postDetailResponseDto.title)
-                            }
-                            ContentSection(newContent, context) { webView ->
-                                webViewInstance = webView
+                                TitleSection(detail = detail)
+                                ContentSection(detail, context) { webView ->
+                                    webViewInstance = webView
+                                }
                             }
                         }
                     }
                 }
+
                 else -> {
                     Box(
                         modifier = Modifier
@@ -195,65 +195,108 @@ fun CommunityDetailScreen(
                 }
             }
 
-            if(showBottomSheet){
-
+            if (showBottomSheet) {
                 ModalBottomSheet(
                     onDismissRequest = { coroutineScope.launch { showBottomSheet = false } },
-                    sheetState = sheetState
+                    sheetState = sheetState,
+                    containerColor = CoinkiriBackground,
                 ) {
 
                     Scaffold(
                         topBar = {
-                            CenterAlignedTopAppBar(
-                                title = { Text("댓글") },
-                                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(CoinkiriBackground),
-                                navigationIcon = {
-                                    IconButton(
-                                        onClick = {
-                                            coroutineScope.launch {
-                                                showBottomSheet = false
-                                            } }
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.ic_navi_home),
-                                            contentDescription = "닫기"
+                            Surface(
+                                color = CoinkiriBackground,
+                                shadowElevation = 5.dp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+
+                            ) {
+                                CenterAlignedTopAppBar(
+                                    title = {
+                                        Text(
+                                            text = "댓글",
+                                            fontSize = 18.sp,
                                         )
-                                    }
-                                },
-                            )
+                                    },
+                                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                                        CoinkiriBackground
+                                    ),
+                                    navigationIcon = {
+                                        IconButton(
+                                            onClick = {
+                                                coroutineScope.launch {
+                                                    showBottomSheet = false
+                                                }
+                                            }
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.ic_navi_home),
+                                                contentDescription = "닫기"
+                                            )
+                                        }
+                                    },
+                                )
+                            }
                         },
                         content = { paddingValues ->
                             LazyColumn(modifier = Modifier.padding(paddingValues)) {
-                                items(commentList.size) {index ->
+                                items(commentList.size) { index ->
                                     val comment = commentList[index]
                                     CommentCard(comment)
                                 }
                             }
                         },
                         bottomBar = {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                            BottomAppBar(
+                                containerColor = CoinkiriBackground,
                             ) {
-                                TextField(
-                                    value = commentContent,
-                                    onValueChange = { newCommentContent -> postViewModel.onCommentContentChange(newCommentContent) },
+                                Row(
                                     modifier = Modifier
-                                        .weight(1f)
-                                        .padding(end = 8.dp),
-                                    placeholder = { Text("댓글을 입력하세요...") }
-                                )
-                                Button(
-                                    onClick = {
-                                        postViewModel.submitComment(postId)
-                                        Log.d("CommunityDetailScreen", "postId: $postId")
-                                        Log.d("CommunityDetailScreen", "commentContent: $commentContent")
-                                        postViewModel.onCommentContentChange("")
-                                    }
+                                        .fillMaxWidth()
+                                        .padding(10.dp),
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text("등록")
+                                    TextField(
+                                        shape = RoundedCornerShape(30.dp),
+                                        value = commentContent,
+                                        onValueChange = { newCommentContent ->
+                                            postViewModel.onCommentContentChange(
+                                                newCommentContent
+                                            )
+                                        },
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(end = 8.dp),
+                                        colors = TextFieldDefaults.colors(
+                                            focusedContainerColor = Color.LightGray,
+                                            focusedIndicatorColor = Color.Transparent,
+                                            unfocusedContainerColor = Color.LightGray,
+                                            unfocusedIndicatorColor = Color.Transparent,
+                                        ),
+                                        placeholder = {
+                                            Text(
+                                                text = "댓글을 입력하세요.",
+                                                fontSize = 12.sp,
+                                            )
+                                        },
+
+                                        )
+                                    IconButton(
+                                        onClick = {
+                                            postViewModel.submitComment(postId)
+                                            Log.d("CommunityDetailScreen", "postId: $postId")
+                                            Log.d(
+                                                "CommunityDetailScreen",
+                                                "commentContent: $commentContent"
+                                            )
+                                            postViewModel.onCommentContentChange("")
+                                        }
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.ic_navi_home),
+                                            contentDescription = "전송"
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -294,7 +337,17 @@ fun CommunityDetailScreen(
 
 
 @Composable
-fun TitleSection(title: String) {
+fun TitleSection(
+    detail: CommunityDetailResponseDto,
+) {
+
+    val title = detail.postDetailResponseDto.title
+    val name = detail.postDetailResponseDto.memberNickname
+    val level = detail.postDetailResponseDto.memberLevel
+    val profileImageByteArray = detail.postDetailResponseDto.memberPic
+    val profileImage = byteArrayToPainter(profileImageByteArray)
+    val createDate = detail.postDetailResponseDto.createdAt
+
     Column(
         modifier = Modifier
             .padding(10.dp)
@@ -308,6 +361,8 @@ fun TitleSection(title: String) {
         ) {
             Text(
                 text = title,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(5.dp),
             )
         }
@@ -322,24 +377,24 @@ fun TitleSection(title: String) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Spacer(modifier = Modifier.size(10.dp))
+                Spacer(modifier = Modifier.size(5.dp))
                 Card(
                     shape = CircleShape,
                     elevation = CardDefaults.cardElevation(5.dp),
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                        painter = profileImage,
                         contentScale = ContentScale.Crop,
                         contentDescription = "Profile Image",
                         modifier = Modifier.size(40.dp)
                     )
                 }
-                Spacer(modifier = Modifier.size(10.dp))
+                Spacer(modifier = Modifier.size(5.dp))
                 Column(
                     modifier = Modifier.padding(5.dp)
                 ) {
-                    Text(text = "레벨 + 작성자", fontWeight = FontWeight.Bold)
-                    Text(text = "작성일")
+                    Text(text = "$level + $name", fontWeight = FontWeight.Bold)
+                    Text(text = createDate)
                 }
             }
             Button(
@@ -357,7 +412,19 @@ fun TitleSection(title: String) {
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun ContentSection(newContent: String, context: Context, onWebViewReady: (WebView) -> Unit) {
+fun ContentSection(
+    detail: CommunityDetailResponseDto,
+    context: Context,
+    onWebViewReady: (WebView) -> Unit
+) {
+
+    val content = detail.postDetailResponseDto.content
+    val imagesList = detail.postDetailResponseDto.images
+    val pairImagesList = imagesList.map {
+        it.position to byteArrayToString(it.base64)
+    }
+    val newContent = insertImagesIntoContent(content, pairImagesList)
+
     AndroidView(
         factory = {
             WebView(context).apply {
@@ -391,6 +458,8 @@ fun CommentCard(comment: CommentList) {
     val name = comment.member.nickname
     val data = comment.createdAt
     val content = comment.content
+    val profileImageByteArray = comment.member.pic
+    val profileImage = byteArrayToPainter(profileImageByteArray)
 
 
     Card(
@@ -399,16 +468,38 @@ fun CommentCard(comment: CommentList) {
             .padding(horizontal = 3.dp),
         colors = CardDefaults.cardColors(CoinkiriBackground)
     ) {
-        Column(
-            modifier = Modifier.padding(10.dp)
+        Row(
+            modifier = Modifier.padding(15.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth()
+            Card(
+                shape = CircleShape,
+                elevation = CardDefaults.cardElevation(5.dp),
             ) {
-                Text(text = "$level + $name + $data", fontWeight = FontWeight.Bold)
+                Image(
+                    painter = profileImage,
+                    contentScale = ContentScale.Crop,
+                    contentDescription = "Profile Image",
+                    modifier = Modifier
+                        .size(40.dp)
+                )
             }
             Spacer(modifier = Modifier.size(10.dp))
-            Text(text = content)
+            Column(
+                modifier = Modifier
+                    .padding(start = 5.dp, bottom = 3.dp),
+                verticalArrangement = Arrangement.spacedBy(1.dp)
+            ) {
+                Text(
+                    text = "Lv.$level $name $data",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 10.sp
+                )
+                Text(
+                    text = content,
+                    fontSize = 13.sp
+                )
+            }
         }
         HorizontalDivider()
     }
