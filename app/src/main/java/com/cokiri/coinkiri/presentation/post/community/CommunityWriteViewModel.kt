@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.presentation.post
+package com.cokiri.coinkiri.presentation.post.community
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

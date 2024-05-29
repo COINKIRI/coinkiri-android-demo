@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.presentation.post
+package com.cokiri.coinkiri.presentation.post.community
 
 import android.annotation.SuppressLint
 import android.net.Uri

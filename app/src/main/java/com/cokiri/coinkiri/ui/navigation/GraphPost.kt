@@ -3,8 +3,8 @@ package com.cokiri.coinkiri.ui.navigation
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.cokiri.coinkiri.presentation.post.CommunityDetail
-import com.cokiri.coinkiri.presentation.post.CommunityWrite
+import com.cokiri.coinkiri.presentation.post.community.CommunityDetail
+import com.cokiri.coinkiri.presentation.post.community.CommunityWrite
 import com.cokiri.coinkiri.presentation.post.PostScreen
 import com.cokiri.coinkiri.presentation.post.PostViewModel
 import com.cokiri.coinkiri.util.COMMUNITY_DETAIL

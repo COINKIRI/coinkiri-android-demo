@@ -1,6 +1,10 @@
-package com.cokiri.coinkiri.presentation.post
+package com.cokiri.coinkiri.presentation.post.community
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.Image
@@ -36,6 +40,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -48,6 +55,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.R
+import com.cokiri.coinkiri.presentation.post.PostViewModel
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.util.buildHtmlContent
@@ -63,6 +71,9 @@ fun CommunityDetail(
     postId: String
 ) {
 
+    var webViewInstance: WebView? by remember { mutableStateOf(null) }
+    val context = LocalContext.current
+
     LaunchedEffect(postId) {
         postViewModel.fetchCommunityPostDetail(postId.toLong())
     }
@@ -74,7 +85,17 @@ fun CommunityDetail(
             TopAppBar(
                 title = { Text("커뮤니티") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        webViewInstance?.let { webView ->
+                            (webView.parent as? ViewGroup)?.removeView(webView)
+                            Handler(Looper.getMainLooper()).post {
+                                webView.clearCache(true)
+                                webView.destroy()
+                            }
+                            webViewInstance = null
+                        }
+                        navController.popBackStack()
+                    }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "뒤로가기"
@@ -84,28 +105,45 @@ fun CommunityDetail(
             )
         },
         content = { padding ->
-            Column(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize()
-                    .background(CoinkiriBackground)
-            ) {
-                communityDetail?.let { detail ->
-                    val content = detail.postDetailResponseDto.content
-                    val imagesList = detail.postDetailResponseDto.images
-                    val pairImagesList = imagesList.map {
-                        it.position to byteArrayToString(it.base64)
+            if (communityDetail != null) {
+                val detail = communityDetail
+                val content = detail?.postDetailResponseDto?.content
+                val imagesList = detail?.postDetailResponseDto?.images
+                val pairImagesList = imagesList?.map {
+                    it.position to byteArrayToString(it.base64)
+                }
+                val newContent = insertImagesIntoContent(content, pairImagesList)
+
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(padding)
+                        .fillMaxSize()
+                        .background(CoinkiriBackground)
+                ) {
+                    item {
+                        if (detail != null) {
+                            TitleSection(title = detail.postDetailResponseDto.title)
+                        }
+                        ContentSection(newContent, context) { webView ->
+                            webViewInstance = webView
+                        }
+                        CommentSection()
                     }
-                    val newContent = insertImagesIntoContent(content, pairImagesList)
-                    TitleSection(title = detail.postDetailResponseDto.title)
-                    ContentSection(newContent)
-                } ?: run {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(CoinkiriBackground),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
         }
     )
 }
+
 
 
 @Composable
@@ -172,8 +210,7 @@ fun TitleSection(title: String) {
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun ContentSection(newContent: String) {
-    val context = LocalContext.current
+fun ContentSection(newContent: String, context: Context, onWebViewReady: (WebView) -> Unit) {
     AndroidView(
         factory = {
             WebView(context).apply {
@@ -186,10 +223,23 @@ fun ContentSection(newContent: String) {
                     "UTF-8",
                     null
                 )
+                onWebViewReady(this)
+            }
+        },
+        update = { webView ->
+            onWebViewReady(webView)
+        },
+        onRelease = { webView ->
+            (webView.parent as? ViewGroup)?.removeView(webView)
+            Handler(Looper.getMainLooper()).post {
+                webView.clearCache(true)
+                webView.destroy()
             }
         }
     )
 }
+
+
 
 @Preview
 @Composable
