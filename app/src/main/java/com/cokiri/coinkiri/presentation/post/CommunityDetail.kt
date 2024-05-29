@@ -6,6 +6,7 @@ import android.webkit.WebViewClient
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,6 +26,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -39,6 +42,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -46,10 +50,11 @@ import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
+import com.cokiri.coinkiri.util.buildHtmlContent
 import com.cokiri.coinkiri.util.byteArrayToString
 import com.cokiri.coinkiri.util.insertImagesIntoContent
 
-@SuppressLint("RememberReturnType", "StateFlowValueCalledInComposition")
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommunityDetail(
@@ -67,7 +72,7 @@ fun CommunityDetail(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = communityDetail?.postDetailResponseDto?.title ?: "N/A") },
+                title = { Text("커뮤니티") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
@@ -101,6 +106,7 @@ fun CommunityDetail(
         }
     )
 }
+
 
 @Composable
 fun TitleSection(title: String) {
@@ -163,7 +169,8 @@ fun TitleSection(title: String) {
     }
 }
 
-@SuppressLint("SetJavaScriptEnabled", "SuspiciousIndentation")
+
+@SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun ContentSection(newContent: String) {
     val context = LocalContext.current
@@ -180,60 +187,62 @@ fun ContentSection(newContent: String) {
                     null
                 )
             }
-        }, update = { webView ->
-            webView.loadDataWithBaseURL(
-                null,
-                buildHtmlContent(newContent),
-                "text/html",
-                "UTF-8",
-                null
-            )
         }
     )
 }
 
-fun buildHtmlContent(newContent: String): String {
-    val quillCssCdn = "https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css"
-    val quillJsCdn = "https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"
-    return """
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <link href="$quillCssCdn" rel="stylesheet">
-            <style>
-                body {
-                    background-color: #F8F8F8;
-                    margin: 0;
-                    padding: 0;
-                    display: flex;
-                    flex-direction: column;
-                    height: 100vh;
-                    box-sizing: border-box;
-                }
-                #editor-container {
-                    flex: 1;
-                }
-                #editor {
-                    width: 100%;
-                    min-height: 500px;
-                    background-color: #F8F8F8;
-                }
-            </style>
-        </head>
-        <body>
-            <div id="editor">$newContent</div>
-            <script src="$quillJsCdn"></script>
-            <script>
-                var quill = new Quill('#editor', {
-                    theme: 'snow',
-                    readOnly: true,
-                    modules: {
-                        toolbar: false
-                    }
-                });
-            </script>
-        </body>
-        </html>
-    """.trimIndent()
+@Preview
+@Composable
+fun CommentSection() {
+    Column(
+        modifier = Modifier
+            .background(CoinkiriBackground)
+            .fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(CoinkiriBackground)
+                .padding(15.dp)
+        ) {
+            Text(text = "댓글(2)")
+        }
+        CommentCard()
+        CommentCard()
+    }
 }
 
+@Preview
+@Composable
+fun CommentCard(){
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 3.dp),
+        colors = CardDefaults.cardColors(CoinkiriBackground)
+    ) {
+        Column(
+            modifier = Modifier.padding(10.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = "레벨 + 작성자", fontWeight = FontWeight.Bold)
+                Text(text = "작성일")
+            }
+            Spacer(modifier = Modifier.size(10.dp))
+            Text(text = "댓글 내용")
+            Spacer(modifier = Modifier.size(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(text = "2분전")
+                Text(text = "작성일")
+            }
+        }
+        HorizontalDivider()
+    }
+}
