@@ -26,7 +26,7 @@ data class PostDetailResponseDto(
     val memberPic: String,
     val likeCount: Int,
     val images: List<ImageResponseDto>,
-    val comments: List<CommentResponseDto>,
+    val commentCount: Int
 )
 
 
@@ -34,20 +34,4 @@ data class PostDetailResponseDto(
 data class ImageResponseDto(
     val position: Int,
     val base64: String
-)
-
-@JsonClass(generateAdapter = true)
-data class CommentResponseDto(
-    val content: String,
-    val createdAt: String,
-    val modifiedAt: String,
-    val member: Member
-)
-
-@JsonClass(generateAdapter = true)
-data class Member(
-    val id : Long,
-    val nickname : String,
-    val level : Int,
-    val pic : String
 )
