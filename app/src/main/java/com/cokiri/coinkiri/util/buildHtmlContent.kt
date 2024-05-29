@@ -23,13 +23,15 @@ fun buildHtmlContent(content: String): String {
                 }
                 #editor {
                     width: 100%;
-                    height: 500px;
+                    height: 100%;
                     background-color: #F8F8F8;
                 }
             </style>
         </head>
         <body>
-            <div id="editor">$content</div>
+            <div id="editor-container">
+                <div id="editor">$content</div>
+            </div>
             <script src="$quillJsCdn"></script>
             <script>
                 var quill = new Quill('#editor', {

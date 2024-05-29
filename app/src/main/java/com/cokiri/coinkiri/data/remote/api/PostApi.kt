@@ -2,6 +2,8 @@ package com.cokiri.coinkiri.data.remote.api
 
 import com.cokiri.coinkiri.data.remote.AuthRequired
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
+import com.cokiri.coinkiri.data.remote.model.CommentRequest
+import com.cokiri.coinkiri.data.remote.model.CommentResponse
 import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponse
 import com.cokiri.coinkiri.data.remote.model.CommunityResponse
 import com.cokiri.coinkiri.data.remote.model.PostDataRequest
@@ -15,6 +17,7 @@ import retrofit2.http.Path
 
 interface PostApi {
 
+    // 커뮤니티 게시글 작성
     @AuthRequired
     @Headers("Content-Type: application/json")
     @POST("/api/v1/post/community/save")
@@ -24,9 +27,24 @@ interface PostApi {
     ): Response<ApiResponse>
 
 
+    // 커뮤니티 게시글 전체조회
     @GET("/api/v1/post/community/all")
     suspend fun getAllCommunityPost(): CommunityResponse
 
+    // 커뮤니티 게시글 상세조회
     @GET("/api/v1/post/community/{postId}")
     suspend fun getCommunityPostDetail(@Path("postId") postId : Long) : CommunityDetailResponse
+
+    // 게시글 댓글 조회
+    @GET("/api/v1/comment/{postId}")
+    suspend fun getComment(@Path("postId") postId: Long) : CommentResponse
+
+    // 게시글 댓글 작성
+    @AuthRequired
+    @Headers("Content-Type: application/json")
+    @POST("/api/v1/comment/save")
+    suspend fun submitComment(
+        @Header("Authorization") accessToken: String,
+        @Body commentRequest: CommentRequest
+    ): Response<ApiResponse>
 }
