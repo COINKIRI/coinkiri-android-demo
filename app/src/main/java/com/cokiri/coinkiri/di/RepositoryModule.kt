@@ -5,11 +5,13 @@ import com.cokiri.coinkiri.data.remote.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
 import com.cokiri.coinkiri.data.remote.api.PostApi
 import com.cokiri.coinkiri.data.repository.CoinRepositoryImpl
+import com.cokiri.coinkiri.data.repository.CommentRepositoryImpl
 import com.cokiri.coinkiri.data.repository.KakaoLoginRepositoryImpl
 import com.cokiri.coinkiri.data.repository.PostRepositoryImpl
 import com.cokiri.coinkiri.data.repository.UserRepositoryImpl
 import com.cokiri.coinkiri.data.repository.WebSocketRepositoryImpl
 import com.cokiri.coinkiri.domain.repository.CoinRepository
+import com.cokiri.coinkiri.domain.repository.CommentRepository
 import com.cokiri.coinkiri.domain.repository.KakaoLoginRepository
 import com.cokiri.coinkiri.domain.repository.PostRepository
 import com.cokiri.coinkiri.domain.repository.UserRepository
@@ -59,6 +61,15 @@ object RepositoryModule {
         appDatabase: AppDatabase
     ): UserRepository {
         return UserRepositoryImpl(authApi, preferencesManager, appDatabase)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCommentRepository(
+        postApi: PostApi,
+        preferencesManager: PreferencesManager,
+        ): CommentRepository {
+        return CommentRepositoryImpl(postApi, preferencesManager)
     }
 
 

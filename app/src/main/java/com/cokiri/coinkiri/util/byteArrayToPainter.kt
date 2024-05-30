@@ -12,3 +12,9 @@ fun byteArrayToPainter(string: String?): BitmapPainter {
         BitmapFactory.decodeByteArray(byteArraySymbolImage, 0, byteArraySymbolImage.size)
     return BitmapPainter(bitmap.asImageBitmap())
 }
+
+
+// base64로 인코딩된 값을 문자열로 변환
+fun byteArrayToString(string: String?): String {
+    return String(Base64.getDecoder().decode(string))
+}

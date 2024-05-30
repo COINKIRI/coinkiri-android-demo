@@ -3,20 +3,17 @@ package com.cokiri.coinkiri.presentation.post
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -25,11 +22,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,11 +44,7 @@ import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.presentation.post.community.CommunityList
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
-import com.cokiri.coinkiri.util.COMMUNITY_DETAIL
 import com.cokiri.coinkiri.util.COMMUNITY_WRITE
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @SuppressLint("RememberReturnType")
 @Composable
@@ -81,6 +76,7 @@ fun PostScreen(
                 postViewModel = postViewModel,
                 modifier = Modifier
                     .padding(paddingValues)
+                    .fillMaxSize()
                     .background(CoinkiriBackground)
             )
         },
@@ -106,15 +102,31 @@ fun PostScreenTopBar(
 ) {
     TopAppBar(
         title = {
-            TabRow(selectedTabIndex = selectedTabIndex) {
+            TabRow(
+                selectedTabIndex = selectedTabIndex,
+                containerColor = CoinkiriBackground,
+                indicator = { tabPositions ->
+                    SecondaryIndicator(
+                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                        color = CoinkiriPointGreen
+                    )
+                }
+            ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTabIndex == index,
                         onClick = { onTabSelected(index) },
-                        text = { Text(title) }
+                        selectedContentColor = CoinkiriPointGreen,
+                        text = {
+                            Text(
+                                title,
+                                fontSize = 15.sp
+                            )
+                        }
                     )
                 }
             }
+
         },
         actions = {
             IconButton(onClick = { /*TODO*/ }) {
@@ -123,7 +135,8 @@ fun PostScreenTopBar(
                     contentDescription = "Search"
                 )
             }
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(CoinkiriBackground)
     )
 }
 
@@ -138,7 +151,7 @@ fun PostScreenContent(
         modifier = modifier
     ) {
         when (selectedTabIndex) {
-            0 -> CommunityList(navController = navController, postViewModel = postViewModel)
+            0 -> CommunityList(navController, postViewModel)
             1 -> NewsList()
             2 -> MissionList()
         }

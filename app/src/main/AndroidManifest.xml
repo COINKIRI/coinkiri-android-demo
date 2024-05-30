@@ -21,6 +21,7 @@
 
         <activity
             android:name=".presentation.main.MainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:theme="@style/Theme.Coinkiriandroid">
             <intent-filter>

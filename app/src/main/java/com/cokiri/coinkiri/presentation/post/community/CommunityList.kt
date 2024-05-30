@@ -18,7 +18,7 @@ import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.presentation.post.PostViewModel
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
-import com.cokiri.coinkiri.util.COMMUNITY_DETAIL
+import com.cokiri.coinkiri.util.COMMUNITY_DETAIL_SCREEN
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -67,7 +67,7 @@ fun CommunityList(
                     val communityResponseDto = communityPostList[index]
                     val postId = communityResponseDto.postResponseDto.id
                     CommunityCard(
-                        onclick = { navController.navigate("$COMMUNITY_DETAIL/$postId") },
+                        onclick = { navController.navigate("$COMMUNITY_DETAIL_SCREEN/$postId") },
                         communityResponseDto = communityResponseDto
                     )
                 }
