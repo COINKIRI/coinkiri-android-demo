@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.presentation.post.community.CommunityList
+import com.cokiri.coinkiri.ui.component.FloatingActionMenu
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.util.COMMUNITY_WRITE
@@ -53,8 +54,13 @@ fun PostScreen(
     postViewModel: PostViewModel = hiltViewModel()
 ) {
     val tabs = remember { listOf("커뮤니티", "뉴스", "미션") }
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    val menuItems = listOf(
+        Triple("커뮤니티 글작성", Icons.Default.Create) { navController.navigate(COMMUNITY_WRITE) },
+        Triple("미션 생성", Icons.Default.Create) { /*TODO*/ }
+    )
+
     var isMenuExpanded by remember { mutableStateOf(false) }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     // 초기 화면 로드 시 게시글 리스트 불러오기
     LaunchedEffect(Unit) {
@@ -82,11 +88,11 @@ fun PostScreen(
         },
         floatingActionButton = {
             FloatingActionMenu(
-                isMenuExpanded,
-                navController
-            ) {
-                isMenuExpanded = !isMenuExpanded
-            }
+                isMenuExpanded = isMenuExpanded,
+                navController = navController,
+                onMenuToggle = { isMenuExpanded = !isMenuExpanded },
+                menuItems = menuItems
+            )
         }
     )
 }
@@ -157,78 +163,6 @@ fun PostScreenContent(
         }
     }
 }
-
-@Composable
-fun FloatingActionMenu(
-    isMenuExpanded: Boolean,
-    navController: NavHostController,
-    onMenuToggle: () -> Unit
-) {
-    if (!isMenuExpanded) {
-        FloatingActionButton(
-            onClick = onMenuToggle,
-            modifier = Modifier.size(55.dp),
-            elevation = FloatingActionButtonDefaults.elevation(8.dp)
-        ) {
-            Icon(
-                Icons.Default.Add,
-                contentDescription = "Add"
-            )
-        }
-    } else {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalAlignment = Alignment.End,
-        ) {
-            FloatingActionButtonWithLabel(
-                label = "커뮤니티 글작성",
-                icon = Icons.Default.Create,
-                onClick = { navController.navigate(COMMUNITY_WRITE) }
-            )
-            FloatingActionButtonWithLabel(
-                label = "미션 생성",
-                icon = Icons.Default.Create,
-                onClick = { /*TODO*/ }
-            )
-            FloatingActionButton(
-                onClick = onMenuToggle
-            ) {
-                Icon(
-                    Icons.Default.Close,
-                    contentDescription = "Close"
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun FloatingActionButtonWithLabel(
-    label: String,
-    icon: ImageVector,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier.wrapContentSize(),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label,
-            fontSize = 10.sp
-        )
-        FloatingActionButton(
-            onClick = onClick,
-        ) {
-            Icon(
-                icon,
-                contentDescription = label
-            )
-        }
-    }
-}
-
-
 
 @Composable
 fun NewsList() {
