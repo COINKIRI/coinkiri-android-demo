@@ -92,25 +92,8 @@ fun AnalysisCard() {
                     .fillMaxWidth(1f)
 
             ) {
-                Card(
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxHeight()
-                        .width(90.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "매도",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(text = "투자의견")
-                    }
-                }
+
+                SellCard()
 
                 Column(
                     modifier = Modifier
@@ -119,7 +102,8 @@ fun AnalysisCard() {
                     Card(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .weight(1f)
+                            .weight(1f),
+                        colors = CardDefaults.cardColors(Color.LightGray)
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
@@ -133,7 +117,8 @@ fun AnalysisCard() {
                     Card(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .weight(1f)
+                            .weight(1f),
+                        colors = CardDefaults.cardColors(Color.LightGray)
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
@@ -229,6 +214,96 @@ fun AnalysisCard() {
                     Text(text = "2024.10.10 까지")
                 }
             }
+        }
+    }
+}
+
+// 매도 카드
+@Preview
+@Composable
+fun SellCard() {
+    Card(
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxHeight()
+            .width(90.dp),
+        colors = CardDefaults.cardColors(Color.Blue)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "매도",
+                fontSize = 20.sp,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "투자의견",
+                color = Color.White
+            )
+        }
+    }
+}
+
+// 중립 카드
+@Preview
+@Composable
+fun NeutralCard() {
+    Card(
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxHeight()
+            .width(90.dp),
+        colors = CardDefaults.cardColors(Color.DarkGray)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "중립",
+                fontSize = 20.sp,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "투자의견",
+                color = Color.White
+            )
+        }
+    }
+}
+
+// 매수 카드
+@Preview
+@Composable
+fun BuyCard() {
+    Card(
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxHeight()
+            .width(90.dp),
+        colors = CardDefaults.cardColors(Color.Red)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "매수",
+                fontSize = 20.sp,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "투자의견",
+                color = Color.White
+            )
         }
     }
 }
