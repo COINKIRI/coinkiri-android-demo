@@ -31,7 +31,16 @@ fun OpinionCard(
     Card(
         onClick = onClick,
         colors = CardDefaults.cardColors(CoinkiriBackground),
-        border = BorderStroke(1.5.dp, if (isSelected) CoinkiriPointGreen else Color.LightGray),
+        border = BorderStroke(
+            when {
+                isSelected -> 2.dp
+                else -> 1.dp
+            },
+            when {
+                isSelected -> CoinkiriPointGreen
+                else -> Color.LightGray
+            }
+        ),
         shape = shape,
         modifier = modifier
     ) {

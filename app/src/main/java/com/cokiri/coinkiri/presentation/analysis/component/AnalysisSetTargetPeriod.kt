@@ -71,7 +71,6 @@ fun TargetPeriodContent(
 
     if (showTargetPeriodBottomSheet) {
         TargetPeriodBottomSheet(
-            coroutineScope = coroutineScope,
             targetPeriodSheetState = targetPeriodSheetState,
             onDateSelected = { date ->
                 coroutineScope.launch {
@@ -107,8 +106,7 @@ fun TargetPeriodContent(
             if (enabled) coroutineScope.launch {
                 showTargetPeriodBottomSheet = true
             } else onClickWhenDisabled()
-        },
-        enabled = enabled
+        }
     )
 }
 
@@ -120,7 +118,6 @@ fun TargetPeriodContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TargetPeriodBottomSheet(
-    coroutineScope: CoroutineScope,
     targetPeriodSheetState: SheetState,
     onDateSelected: (LocalDate) -> Unit,
     onDismissRequest: () -> Unit
@@ -161,7 +158,6 @@ fun TargetPeriodCard(
     selectedTargetPeriod: String,
     onPeriodSelected: (String) -> Unit,
     onDirectInputClick: () -> Unit,
-    enabled: Boolean
 ) {
     Card(
         colors = CardDefaults.cardColors(CoinkiriBackground),
@@ -171,7 +167,7 @@ fun TargetPeriodCard(
     ) {
         Column(
             modifier = Modifier
-                .padding(10.dp)
+                .padding(15.dp)
                 .fillMaxWidth()
         ) {
             Row(

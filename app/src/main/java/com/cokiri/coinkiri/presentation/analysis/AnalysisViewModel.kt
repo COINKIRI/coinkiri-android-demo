@@ -62,6 +62,15 @@ class AnalysisViewModel @Inject constructor(
     private val _selectedInvestmentOption = MutableStateFlow("")
     val selectedInvestmentOption: StateFlow<String> = _selectedInvestmentOption.asStateFlow()
 
+    // 목표가격 설정
+    private val _selectedTargetPrice = MutableStateFlow("")
+    val selectedTargetPrice: StateFlow<String> = _selectedTargetPrice.asStateFlow()
+
+    // 목표가격의 변동률
+    private val _selectedTargetPriceChangeRate = MutableStateFlow("")
+    val selectedTargetPriceChangeRate: StateFlow<String> = _selectedTargetPriceChangeRate.asStateFlow()
+
+
     /**
      * 코인 목록을 가져옴
      */
@@ -125,4 +134,21 @@ class AnalysisViewModel @Inject constructor(
         _selectedDate.value = date
         Log.d("AnalysisViewModel", "달력 선택기간: $date")
     }
+
+    /**
+     * 선택한 목표가격을 저장
+     */
+    fun setSelectedTargetPrice(price: String) {
+        _selectedTargetPrice.value = price
+        Log.d("AnalysisViewModel", "목표가격: $price")
+    }
+
+    /**
+     * 목표가격의 변동률을 저장
+     */
+    fun setTargetPriceChangeRate(rate: String) {
+        _selectedTargetPriceChangeRate.value = rate
+        Log.d("AnalysisViewModel", "목표가격 변동률: $rate")
+    }
+
 }
