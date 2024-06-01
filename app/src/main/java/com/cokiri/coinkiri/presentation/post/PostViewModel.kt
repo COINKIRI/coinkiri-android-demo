@@ -11,7 +11,7 @@ import com.cokiri.coinkiri.domain.usecase.GetAllCommentsUseCase
 import com.cokiri.coinkiri.domain.usecase.GetCommunityPostDetailsUseCase
 import com.cokiri.coinkiri.domain.usecase.GetAllCommunityPostsUseCase
 import com.cokiri.coinkiri.domain.usecase.SubmitCommentUseCase
-import com.cokiri.extensions.executeWithLoading
+import com.cokiri.coinkiri.extensions.executeWithLoading
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

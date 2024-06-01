@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.presentation.post.community
+package com.cokiri.coinkiri.presentation.createpost
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -40,9 +40,9 @@ import org.json.JSONObject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommunityWrite(
+fun CreatePostScreen(
     navController: NavHostController,
-    communityWriteViewModel: CommunityWriteViewModel = hiltViewModel()
+    communityWriteViewModel: CreatePostViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val webView = remember { WebView(context) }
@@ -51,7 +51,7 @@ fun CommunityWrite(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("커뮤니티 글 작성") },
+                title = { Text("글 작성") },
                 navigationIcon = {
                     TextButton(onClick = { navController.popBackStack() }) {
                         Text(text = "취소")
@@ -72,7 +72,6 @@ fun CommunityWrite(
         },
         content = {
             if (isLoading) {
-                // 로딩 중일 때 로딩 인디케이터 표시
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -96,7 +95,7 @@ fun CommunityWrite(
 
 @Composable
 fun WriteContent(
-    communityWriteViewModel: CommunityWriteViewModel,
+    communityWriteViewModel: CreatePostViewModel,
     webView: WebView
 ) {
     val title by communityWriteViewModel.title.collectAsState()
@@ -128,7 +127,7 @@ fun WriteContent(
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun WebViewComponent(
-    communityWriteViewModel: CommunityWriteViewModel,
+    communityWriteViewModel: CreatePostViewModel,
     webView: WebView
 ) {
     AndroidView(
@@ -152,7 +151,7 @@ fun WebViewComponent(
  * WebView 설정(JavaScript 활성화, 파일 업로드 처리)
  */
 @SuppressLint("SetJavaScriptEnabled")
-private fun WebView.setupWebView(viewModel: CommunityWriteViewModel) {
+private fun WebView.setupWebView(viewModel: CreatePostViewModel) {
     settings.javaScriptEnabled = true
     webViewClient = WebViewClient()
     webChromeClient = object : WebChromeClient() {
@@ -172,7 +171,7 @@ private fun WebView.setupWebView(viewModel: CommunityWriteViewModel) {
 
 private fun handleContentSubmission(
     webView: WebView,
-    viewModel: CommunityWriteViewModel,
+    viewModel: CreatePostViewModel,
     navController: NavHostController
 ) {
     webView.evaluateJavascript("sendContent()") { result ->
@@ -216,7 +215,7 @@ private fun handleContentSubmission(
  * JavaScript에서 AndroidInterface.receiveContent(content)로 호출할 수 있다.
  */
 class JavaScriptInterface(
-    private val viewModel: CommunityWriteViewModel
+    private val viewModel: CreatePostViewModel
 ) {
     @JavascriptInterface
     fun receiveContent(content: String) {
@@ -227,7 +226,7 @@ class JavaScriptInterface(
 
 private fun handleReceivedContent(
     content: String,
-    viewModel: CommunityWriteViewModel
+    viewModel: CreatePostViewModel
 ) {
     try {
         val jsonObject = JSONObject(content)

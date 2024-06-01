@@ -34,7 +34,7 @@ import com.cokiri.coinkiri.presentation.post.community.CommunityList
 import com.cokiri.coinkiri.ui.component.FloatingActionMenu
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
-import com.cokiri.coinkiri.util.COMMUNITY_WRITE
+import com.cokiri.coinkiri.util.CREATE_POST_SCREEN
 
 @SuppressLint("RememberReturnType")
 @Composable
@@ -44,7 +44,7 @@ fun PostScreen(
 ) {
     val tabs = remember { listOf("커뮤니티", "뉴스", "미션") }
     val menuItems = listOf(
-        Triple("커뮤니티 글작성", Icons.Default.Create) { navController.navigate(COMMUNITY_WRITE) },
+        Triple("커뮤니티 글작성", Icons.Default.Create) { navController.navigate(CREATE_POST_SCREEN) },
         Triple("미션 생성", Icons.Default.Create) { /*TODO*/ }
     )
 
@@ -86,7 +86,9 @@ fun PostScreen(
 }
 
 
-
+/**
+ * 게시글 목록 화면의 상단바
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostScreenTopBar(
@@ -134,6 +136,10 @@ fun PostScreenTopBar(
     )
 }
 
+
+/**
+ * 게시글 목록 화면의 내용
+ */
 @Composable
 fun PostScreenContent(
     selectedTabIndex: Int,
@@ -151,6 +157,8 @@ fun PostScreenContent(
         }
     }
 }
+
+
 
 @Composable
 fun NewsList() {

@@ -6,9 +6,9 @@ import androidx.navigation.compose.composable
 import com.cokiri.coinkiri.presentation.post.PostScreen
 import com.cokiri.coinkiri.presentation.post.PostViewModel
 import com.cokiri.coinkiri.presentation.post.community.CommunityDetailScreen
-import com.cokiri.coinkiri.presentation.post.community.CommunityWrite
+import com.cokiri.coinkiri.presentation.createpost.CreatePostScreen
 import com.cokiri.coinkiri.util.COMMUNITY_DETAIL_SCREEN
-import com.cokiri.coinkiri.util.COMMUNITY_WRITE
+import com.cokiri.coinkiri.util.CREATE_POST_SCREEN
 import com.cokiri.coinkiri.util.POST
 
 fun NavGraphBuilder.postNavGraph(
@@ -22,5 +22,5 @@ fun NavGraphBuilder.postNavGraph(
         CommunityDetailScreen(navController, postViewModel,postId)
     }
 
-    composable(COMMUNITY_WRITE){ CommunityWrite(navController) }
+    composable(CREATE_POST_SCREEN){CreatePostScreen(navController) }
 }

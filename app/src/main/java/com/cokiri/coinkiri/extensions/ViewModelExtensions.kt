@@ -1,4 +1,4 @@
-package com.cokiri.extensions
+package com.cokiri.coinkiri.extensions
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
