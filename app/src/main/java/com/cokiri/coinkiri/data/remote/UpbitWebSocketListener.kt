@@ -12,19 +12,15 @@ import java.nio.charset.StandardCharsets
 import java.util.UUID
 
 /**
- * WebSocket으로부터 받은 데이터를 처리하기 위한 리스너
- * WebSocket으로부터 받은 데이터를 처리하기 위해 사용
- * @param onTickerReceived 티커 데이터를 받았을 때 호출할 콜백
- * @param krwMarkets 웹소켓으로 요청할 코인 목록
- * @param jsonParser Json 파서
- * @param normalClosureStatus 웹소켓 종료 상태
+ * UpbitWebSocketListener
+ * 웹소켓 리스너
  */
-
 class UpbitWebSocketListener(
     private val onTickerReceived: (Ticker) -> Unit,
     private val krwMarkets: List<String>,
     private val jsonParser: JsonParser,
-    private val normalClosureStatus: Int
+    private val normalClosureStatus: Int,
+    private val receiveOnce: Boolean
 ) : WebSocketListener() {
 
     // 웹소켓이 연결되었을 때 호출
@@ -43,14 +39,14 @@ class UpbitWebSocketListener(
 
     // 웹소켓으로부터 바이트 메시지를 받았을 때 호출
     override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-
         val jsonString = bytes.string(StandardCharsets.UTF_8)
-
         val upbitTickerResponse = jsonParser.fromJsonToUpbitTickerResponse(jsonString)   // JsonParser를 통해 UpbitTickerResponse로 변환
         if (upbitTickerResponse != null) {
             val ticker = TickerMapper.UpbitTickerResponseToTicker(upbitTickerResponse)   // UpbitTickerResponse를 Ticker로 변환
             onTickerReceived(ticker)
-            //Log.d("WebSocket", "Ticker: $ticker")
+            if (receiveOnce) {
+                webSocket.close(normalClosureStatus, null)
+            }
         } else {
             Log.d("WebSocket", "Failed to parse response")
         }

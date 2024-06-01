@@ -11,10 +11,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * WebSocketRepositoryImpl
- * WebSocketRepository의 구현체로 WebSocket을 통해 데이터를 받아오는 역할
+ * WebSocketServiceImpl
+ * WebSocket을 통해 데이터를 받아오는 역할
  */
-
 @Singleton
 class WebSocketServiceImpl @Inject constructor(
     private val client: OkHttpClient,
@@ -24,15 +23,17 @@ class WebSocketServiceImpl @Inject constructor(
     private val NORMAL_CLOSURE_STATUS = 1000
     private lateinit var webSocket: WebSocket
 
-    override fun startConnection(krwMarkets: List<String>, onTickerReceived: (Ticker) -> Unit) {
+    override fun startConnection(krwMarkets: List<String>, onTickerReceived: (Ticker) -> Unit, receiveOnce: Boolean) {
         val request = Request.Builder()
             .url("https://api.upbit.com/websocket/v1")
             .build()
 
-        webSocket = client.newWebSocket(request, UpbitWebSocketListener( onTickerReceived ,krwMarkets, jsonParser, NORMAL_CLOSURE_STATUS))
+        webSocket = client.newWebSocket(request, UpbitWebSocketListener(onTickerReceived, krwMarkets, jsonParser, NORMAL_CLOSURE_STATUS, receiveOnce))
     }
 
     override fun closeConnection() {
-        webSocket.close(NORMAL_CLOSURE_STATUS, null)
+        if (this::webSocket.isInitialized) {
+            webSocket.close(NORMAL_CLOSURE_STATUS, null)
+        }
     }
 }
