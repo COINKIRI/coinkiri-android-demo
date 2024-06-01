@@ -54,4 +54,7 @@ data class Ticker(
 
     val formattedLowPrice : String
         get() = lowPrice?.let { DecimalFormat("#,###").format(it) } ?: "0"
+
+    val formattedPrevClosingPrice : String
+        get() = prevClosingPrice?.let { DecimalFormat("#,###").format(it) } ?: "0"
 }

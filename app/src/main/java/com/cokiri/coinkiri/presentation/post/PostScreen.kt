@@ -89,7 +89,6 @@ fun PostScreen(
         floatingActionButton = {
             FloatingActionMenu(
                 isMenuExpanded = isMenuExpanded,
-                navController = navController,
                 onMenuToggle = { isMenuExpanded = !isMenuExpanded },
                 menuItems = menuItems
             )

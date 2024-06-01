@@ -23,7 +23,6 @@ import androidx.navigation.NavHostController
 @Composable
 fun FloatingActionMenu(
     isMenuExpanded: Boolean,
-    navController: NavHostController,
     onMenuToggle: () -> Unit,
     menuItems: List<Triple<String, ImageVector, () -> Unit>> = emptyList()
 ) {
