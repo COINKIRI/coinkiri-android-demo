@@ -1,6 +1,5 @@
 package com.cokiri.coinkiri.presentation.price
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cokiri.coinkiri.data.remote.model.CoinInfoDetail
@@ -43,32 +42,23 @@ class PriceViewModel @Inject constructor(
     val coinDaysInfo: StateFlow<List<CoinPrice>> get() = _coinDaysInfo
 
 
-
-
     init {
         loadCoins()
     }
 
     private fun loadCoins() {
         viewModelScope.launch {
-            try{
-                val coins = getCoinsUseCase()
-                _coinList.value = coins
-                _krwMarketString.value = convertCoinInfoResponse(coins)
-            } catch (e: Exception) {
-                Log.e("PriceViewModel", "Failed to load coins : ", e)
-            }
+            val coins = getCoinsUseCase()
+            _coinList.value = coins
+            _krwMarketString.value = convertCoinInfoResponse(coins)
         }
     }
 
+
     fun getCoinDaysInfo(coinId: String) {
         viewModelScope.launch {
-            try {
-                val coinDaysInfo = getCoinDaysInfoUseCase(coinId)
-                _coinDaysInfo.value = coinDaysInfo
-            } catch (e: Exception) {
-                Log.e("PriceViewModel", "Failed to get coin days info", e)
-            }
+            val coinDaysInfo = getCoinDaysInfoUseCase(coinId)
+            _coinDaysInfo.value = coinDaysInfo
         }
     }
 
@@ -77,13 +67,9 @@ class PriceViewModel @Inject constructor(
         viewModelScope.launch {
             krwMarketString.collect { krwMarket ->
                 if (krwMarket.isNotBlank()) {
-                    try {
-                        webSocketUseCase.startConnection(listOf(krwMarket)) { ticker ->
-                            handleTickerResponse(ticker)
-                        }
-                    } catch (e: Exception) {
-                        Log.e("PriceViewModel", "Failed to start WebSocket connection", e)
-                    }
+                    webSocketUseCase.startConnection(listOf(krwMarket), { ticker ->
+                        handleTickerResponse(ticker)
+                    }, receiveOnce = false)  // receiveOnce를 true로 설정
                 }
             }
         }
@@ -91,13 +77,9 @@ class PriceViewModel @Inject constructor(
 
     fun observeSingleCoinTicker(coinMarketId: String) {
         viewModelScope.launch {
-            try {
-                webSocketUseCase.startConnection(listOf(coinMarketId)) { ticker ->
-                    _singleCoinTicker.value = ticker
-                }
-            } catch (e: Exception) {
-                Log.e("PriceViewModel", "Failed to start WebSocket connection for single coin", e)
-            }
+            webSocketUseCase.startConnection(listOf(coinMarketId), { ticker ->
+                _singleCoinTicker.value = ticker
+            }, receiveOnce = false)  // receiveOnce를 true로 설정
         }
     }
 
@@ -131,6 +113,10 @@ class PriceViewModel @Inject constructor(
         }
     }
 
+    private fun convertCoinInfoResponse(coins: List<Coin>): String {
+        return coins.joinToString(", ") { it.krwMarket }
+    }
+
 
     // WebSocket 연결 종료 메서드
     fun stopWebSocketConnection() {
@@ -141,10 +127,4 @@ class PriceViewModel @Inject constructor(
         super.onCleared()
         webSocketUseCase.closeConnection()
     }
-
-
-    private fun convertCoinInfoResponse(coins: List<Coin>): String {
-        return coins.joinToString(", ") { it.krwMarket }
-    }
-
 }
