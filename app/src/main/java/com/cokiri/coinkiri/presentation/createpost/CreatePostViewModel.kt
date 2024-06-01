@@ -5,7 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.ImageData
 import com.cokiri.coinkiri.data.remote.model.PostDataRequest
-import com.cokiri.coinkiri.domain.usecase.SubmitPostUseCase
+import com.cokiri.coinkiri.domain.usecase.SubmitPostContentUseCase
+import com.cokiri.coinkiri.extensions.executeWithLoading
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreatePostViewModel @Inject constructor(
-    private val submitPostUseCase: SubmitPostUseCase
+    private val submitPostContentUseCase: SubmitPostContentUseCase
 ) : ViewModel() {
 
     // 게시글 제목을 관리하는 MutableStateFlow
@@ -40,44 +41,46 @@ class CreatePostViewModel @Inject constructor(
     private val _submitResult = MutableStateFlow<Result<ApiResponse>?>(null)
     val submitResult: StateFlow<Result<ApiResponse>?> = _submitResult
 
-    // 제목이 변경될 때 호출되는 함수
-    fun onTitleChange(newTitle: String) {
-        _title.value = newTitle
-    }
 
-    // 내용이 변경될 때 호출되는 함수
-    fun onContentChange(newContent: String) {
-        _content.value = newContent
-    }
-
-    // 이미지 목록이 변경될 때 호출되는 함수
-    fun onImagesChange(newImages: List<Pair<Int, String>>) {
-        _images.value = newImages
-    }
-
-    // 게시글 등록 처리
-    fun submitPost() {
+    /**
+     * 게시글 내용을 서버에 제출하는 함수
+     */
+    fun submitPostContent() {
         viewModelScope.launch {
-            try {
-                // 로딩 상태 설정 (추가)
-                _isLoading.value = true
-                _errorMessage.value = null
-
-                // 게시글 데이터를 요청 객체로 변환
+            executeWithLoading(_isLoading, _errorMessage) {
                 val postDataRequest = PostDataRequest(
                     title = _title.value,
                     content = _content.value,
                     images = _images.value.map { ImageData(it.first, it.second) }
                 )
-                // 게시글 등록 UseCase 호출
-                _submitResult.value = submitPostUseCase(postDataRequest)
-            } catch (e: Exception) {
-                // 예외 발생 시 에러 메시지 설정 (추가)
-                _errorMessage.value = e.message
-            } finally {
-                // 로딩 상태 해제 (추가)
-                _isLoading.value = false
+                val result = submitPostContentUseCase(postDataRequest)
+                _submitResult.value = result
+                result
             }
         }
+    }
+
+
+    /**
+     * 글 작성시 제목이 변경될 때 호출되는 함수
+     */
+    fun onTitleChange(newTitle: String) {
+        _title.value = newTitle
+    }
+
+
+    /**
+     * 글 작성시 내용이 변경될 때 호출되는 함수
+     */
+    fun onContentChange(newContent: String) {
+        _content.value = newContent
+    }
+
+
+    /**
+     * 글 작성시 이미지가 변경될 때 호출되는 함수
+     */
+    fun onImagesChange(newImages: List<Pair<Int, String>>) {
+        _images.value = newImages
     }
 }

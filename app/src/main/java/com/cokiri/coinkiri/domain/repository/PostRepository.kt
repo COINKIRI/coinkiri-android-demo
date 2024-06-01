@@ -7,9 +7,9 @@ import com.cokiri.coinkiri.data.remote.model.PostDataRequest
 import com.cokiri.coinkiri.data.remote.model.PostResponseDto
 
 interface PostRepository {
-    suspend fun submitPost(postDataRequest: PostDataRequest) : Result<ApiResponse>
+    suspend fun submitPost(postDataRequest: PostDataRequest) : ApiResponse
 
-    suspend fun getCommunityPostList() : List<CommunityResponseDto>
+    suspend fun getCommunityPostList(forceRefresh: Boolean = false): List<CommunityResponseDto>
 
     suspend fun getCommunityPostDetail(postId: Long) : CommunityDetailResponseDto
 }

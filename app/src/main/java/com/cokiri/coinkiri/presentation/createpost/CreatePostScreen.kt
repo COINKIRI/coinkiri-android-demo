@@ -196,7 +196,7 @@ private fun handleContentSubmission(
                 viewModel.onImagesChange(imageList)
 
                 // 포스트 제출
-                viewModel.submitPost()
+                viewModel.submitPostContent()
                 navController.popBackStack()
             } catch (e: JSONException) {
                 e.printStackTrace()
