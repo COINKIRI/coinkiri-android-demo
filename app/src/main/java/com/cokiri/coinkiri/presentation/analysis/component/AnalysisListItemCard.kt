@@ -34,10 +34,11 @@ import androidx.compose.ui.unit.sp
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 
-@Preview
+/**
+ * 분석글 목록에서 사용되는 분석글 카드
+ */
 @Composable
-fun AnalysisCard() {
-
+fun AnalysisListItemCard() {
     Card(
         onClick = { /*TODO*/ },
         colors =  CardDefaults.cardColors(CoinkiriBackground),

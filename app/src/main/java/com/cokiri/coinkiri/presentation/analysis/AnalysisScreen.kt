@@ -1,9 +1,6 @@
 package com.cokiri.coinkiri.presentation.analysis
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,16 +19,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.R
-import com.cokiri.coinkiri.presentation.analysis.component.AnalysisCard
+import com.cokiri.coinkiri.presentation.analysis.component.AnalysisListItemCard
 import com.cokiri.coinkiri.ui.component.FloatingActionMenu
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.util.ANALYSIS_WRITE_SCREEN
-import com.cokiri.coinkiri.util.COMMUNITY_WRITE
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,7 +57,6 @@ fun AnalysisScreen(
         floatingActionButton = {
             FloatingActionMenu(
                 isMenuExpanded = isMenuExpanded,
-                navController = navController,
                 onMenuToggle = { isMenuExpanded = !isMenuExpanded },
                 menuItems = menuItems
             )
@@ -75,7 +69,7 @@ fun AnalysisScreen(
                     .padding(paddingValues)
             ) {
                 items(10) {
-                    AnalysisCard()
+                    AnalysisListItemCard()
                 }
             }
         }
