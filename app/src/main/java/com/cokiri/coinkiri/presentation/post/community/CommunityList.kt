@@ -38,7 +38,7 @@ fun CommunityList(
         state = swipeRefreshState,
         onRefresh = {
             isRefreshing = true
-            postViewModel.fetchCommunityPostList()
+            postViewModel.fetchAllCommunityPostList()
             isRefreshing = false
         },
         indicator = { state, trigger ->

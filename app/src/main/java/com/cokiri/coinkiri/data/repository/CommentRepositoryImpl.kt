@@ -33,29 +33,20 @@ class CommentRepositoryImpl @Inject constructor(
 
 
     // 댓글 작성 요청(POST)
-    override suspend fun submitComment(commentRequest: CommentRequest): Result<ApiResponse> {
-        return try {
-            val accessToken = preferencesManager.getAccessToken()
-            if (accessToken.isNullOrEmpty()) {
-                return Result.failure(Exception("로그인이 필요합니다."))
-            } else {
-                val response = postApi.submitComment("Bearer $accessToken", commentRequest)
-                Log.d(TAG, "submitComment: $response")
+    override suspend fun submitComment(commentRequest: CommentRequest): ApiResponse {
+        val accessToken = preferencesManager.getAccessToken()
+        if (accessToken.isNullOrEmpty()) {
+            throw Exception("로그인이 필요합니다.")
+        }
 
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody != null) {
-                        Result.success(responseBody)
-                    } else {
-                        Result.failure(Exception("응답 데이터가 null입니다."))
-                    }
-                } else {
-                    Result.failure(Exception("응답이 실패하였습니다."))
-                }
-            }
-        } catch (e: Exception) {
-            Log.d(TAG, "submitComment: $e")
-            Result.failure(e)
+        val response = postApi.submitComment("Bearer $accessToken", commentRequest)
+        Log.d(TAG, "submitComment: $response")
+
+        if (response.isSuccessful) {
+            return response.body() ?: throw Exception("응답 데이터가 null입니다.")
+        } else {
+            throw Exception("응답이 실패하였습니다.")
         }
     }
+
 }
