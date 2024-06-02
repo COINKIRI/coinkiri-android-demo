@@ -41,7 +41,6 @@ import com.cokiri.coinkiri.presentation.analysis.component.TargetPeriodContent
 import com.cokiri.coinkiri.ui.component.CustomSnackbarHost
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
-import com.cokiri.coinkiri.util.CREATE_POST_SCREEN
 import com.cokiri.coinkiri.util.CREATE_POST_SCREEN_FOR_ANALYSIS
 import kotlinx.coroutines.launch
 

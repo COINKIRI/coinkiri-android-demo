@@ -34,7 +34,6 @@ import com.cokiri.coinkiri.presentation.post.community.CommunityList
 import com.cokiri.coinkiri.ui.component.FloatingActionMenu
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
-import com.cokiri.coinkiri.util.CREATE_POST_SCREEN
 import com.cokiri.coinkiri.util.CREATE_POST_SCREEN_FOR_COMMUNITY
 
 @SuppressLint("RememberReturnType")

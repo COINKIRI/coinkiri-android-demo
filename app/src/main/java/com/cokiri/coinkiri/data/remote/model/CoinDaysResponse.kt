@@ -1,6 +1,7 @@
 package com.cokiri.coinkiri.data.remote.model
 
 import com.squareup.moshi.JsonClass
+import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -27,4 +28,6 @@ data class CoinPrice(
             val dateTime = LocalDateTime.parse(candleDateTimeKst, DateTimeFormatter.ISO_DATE_TIME)
             return dateTime.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분"))
         }
+    val formattedTradePrice: String
+        get() = tradePrice.let { DecimalFormat("#,###").format(it) } ?: "0"
 }

@@ -28,7 +28,7 @@ import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.data.remote.model.CoinInfoDetail
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriBlack
-import com.cokiri.coinkiri.util.COIN_DETAIL
+import com.cokiri.coinkiri.util.COIN_DETAIL_SCREEN
 
 @Composable
 fun PriceScreen(
@@ -56,7 +56,7 @@ fun PriceScreen(
                     paddingValues = paddingValues,
                     onCoinClicked = { coinMarket, coinId, coinKoreanName ->
                         priceViewModel.stopWebSocketConnection()
-                        navController.navigate("$COIN_DETAIL/$coinMarket/$coinId/$coinKoreanName")
+                        navController.navigate("$COIN_DETAIL_SCREEN/$coinMarket/$coinId/$coinKoreanName")
                     }
                 )
             }
