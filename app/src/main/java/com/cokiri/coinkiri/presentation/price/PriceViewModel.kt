@@ -8,6 +8,8 @@ import com.cokiri.coinkiri.data.remote.model.CoinPrice
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.domain.usecase.AddCoinToWatchlistUseCase
+import com.cokiri.coinkiri.domain.usecase.CheckCoinInWatchlistUseCase
+import com.cokiri.coinkiri.domain.usecase.DeleteCoinFromWatchlistUseCase
 import com.cokiri.coinkiri.domain.usecase.GetCoinDaysInfoUseCase
 import com.cokiri.coinkiri.domain.usecase.GetCoinsUseCase
 import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
@@ -21,10 +23,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PriceViewModel @Inject constructor(
-    private val getCoinsUseCase: GetCoinsUseCase,                     // 코인 정보를 가져오는 유스케이스
-    private val webSocketUseCase: WebSocketUseCase,                   // WebSocket을 관리하는 유스케이스
-    private val getCoinDaysInfoUseCase: GetCoinDaysInfoUseCase,       // 특정 코인의 일간 정보를 가져오는 유스케이스
-    private val addCoinToWatchlistUseCase: AddCoinToWatchlistUseCase  // 코인 관심 목록에 추가하는 유스케이스
+    private val getCoinsUseCase: GetCoinsUseCase,                                // 코인 정보를 가져오는 유스케이스
+    private val webSocketUseCase: WebSocketUseCase,                              // WebSocket을 관리하는 유스케이스
+    private val getCoinDaysInfoUseCase: GetCoinDaysInfoUseCase,                  // 특정 코인의 일간 정보를 가져오는 유스케이스
+    private val addCoinToWatchlistUseCase: AddCoinToWatchlistUseCase,            // 코인 관심 목록에 추가하는 유스케이스
+    private val checkCoinInWatchlistUseCase: CheckCoinInWatchlistUseCase,        // 코인 관심 목록 등록여부 조회 유스케이스
+    private val deleteCoinFromWatchlistUseCase: DeleteCoinFromWatchlistUseCase   // 코인 관심 목록에서 삭제하는 유스케이스
 ) : ViewModel() {
 
     // 코인 목록을 저장하는 StateFlow
@@ -55,7 +59,7 @@ class PriceViewModel @Inject constructor(
     private val _isCoinInWatchlist = MutableStateFlow(false)
     val isCoinInWatchlist: StateFlow<Boolean> get() = _isCoinInWatchlist
 
-    
+
     // 로딩 상태를 저장하는 StateFlow
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -161,14 +165,42 @@ class PriceViewModel @Inject constructor(
     }
 
 
-
     /**
      * 코인 관심 목록에 추가하는 함수
      */
     fun addCoinToWatchlist(coinId: Long) {
         viewModelScope.launch {
             executeWithLoading(_isLoading, _errorMessage) {
+                _isCoinInWatchlist.value = true
                 addCoinToWatchlistUseCase(coinId) // 코인 관심 목록에 추가하는 유스케이스 호출
+            }
+        }
+    }
+
+
+    /**
+     * 코인 관심 목록에서 삭제하는 함수
+     */
+    fun deleteCoinFromWatchlist(coinId: Long) {
+        viewModelScope.launch {
+            executeWithLoading(_isLoading, _errorMessage) {
+                _isCoinInWatchlist.value = false
+                deleteCoinFromWatchlistUseCase(coinId) // 코인 관심 목록에서 삭제하는 유스케이스 호출
+            }
+        }
+    }
+
+
+    /**
+     * 코인 관심 목록 등록여부 조회하는 함수
+     */
+    fun checkIfCoinInWatchlist(coinId: Long) {
+        viewModelScope.launch {
+            try {
+                val inWatchlist = checkCoinInWatchlistUseCase(coinId)
+                _isCoinInWatchlist.value = inWatchlist
+            } catch (e: Exception) {
+                Log.e("PriceViewModel", "Error checking watchlist status", e)
             }
         }
     }

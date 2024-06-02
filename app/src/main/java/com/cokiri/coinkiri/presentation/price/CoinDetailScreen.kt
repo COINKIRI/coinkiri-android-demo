@@ -6,6 +6,7 @@ import android.graphics.drawable.GradientDrawable
 import android.widget.ImageView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
@@ -52,7 +55,9 @@ import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.data.remote.model.CoinPrice
 import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.ui.theme.PretendardFont
+import com.cokiri.coinkiri.ui.theme.kakaoColor
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.components.YAxis
@@ -75,6 +80,7 @@ fun CoinDetailScreen(
     DisposableEffect(coinMarketId, coinId) {
         priceViewModel.observeSingleCoinTicker(coinMarketId)
         priceViewModel.getCoinDaysInfo(coinId)
+        priceViewModel.checkIfCoinInWatchlist(coinId.toLong())
 
         onDispose {
             // WebSocket 연결 중지
@@ -85,14 +91,22 @@ fun CoinDetailScreen(
     val isLoading by priceViewModel.isLoading.collectAsState()
     val singleCoinTicker by priceViewModel.singleCoinTicker.collectAsState()
     val coinDaysInfo by priceViewModel.coinDaysInfo.collectAsState()
+    val isCoinInWatchlist by priceViewModel.isCoinInWatchlist.collectAsState()
 
     Scaffold(
         topBar = {
             CoinDetailTopBar(
                 coinMarketId,
                 coinKoreaName,
+                isCoinInWatchlist,
                 backClick = { navController.popBackStack() },
-                addCoinToWatchlistClick = { priceViewModel.addCoinToWatchlist(coinId.toLong()) }
+                addCoinToWatchlistClick = {
+                    if (isCoinInWatchlist) {
+                        priceViewModel.deleteCoinFromWatchlist(coinId.toLong())
+                    } else {
+                        priceViewModel.addCoinToWatchlist(coinId.toLong())
+                    }
+                }
             )
         },
         content = { paddingValues ->
@@ -127,6 +141,7 @@ fun CoinDetailScreen(
 fun CoinDetailTopBar(
     marketName: String,
     coinKoreaName: String,
+    isCoinInWatchlist: Boolean,
     backClick: () -> Unit,
     addCoinToWatchlistClick: () -> Unit
 ) {
@@ -145,7 +160,7 @@ fun CoinDetailTopBar(
         navigationIcon = {
             IconButton(onClick = backClick) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    painter = painterResource(R.drawable.ic_arrow_back),
                     contentDescription = "Back"
                 )
             }
@@ -153,8 +168,12 @@ fun CoinDetailTopBar(
         actions = {
             IconButton(onClick = addCoinToWatchlistClick) {
                 Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = "Favorite"
+                    painter = if (isCoinInWatchlist) painterResource(R.drawable.ic_coin_star_fill)
+                    else painterResource(R.drawable.ic_coin_star_outline),
+                    contentDescription = "Favorite",
+                    modifier = Modifier
+                        .size(35.dp),
+                    tint = if (isCoinInWatchlist) CoinkiriPointGreen else Color.Black
                 )
             }
         }

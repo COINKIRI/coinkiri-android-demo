@@ -1,6 +1,5 @@
 package com.cokiri.coinkiri.data.repository
 
-import android.content.SharedPreferences
 import android.util.Log
 import com.cokiri.coinkiri.data.remote.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.CoinApi
@@ -22,6 +21,9 @@ class CoinRepositoryImpl @Inject constructor(
     // 캐시된 코인 리스트
     private var cachedCoins: List<Coin>? = null
 
+    /**
+     * 코인 목록을 가져옴
+     */
     override suspend fun getCoins(): List<Coin> {
         return try {
             // 캐시된 코인 리스트가 없으면 API를 통해 코인 리스트를 가져옴
@@ -42,6 +44,9 @@ class CoinRepositoryImpl @Inject constructor(
     }
 
 
+    /**
+     * 특정 코인의 일간(200일) 가격 정보를 가져옴
+     */
     override suspend fun getCoinDaysInfo(coinId: String): List<CoinPrice> {
         return try {
             val coinDaysResponse = coinApi.getCoinDaysInfo(coinId.toLong())
@@ -70,6 +75,54 @@ class CoinRepositoryImpl @Inject constructor(
         if (response.isSuccessful) {
             // 응답 데이터 반환, null인 경우 예외 발생
             return response.body() ?: throw ApiException("응답 데이터가 null입니다.")
+        } else {
+            throw ApiException("응답이 실패하였습니다.")
+        }
+    }
+
+
+    /**
+     * 코인 관심 목록에서 삭제
+     */
+    override suspend fun deleteCoinFromWatchlist(coinId: Long) : ApiResponse {
+        // 액세스 토큰을 preferencesManager에서 가져옴
+        val accessToken = preferencesManager.getAccessToken()
+        if (accessToken.isNullOrEmpty()) {
+            throw AuthException("로그인이 필요합니다.")
+        }
+
+        // PostApi를 사용하여 글 작성 요청
+        val response = coinApi.deleteCoinFromWatchlist("Bearer $accessToken", coinId)
+        Log.d(TAG, "submitPost: $response")
+
+        if (response.isSuccessful) {
+            // 응답 데이터 반환, null인 경우 예외 발생
+            return response.body() ?: throw ApiException("응답 데이터가 null입니다.")
+        } else {
+            throw ApiException("응답이 실패하였습니다.")
+        }
+    }
+
+
+    /**
+     * 코인 관심 목록 등록여부 조회
+     */
+    override suspend fun checkCoinInWatchlist(coinId: Long): Boolean {
+        val accessToken = preferencesManager.getAccessToken()
+        if (accessToken.isNullOrEmpty()) {
+            throw AuthException("로그인이 필요합니다.")
+        }
+
+        val response = coinApi.checkCoinInterest("Bearer $accessToken", coinId)
+        Log.d(TAG, "checkCoinInWatchlist: $response")
+
+        if(response.isSuccessful) {
+            val apiResponse = response.body()
+            if (apiResponse != null && apiResponse.result is Boolean) {
+                return apiResponse.result as Boolean
+            } else {
+                throw ApiException("Invalid response format")
+            }
         } else {
             throw ApiException("응답이 실패하였습니다.")
         }

@@ -39,4 +39,27 @@ interface CoinApi {
         @Header("Authorization") accessToken: String,
         @Path("coinId") coinId: Long
     ): Response<ApiResponse>
+
+
+    /**
+     * 코인 관심 목록 삭제
+     */
+    @AuthRequired
+    @Headers("Content-Type: application/json")
+    @POST("/api/v1/interest/delete/{coinId}")
+    suspend fun deleteCoinFromWatchlist(
+        @Header("Authorization") accessToken: String,
+        @Path("coinId") coinId: Long
+    ): Response<ApiResponse>
+
+
+    /**
+     * 코인 관심 목록 등록여부 조회
+     */
+    @AuthRequired
+    @GET("/api/v1/interest/check/{coinId}")
+    suspend fun checkCoinInterest(
+        @Header("Authorization") accessToken: String,
+        @Path("coinId") coinId: Long
+    ): Response<ApiResponse>
 }

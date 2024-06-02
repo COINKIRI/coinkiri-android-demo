@@ -5,10 +5,20 @@ import com.cokiri.coinkiri.data.remote.model.CoinPrice
 import com.cokiri.coinkiri.domain.model.Coin
 
 interface CoinRepository {
+
+    // 코인 목록을 가져옴
     suspend fun getCoins(): List<Coin>
 
+    // 특정 코인의 일간(200일) 가격 정보를 가져옴
     suspend fun getCoinDaysInfo(coinId: String) : List<CoinPrice>
 
+    // 코인 관심 목록에 추가
     suspend fun addCoinToWatchlist(coinId: Long) : ApiResponse
+
+    // 코인 관심 목록에서 삭제
+    suspend fun deleteCoinFromWatchlist(coinId: Long) : ApiResponse
+
+    // 코인 관심 목록 등록여부 조회
+    suspend fun checkCoinInWatchlist(coinId: Long) : Boolean
 
 }
