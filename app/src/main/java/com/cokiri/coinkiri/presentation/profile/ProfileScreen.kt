@@ -35,6 +35,7 @@ import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.presentation.login.LoginUiState
 import com.cokiri.coinkiri.presentation.login.LoginViewModel
+import com.cokiri.coinkiri.presentation.profile.component.MemberInfoCard
 import com.cokiri.coinkiri.util.LOGIN
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriBlack
@@ -49,6 +50,7 @@ fun ProfileScreen(
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
+
     val loginUiState by loginViewModel.loginUiState.collectAsStateWithLifecycle()
     val memberInfo by profileViewModel.memberInfo.collectAsStateWithLifecycle()
 
@@ -106,12 +108,13 @@ fun ProfileScreen(
     )
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileBottomSheet(
     sheetState: SheetState,
     onDismissSheet: () -> Unit,
-    onLogoutClick: () -> Unit     // 로그아웃 버튼 클릭 시 실행할 함수
+    onLogoutClick: () -> Unit
 ) {
     ModalBottomSheet(
         modifier = Modifier.fillMaxWidth(),
