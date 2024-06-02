@@ -4,6 +4,7 @@ import com.cokiri.coinkiri.data.remote.AuthRequired
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.CoinDaysResponse
 import com.cokiri.coinkiri.data.remote.model.CoinResponse
+import com.cokiri.coinkiri.data.remote.model.WatchlistResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -62,4 +63,14 @@ interface CoinApi {
         @Header("Authorization") accessToken: String,
         @Path("coinId") coinId: Long
     ): Response<ApiResponse>
+
+
+    /**
+     * 코인 관심 목록 조회
+     */
+    @AuthRequired
+    @GET("/api/v1/interest/")
+    suspend fun getCoinWatchlist(
+        @Header("Authorization") accessToken: String
+    ): WatchlistResponse
 }

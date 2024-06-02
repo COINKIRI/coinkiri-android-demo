@@ -6,6 +6,8 @@ import com.cokiri.coinkiri.data.remote.api.CoinApi
 import com.cokiri.coinkiri.data.remote.mapper.CoinMapper
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.CoinPrice
+import com.cokiri.coinkiri.data.remote.model.WatchlistCoinPrice
+import com.cokiri.coinkiri.data.remote.model.WatchlistResponse
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.repository.CoinRepository
 import javax.inject.Inject
@@ -16,7 +18,9 @@ class CoinRepositoryImpl @Inject constructor(
 ) : CoinRepository {
 
     // 로그를 위한 태그
-    companion object { private const val TAG = "CoinRepositoryImpl" }
+    companion object {
+        private const val TAG = "CoinRepositoryImpl"
+    }
 
     // 캐시된 코인 리스트
     private var cachedCoins: List<Coin>? = null
@@ -61,7 +65,7 @@ class CoinRepositoryImpl @Inject constructor(
     /**
      * 코인 관심 목록에 추가
      */
-    override suspend fun addCoinToWatchlist(coinId: Long) : ApiResponse {
+    override suspend fun addCoinToWatchlist(coinId: Long): ApiResponse {
         // 액세스 토큰을 preferencesManager에서 가져옴
         val accessToken = preferencesManager.getAccessToken()
         if (accessToken.isNullOrEmpty()) {
@@ -84,7 +88,7 @@ class CoinRepositoryImpl @Inject constructor(
     /**
      * 코인 관심 목록에서 삭제
      */
-    override suspend fun deleteCoinFromWatchlist(coinId: Long) : ApiResponse {
+    override suspend fun deleteCoinFromWatchlist(coinId: Long): ApiResponse {
         // 액세스 토큰을 preferencesManager에서 가져옴
         val accessToken = preferencesManager.getAccessToken()
         if (accessToken.isNullOrEmpty()) {
@@ -116,7 +120,7 @@ class CoinRepositoryImpl @Inject constructor(
         val response = coinApi.checkCoinInterest("Bearer $accessToken", coinId)
         Log.d(TAG, "checkCoinInWatchlist: $response")
 
-        if(response.isSuccessful) {
+        if (response.isSuccessful) {
             val apiResponse = response.body()
             if (apiResponse != null && apiResponse.result is Boolean) {
                 return apiResponse.result as Boolean
@@ -125,6 +129,26 @@ class CoinRepositoryImpl @Inject constructor(
             }
         } else {
             throw ApiException("응답이 실패하였습니다.")
+        }
+    }
+
+
+    /**
+     * 코인 관심 목록 조회
+     */
+    override suspend fun getCoinWatchlist(): List<WatchlistCoinPrice> {
+        return try{
+            val accessToken = preferencesManager.getAccessToken()
+            if (accessToken.isNullOrEmpty()) {
+                throw AuthException("로그인이 필요합니다.")
+            }
+
+            val response = coinApi.getCoinWatchlist("Bearer $accessToken")
+            Log.d(TAG, "getCoinWatchlist: $response")
+            response.result.coinPrices
+        } catch (e: Exception) {
+            Log.e(TAG, "코인 관심 목록을 가져오는 중에 오류가 발생했습니다. : ${e.message}")
+            emptyList()
         }
     }
 

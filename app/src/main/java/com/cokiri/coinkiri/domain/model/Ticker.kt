@@ -60,4 +60,9 @@ data class Ticker(
 
     val formattedSignedChangePrice : String
         get() = signedChangePrice?.let { DecimalFormat("#,###").format(it) } ?: "0"
+
+    val formattedChangeRate : String
+        get() = changeRate?.let { DecimalFormat("#,###").format(it) } ?: "0"
+
+
 }

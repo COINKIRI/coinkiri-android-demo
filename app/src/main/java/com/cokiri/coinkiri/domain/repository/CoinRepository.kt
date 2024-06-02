@@ -2,6 +2,7 @@ package com.cokiri.coinkiri.domain.repository
 
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.CoinPrice
+import com.cokiri.coinkiri.data.remote.model.WatchlistCoinPrice
 import com.cokiri.coinkiri.domain.model.Coin
 
 interface CoinRepository {
@@ -20,5 +21,8 @@ interface CoinRepository {
 
     // 코인 관심 목록 등록여부 조회
     suspend fun checkCoinInWatchlist(coinId: Long) : Boolean
+
+    // 코인 관심 목록을 가져옴
+    suspend fun getCoinWatchlist() : List<WatchlistCoinPrice>
 
 }
