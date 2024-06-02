@@ -2,11 +2,14 @@ package com.cokiri.coinkiri.presentation.createpost
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.ImageData
-import com.cokiri.coinkiri.data.remote.model.PostDataRequest
+import com.cokiri.coinkiri.data.remote.model.PostRequestDto
+import com.cokiri.coinkiri.domain.usecase.SubmitAnalysisPostContentUseCase
 import com.cokiri.coinkiri.domain.usecase.SubmitPostContentUseCase
 import com.cokiri.coinkiri.extensions.executeWithLoading
+import com.cokiri.coinkiri.util.InvestmentOption
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreatePostViewModel @Inject constructor(
-    private val submitPostContentUseCase: SubmitPostContentUseCase
+    private val submitPostContentUseCase: SubmitPostContentUseCase,
+    private val submitAnalysisPostContentUseCase: SubmitAnalysisPostContentUseCase
 ) : ViewModel() {
 
     // 게시글 제목을 관리하는 MutableStateFlow
@@ -42,18 +46,78 @@ class CreatePostViewModel @Inject constructor(
     val submitResult: StateFlow<Result<ApiResponse>?> = _submitResult
 
 
+    private val _coinId = MutableStateFlow(0L)
+    val coinId: StateFlow<Long> get() = _coinId
+
+    private val _coinPrevClosingPrice = MutableStateFlow("")
+    val coinPrevClosingPrice: StateFlow<String> get() = _coinPrevClosingPrice
+
+    private val _investmentOption = MutableStateFlow("")
+    val investmentOption: StateFlow<String> get() = _investmentOption
+
+    private val _targetPrice = MutableStateFlow("")
+    val targetPrice: StateFlow<String> get() = _targetPrice
+
+    private val _targetPeriod = MutableStateFlow("")
+    val targetPeriod: StateFlow<String> get() = _targetPeriod
+
+    /**
+     * 분석글 작성시 분석 데이터를 설정하는 함수
+     */
+    fun setAnalysisData(
+        coinId: Long,
+        coinPrevClosingPrice: String,
+        investmentOption: String,
+        targetPrice: String,
+        targetPeriod: String
+    ) {
+        _coinId.value = coinId
+        _coinPrevClosingPrice.value = coinPrevClosingPrice
+        _investmentOption.value = investmentOption
+        _targetPrice.value = targetPrice
+        _targetPeriod.value = targetPeriod
+    }
+
+    /**
+     * 분석글 내용을 서버에 제출하는 함수
+     */
+    fun submitAnalysisPostContent() {
+        viewModelScope.launch {
+            executeWithLoading(_isLoading, _errorMessage) {
+                val englishInvestmentOption = InvestmentOption.toEnglish(_investmentOption.value)
+
+                val analysisPostDataRequest = AnalysisPostDataRequest(
+                    postRequestDto = PostRequestDto(
+                        title = _title.value,
+                        content = _content.value,
+                        images = _images.value.map { ImageData(it.first, it.second) }
+                    ),
+                    coinId = _coinId.value,
+                    coinPrevClosingPrice = _coinPrevClosingPrice.value,
+                    investmentOption = englishInvestmentOption,
+                    targetPrice = _targetPrice.value,
+                    targetPeriod = _targetPeriod.value
+                )
+                val result = submitAnalysisPostContentUseCase(analysisPostDataRequest)
+                _submitResult.value = result
+                result
+            }
+        }
+    }
+
+
     /**
      * 게시글 내용을 서버에 제출하는 함수
      */
     fun submitPostContent() {
         viewModelScope.launch {
             executeWithLoading(_isLoading, _errorMessage) {
-                val postDataRequest = PostDataRequest(
+                val postRequestDto = PostRequestDto(
                     title = _title.value,
                     content = _content.value,
                     images = _images.value.map { ImageData(it.first, it.second) }
                 )
-                val result = submitPostContentUseCase(postDataRequest)
+                val result = submitPostContentUseCase(postRequestDto)
                 _submitResult.value = result
                 result
             }
