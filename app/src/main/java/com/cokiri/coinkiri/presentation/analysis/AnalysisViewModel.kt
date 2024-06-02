@@ -8,6 +8,7 @@ import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.domain.usecase.GetCoinsUseCase
 import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
+import com.cokiri.coinkiri.extensions.executeWithLoading
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -70,14 +71,27 @@ class AnalysisViewModel @Inject constructor(
     private val _selectedTargetPriceChangeRate = MutableStateFlow("")
     val selectedTargetPriceChangeRate: StateFlow<String> = _selectedTargetPriceChangeRate.asStateFlow()
 
+    // 로딩 상태와 에러 메시지 관리용 MutableStateFlow
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+
 
     /**
      * 코인 목록을 가져옴
      */
     fun fetchCoins() {
         viewModelScope.launch {
-            val coins = getCoinsUseCase()
-            _coinList.value = coins
+            executeWithLoading(_isLoading, _errorMessage) {
+                getCoinsUseCase().onSuccess { coins ->
+                    _coinList.value = coins
+                    Result.success(Unit)
+                }.onFailure { e ->
+                    Result.failure<Unit>(e)
+                }
+            }
         }
     }
 

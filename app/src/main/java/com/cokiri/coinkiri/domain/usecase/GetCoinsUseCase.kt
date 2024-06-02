@@ -8,14 +8,13 @@ import javax.inject.Inject
 class GetCoinsUseCase @Inject constructor(
     private val coinRepository: CoinRepository
 ) {
-    suspend operator fun invoke(): List<Coin> {
+    suspend operator fun invoke(): Result<List<Coin>> {
         return try {
-            coinRepository.getCoins()
-        }
-        catch (e: Exception) {
+            val coins = coinRepository.getCoins()
+            Result.success(coins)
+        } catch (e: Exception) {
             Log.e("GetCoinsUseCase", "Failed to get coins", e)
-            emptyList()
+            Result.failure(e)
         }
     }
-
 }

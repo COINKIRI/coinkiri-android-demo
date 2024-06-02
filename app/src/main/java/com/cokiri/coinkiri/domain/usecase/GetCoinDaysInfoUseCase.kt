@@ -8,13 +8,13 @@ import javax.inject.Inject
 class GetCoinDaysInfoUseCase @Inject constructor(
     private val coinRepository: CoinRepository
 ){
-    suspend operator fun invoke(coinId: String): List<CoinPrice> {
+    suspend operator fun invoke(coinId: String): Result<List<CoinPrice>> {
         return try {
-            coinRepository.getCoinDaysInfo(coinId)
+            val coinDaysInfo = coinRepository.getCoinDaysInfo(coinId)
+            Result.success(coinDaysInfo)
         } catch (e: Exception) {
             Log.e("GetCoinDaysInfoUseCase", "Failed to get coin days info", e)
-            emptyList()
+            Result.failure(e)
         }
     }
-
 }
