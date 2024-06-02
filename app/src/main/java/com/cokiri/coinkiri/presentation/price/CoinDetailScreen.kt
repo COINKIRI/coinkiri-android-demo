@@ -91,7 +91,8 @@ fun CoinDetailScreen(
             CoinDetailTopBar(
                 coinMarketId,
                 coinKoreaName,
-                backClick = { navController.popBackStack() }
+                backClick = { navController.popBackStack() },
+                addCoinToWatchlistClick = { priceViewModel.addCoinToWatchlist(coinId.toLong()) }
             )
         },
         content = { paddingValues ->
@@ -126,7 +127,8 @@ fun CoinDetailScreen(
 fun CoinDetailTopBar(
     marketName: String,
     coinKoreaName: String,
-    backClick: () -> Unit
+    backClick: () -> Unit,
+    addCoinToWatchlistClick: () -> Unit
 ) {
     CenterAlignedTopAppBar(
         modifier = Modifier.background(CoinkiriBackground),
@@ -149,7 +151,7 @@ fun CoinDetailTopBar(
             }
         },
         actions = {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = addCoinToWatchlistClick) {
                 Icon(
                     imageVector = Icons.Default.Star,
                     contentDescription = "Favorite"
@@ -394,9 +396,9 @@ fun CoinChart(
     }
 }
 
+
 @SuppressLint("ViewConstructor")
 class CustomMarkerView(context: Context, layoutResource: Int) : MarkerView(context, layoutResource) {
-
 
     override fun refreshContent(e: Entry?, highlight: Highlight?) {
         // 마커를 업데이트하는 코드

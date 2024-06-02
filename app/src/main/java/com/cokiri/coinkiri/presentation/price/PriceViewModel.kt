@@ -1,11 +1,13 @@
 package com.cokiri.coinkiri.presentation.price
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cokiri.coinkiri.data.remote.model.CoinInfoDetail
 import com.cokiri.coinkiri.data.remote.model.CoinPrice
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.model.Ticker
+import com.cokiri.coinkiri.domain.usecase.AddCoinToWatchlistUseCase
 import com.cokiri.coinkiri.domain.usecase.GetCoinDaysInfoUseCase
 import com.cokiri.coinkiri.domain.usecase.GetCoinsUseCase
 import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
@@ -19,9 +21,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PriceViewModel @Inject constructor(
-    private val getCoinsUseCase: GetCoinsUseCase,                // 코인 정보를 가져오는 유스케이스
-    private val webSocketUseCase: WebSocketUseCase,              // WebSocket을 관리하는 유스케이스
-    private val getCoinDaysInfoUseCase: GetCoinDaysInfoUseCase   // 특정 코인의 일간 정보를 가져오는 유스케이스
+    private val getCoinsUseCase: GetCoinsUseCase,                     // 코인 정보를 가져오는 유스케이스
+    private val webSocketUseCase: WebSocketUseCase,                   // WebSocket을 관리하는 유스케이스
+    private val getCoinDaysInfoUseCase: GetCoinDaysInfoUseCase,       // 특정 코인의 일간 정보를 가져오는 유스케이스
+    private val addCoinToWatchlistUseCase: AddCoinToWatchlistUseCase  // 코인 관심 목록에 추가하는 유스케이스
 ) : ViewModel() {
 
     // 코인 목록을 저장하는 StateFlow
@@ -48,6 +51,11 @@ class PriceViewModel @Inject constructor(
     private val _coinDaysInfo = MutableStateFlow<List<CoinPrice>>(emptyList())
     val coinDaysInfo: StateFlow<List<CoinPrice>> get() = _coinDaysInfo
 
+    // 관심 목록에 코인이 있는지 여부를 저장하는 StateFlow
+    private val _isCoinInWatchlist = MutableStateFlow(false)
+    val isCoinInWatchlist: StateFlow<Boolean> get() = _isCoinInWatchlist
+
+    
     // 로딩 상태를 저장하는 StateFlow
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -149,6 +157,19 @@ class PriceViewModel @Inject constructor(
                 coinInfoDetails.add(updatedCoinInfoDetail) // 새로운 코인 정보 추가
             }
             _coinInfoDetailList.value = coinInfoDetails // 코인 상세 정보 리스트 갱신
+        }
+    }
+
+
+
+    /**
+     * 코인 관심 목록에 추가하는 함수
+     */
+    fun addCoinToWatchlist(coinId: Long) {
+        viewModelScope.launch {
+            executeWithLoading(_isLoading, _errorMessage) {
+                addCoinToWatchlistUseCase(coinId) // 코인 관심 목록에 추가하는 유스케이스 호출
+            }
         }
     }
 

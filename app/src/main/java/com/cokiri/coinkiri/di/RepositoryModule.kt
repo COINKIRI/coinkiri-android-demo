@@ -3,6 +3,7 @@ package com.cokiri.coinkiri.di
 import com.cokiri.coinkiri.data.local.database.AppDatabase
 import com.cokiri.coinkiri.data.remote.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
+import com.cokiri.coinkiri.data.remote.api.CoinApi
 import com.cokiri.coinkiri.data.remote.api.PostApi
 import com.cokiri.coinkiri.data.repository.CoinRepositoryImpl
 import com.cokiri.coinkiri.data.repository.CommentRepositoryImpl
@@ -43,8 +44,11 @@ object RepositoryModule {
      */
     @Provides
     @Singleton
-    fun provideCoinRepository(coinRepositoryImpl: CoinRepositoryImpl): CoinRepository {
-        return coinRepositoryImpl
+    fun provideCoinRepository(
+        coinApi: CoinApi,
+        preferencesManager: PreferencesManager
+    ): CoinRepository {
+        return CoinRepositoryImpl(coinApi, preferencesManager)
     }
 
 
