@@ -111,6 +111,8 @@ class AnalysisViewModel @Inject constructor(
         Log.d("AnalysisViewModel", "투자의견: $option")
     }
 
+
+
     /**
      * 선택된 코인의 전일 종가를 저장
      */
@@ -122,9 +124,9 @@ class AnalysisViewModel @Inject constructor(
     /**
      * 선택한 목표기간을 저장
      */
-    fun setTargetPeriod(period: String) {
-        _selectedTargetPeriod.value = period
-        Log.d("AnalysisViewModel", "목표기간: $period")
+    fun setTargetPeriod(targetPeriod: String) {
+        _selectedTargetPeriod.value = targetPeriod
+        Log.d("AnalysisViewModel", "목표기간: $targetPeriod")
     }
 
     /**
@@ -138,9 +140,9 @@ class AnalysisViewModel @Inject constructor(
     /**
      * 선택한 목표가격을 저장
      */
-    fun setSelectedTargetPrice(price: String) {
-        _selectedTargetPrice.value = price
-        Log.d("AnalysisViewModel", "목표가격: $price")
+    fun setSelectedTargetPrice(targetPrice: String) {
+        _selectedTargetPrice.value = targetPrice
+        Log.d("AnalysisViewModel", "목표가격: $targetPrice")
     }
 
     /**
@@ -151,4 +153,18 @@ class AnalysisViewModel @Inject constructor(
         Log.d("AnalysisViewModel", "목표가격 변동률: $rate")
     }
 
+    /**
+     * 상태 초기화
+     */
+    fun resetState() {
+        _selectedCoinId.value = 0L
+        _selectedCoinMarketId.value = ""
+        _selectedCoinName.value = ""
+        _selectedCoinImagePainter.value = null
+        _selectedCoinPrevClosingPrice.value = ""
+        _selectedInvestmentOption.value = ""
+        _selectedTargetPrice.value = ""
+        _selectedTargetPeriod.value = ""
+        _selectedDate.value = null
+    }
 }

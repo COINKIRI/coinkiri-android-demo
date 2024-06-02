@@ -3,11 +3,11 @@ package com.cokiri.coinkiri.data.repository
 import android.util.Log
 import com.cokiri.coinkiri.data.remote.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.PostApi
+import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
-import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponse
 import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.CommunityResponseDto
-import com.cokiri.coinkiri.data.remote.model.PostDataRequest
+import com.cokiri.coinkiri.data.remote.model.PostRequestDto
 import com.cokiri.coinkiri.domain.repository.PostRepository
 import javax.inject.Inject
 
@@ -26,13 +26,13 @@ class PostRepositoryImpl @Inject constructor(
 
 
     /**
-     * 글 작성 요청 (POST)
-     * @param postDataRequest 작성할 글의 데이터
+     * 게시글 작성 요청 (POST)
+     * @param postRequestDto 작성할 글의 데이터
      * @return ApiResponse 작성 결과 응답
      * @throws AuthException 로그인이 필요할 때 발생
      * @throws ApiException 응답이 실패하거나 데이터가 null일 때 발생
      */
-    override suspend fun submitPost(postDataRequest: PostDataRequest): ApiResponse {
+    override suspend fun submitPost(postRequestDto: PostRequestDto): ApiResponse {
         // 액세스 토큰을 preferencesManager에서 가져옴
         val accessToken = preferencesManager.getAccessToken()
         if (accessToken.isNullOrEmpty()) {
@@ -40,12 +40,35 @@ class PostRepositoryImpl @Inject constructor(
         }
 
         // PostApi를 사용하여 글 작성 요청
-        val response = postApi.submitPost("Bearer $accessToken", postDataRequest)
+        val response = postApi.submitPost("Bearer $accessToken", postRequestDto)
         Log.d(TAG, "submitPost: $response")
 
         if (response.isSuccessful) {
             // 캐시 무효화
             clearCache()
+            // 응답 데이터 반환, null인 경우 예외 발생
+            return response.body() ?: throw ApiException("응답 데이터가 null입니다.")
+        } else {
+            throw ApiException("응답이 실패하였습니다.")
+        }
+    }
+
+
+    /**
+     * 분석글 작성 요청 (POST)
+     */
+    override suspend fun submitAnalysisPost(analysisPostDataRequest: AnalysisPostDataRequest): ApiResponse {
+        // 액세스 토큰을 preferencesManager에서 가져옴
+        val accessToken = preferencesManager.getAccessToken()
+        if (accessToken.isNullOrEmpty()) {
+            throw AuthException("로그인이 필요합니다.")
+        }
+
+        // PostApi를 사용하여 분석글 작성 요청
+        val response = postApi.submitAnalysisPost("Bearer $accessToken", analysisPostDataRequest)
+        Log.d(TAG, "submitAnalysisPost: $response")
+
+        if (response.isSuccessful) {
             // 응답 데이터 반환, null인 경우 예외 발생
             return response.body() ?: throw ApiException("응답 데이터가 null입니다.")
         } else {
