@@ -90,7 +90,7 @@ fun CommunityDetailScreen(
     val context = LocalContext.current
 
     LaunchedEffect(postId) {
-        postViewModel.fetchCommunityPostDetail(postId)
+        postViewModel.fetchCommunityPostDetails(postId)
         postViewModel.fetchCommentList(postId)
     }
 

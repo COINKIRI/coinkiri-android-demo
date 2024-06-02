@@ -4,10 +4,13 @@ import com.cokiri.coinkiri.data.remote.model.CommentList
 import com.cokiri.coinkiri.domain.repository.CommentRepository
 import javax.inject.Inject
 
-class GetCommentListUseCase @Inject constructor(
+/**
+ * 댓글 목록을 가져오는 UseCase
+ */
+class GetAllCommentsUseCase @Inject constructor(
     private val commentRepository: CommentRepository
 ){
-    suspend operator fun invoke(postId: Long) : List<CommentList> {
-        return commentRepository.getCommentList(postId)
+    suspend operator fun invoke(postId: Long): Result<List<CommentList>> {
+        return runCatching { commentRepository.getCommentList(postId) }
     }
 }

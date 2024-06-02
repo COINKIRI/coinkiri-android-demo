@@ -7,10 +7,11 @@ import com.cokiri.coinkiri.data.remote.model.CommentList
 import com.cokiri.coinkiri.data.remote.model.CommentRequest
 import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.CommunityResponseDto
-import com.cokiri.coinkiri.domain.usecase.GetCommentListUseCase
-import com.cokiri.coinkiri.domain.usecase.GetCommunityPostDetailUseCase
-import com.cokiri.coinkiri.domain.usecase.GetCommunityPostListUseCase
+import com.cokiri.coinkiri.domain.usecase.GetAllCommentsUseCase
+import com.cokiri.coinkiri.domain.usecase.GetCommunityPostDetailsUseCase
+import com.cokiri.coinkiri.domain.usecase.GetAllCommunityPostsUseCase
 import com.cokiri.coinkiri.domain.usecase.SubmitCommentUseCase
+import com.cokiri.coinkiri.extensions.executeWithLoading
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,40 +20,34 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
-    private val getCommunityPostListUseCase: GetCommunityPostListUseCase,
-    private val getCommunityPostDetailUseCase: GetCommunityPostDetailUseCase,
-    private val getCommentListUseCase: GetCommentListUseCase,
+    private val getAllCommunityPostsUseCase: GetAllCommunityPostsUseCase,
+    private val getCommunityPostDetailsUseCase: GetCommunityPostDetailsUseCase,
+    private val getAllCommentsUseCase: GetAllCommentsUseCase,
     private val submitCommentUseCase: SubmitCommentUseCase
 ) : ViewModel() {
 
     // 커뮤니티 게시글 목록을 관리하는 MutableStateFlow
     private val _communityPostList = MutableStateFlow<List<CommunityResponseDto>>(emptyList())
-    // 외부에서 읽기만 가능한 커뮤니티 게시글 목록 StateFlow
     val communityPostList: StateFlow<List<CommunityResponseDto>> = _communityPostList
 
     // 커뮤니티 게시글 상세 정보를 관리하는 MutableStateFlow
     private val _communityDetail = MutableStateFlow<CommunityDetailResponseDto?>(null)
-    // 외부에서 읽기만 가능한 커뮤니티 게시글 상세 정보 StateFlow
     val communityDetail: StateFlow<CommunityDetailResponseDto?> = _communityDetail
 
     // 로딩 상태를 관리하는 MutableStateFlow
     private val _isLoading = MutableStateFlow(false)
-    // 외부에서 읽기만 가능한 로딩 상태 StateFlow
     val isLoading: StateFlow<Boolean> = _isLoading
 
     // 에러 메시지를 관리하는 MutableStateFlow
     private val _errorMessage = MutableStateFlow<String?>(null)
-    // 외부에서 읽기만 가능한 에러 메시지 StateFlow
     val errorMessage: StateFlow<String?> = _errorMessage
 
     // 댓글 목록을 관리하는 MutableStateFlow
     private val _commentList = MutableStateFlow<List<CommentList>>(emptyList())
-    // 외부에서 읽기만 가능한 댓글 목록 StateFlow
     val commentList: StateFlow<List<CommentList>> = _commentList
 
     // 작성 중인 댓글 내용을 관리하는 MutableStateFlow
     private val _commentContent = MutableStateFlow("")
-    // 외부에서 읽기만 가능한 작성 중인 댓글 내용 StateFlow
     val commentContent: StateFlow<String> = _commentContent
 
     // 댓글 작성 결과를 관리하는 MutableStateFlow
@@ -60,79 +55,85 @@ class PostViewModel @Inject constructor(
 
 
 
-    // 댓글 내용이 변경될 때 호출되는 함수
-    fun onCommentContentChange(newCommentContent: String) {
-        _commentContent.value = newCommentContent
-    }
-
-    // 댓글을 작성하는 함수
+    /**
+     * 댓글을 작성하는 함수
+     * @param postId 댓글을 작성할 게시글의 ID
+     */
     fun submitComment(postId: Long) {
         viewModelScope.launch {
-            try {
+            executeWithLoading(_isLoading, _errorMessage) {
                 val content = _commentContent.value
-                // 댓글 내용이 비어 있으면 에러 메시지 설정 후 종료
                 if (content.isBlank()) {
-                    _errorMessage.value = "댓글 내용을 입력해주세요."
-                    return@launch
+                    throw IllegalArgumentException("댓글 내용을 입력해주세요.")
                 }
-                // 댓글 요청 객체 생성
-                val commentRequest = CommentRequest(
-                    postId = postId,
-                    content = content
-                )
-                // 댓글 작성 결과를 UseCase를 통해 받아옴
-                _submitCommentResult.value = submitCommentUseCase(commentRequest)
-                // 댓글 작성 성공 시 댓글 목록 갱신, 실패 시 에러 메시지 설정
-                _submitCommentResult.value?.let {
-                    if (it.isSuccess) {
-                        fetchCommentList(postId)
-                    } else {
-                        _errorMessage.value = "댓글 작성에 실패하였습니다."
-                    }
+
+                val commentRequest = CommentRequest(postId, content)
+                val result = submitCommentUseCase(commentRequest)
+                _submitCommentResult.value = result
+
+                if (result.isSuccess) {
+                    fetchCommentList(postId)
                 }
-            } catch (e: Exception) {
-                // 예외 발생 시 에러 메시지 설정
-                _errorMessage.value = e.message
+                result
             }
         }
     }
 
-    // 특정 게시글의 댓글 목록을 가져오는 함수
+
+    /**
+     * 댓글 목록을 가져오는 함수
+     * @param postId 댓글 목록을 가져올 게시글의 ID
+     */
     suspend fun fetchCommentList(postId: Long) {
-        executeWithLoading {
-            _commentList.value = getCommentListUseCase(postId)
-        }
-    }
-
-    // 커뮤니티 게시글 목록을 가져오는 함수
-    fun fetchCommunityPostList() {
         viewModelScope.launch {
-            executeWithLoading {
-                _communityPostList.value = getCommunityPostListUseCase()
+            executeWithLoading(_isLoading, _errorMessage) {
+                val result = getAllCommentsUseCase(postId)
+                if (result.isSuccess) {
+                    _commentList.value = result.getOrDefault(emptyList())
+                }
+                result
             }
         }
     }
 
-    // 특정 게시글의 상세 정보를 가져오는 함수
-    suspend fun fetchCommunityPostDetail(postId: Long) {
+
+    /**
+     * 커뮤니티 게시글 목록을 가져오는 함수
+     */
+    fun fetchAllCommunityPostList() {
         viewModelScope.launch {
-            executeWithLoading {
-                _communityDetail.value = getCommunityPostDetailUseCase(postId)
+            executeWithLoading(_isLoading, _errorMessage) {
+                val result = getAllCommunityPostsUseCase()
+                if (result.isSuccess) {
+                    _communityPostList.value = result.getOrDefault(emptyList())
+                }
+                result
             }
         }
     }
 
-    // 로딩 상태를 관리하는 공통 함수
-    private suspend fun <T> executeWithLoading(block: suspend () -> T) {
-        _isLoading.value = true
-        _errorMessage.value = null
-        try {
-            block()
-        } catch (e: Exception) {
-            // 예외 발생 시 에러 메시지 설정
-            _errorMessage.value = e.message
-        } finally {
-            _isLoading.value = false
+
+    /**
+     * 커뮤니티 게시글 상세 정보를 가져오는 함수
+     * @param postId 가져올 게시글의 ID
+     */
+    suspend fun fetchCommunityPostDetails(postId: Long) {
+        viewModelScope.launch {
+            executeWithLoading(_isLoading, _errorMessage) {
+                val result = getCommunityPostDetailsUseCase(postId)
+                if (result.isSuccess) {
+                    _communityDetail.value = result.getOrNull()
+                }
+                result
+            }
         }
+    }
+
+
+    /**
+     * 댓글 내용이 변경될 때 호출되는 함수
+     */
+    fun onCommentContentChange(newCommentContent: String) {
+        _commentContent.value = newCommentContent
     }
 }

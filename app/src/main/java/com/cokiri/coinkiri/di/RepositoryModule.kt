@@ -9,13 +9,13 @@ import com.cokiri.coinkiri.data.repository.CommentRepositoryImpl
 import com.cokiri.coinkiri.data.repository.KakaoLoginRepositoryImpl
 import com.cokiri.coinkiri.data.repository.PostRepositoryImpl
 import com.cokiri.coinkiri.data.repository.UserRepositoryImpl
-import com.cokiri.coinkiri.data.repository.WebSocketRepositoryImpl
+import com.cokiri.coinkiri.data.remote.service.WebSocketServiceImpl
 import com.cokiri.coinkiri.domain.repository.CoinRepository
 import com.cokiri.coinkiri.domain.repository.CommentRepository
 import com.cokiri.coinkiri.domain.repository.KakaoLoginRepository
 import com.cokiri.coinkiri.domain.repository.PostRepository
 import com.cokiri.coinkiri.domain.repository.UserRepository
-import com.cokiri.coinkiri.domain.repository.WebSocketRepository
+import com.cokiri.coinkiri.domain.service.WebSocketService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -72,17 +72,6 @@ object RepositoryModule {
         return CommentRepositoryImpl(postApi, preferencesManager)
     }
 
-
-
-    /**
-     * WebSocketRepository를 제공하는 Provider 메소드
-     * WebSocketRepositoryImpl 클래스가 WebSocketRepository 인터페이스에 주입되어 반환된다.
-     */
-    @Provides
-    @Singleton
-    fun provideWebSocketRepository(webSocketRepositoryImpl: WebSocketRepositoryImpl): WebSocketRepository{
-        return webSocketRepositoryImpl
-    }
 
     @Provides
     @Singleton
