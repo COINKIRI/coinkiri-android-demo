@@ -4,6 +4,7 @@ import android.util.Log
 import com.cokiri.coinkiri.data.remote.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.PostApi
 import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
+import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.CommunityResponseDto
@@ -16,12 +17,16 @@ class PostRepositoryImpl @Inject constructor(
     private val preferencesManager: PreferencesManager
 ) : PostRepository {
 
-    private var cachedCommunityPostList: List<CommunityResponseDto>? = null     // 캐시된 커뮤니티 게시물 목록
-    private var lastFetchTime: Long = 0                                         // 마지막으로 게시물 목록을 가져온 시간
+    private var cachedCommunityPostList : List<CommunityResponseDto>? = null     // 캐시된 커뮤니티 게시물 목록
+    private var cachedAnalysisPostList : List<AnalysisResponseDto>? = null       // 캐시된 분석 게시물 목록
+    private var lastFetchTimeCommunity: Long = 0                                 // 마지막으로 게시물 목록을 가져온 시간
+    private var lastFetchTimeAnalysis: Long = 0                                  // 마지막으로 분석 게시물 목록을 가져온 시간
+
 
     companion object {
-        private const val CACHE_VALIDITY_DURATION = 5 * 60 * 1000   // 캐시 유효 기간 (5분)
-        private const val TAG = "PostRepositoryImpl"                // 로그 태그
+        private const val CACHE_VALIDITY_DURATION_COMMUNITY = 5 * 60 * 1000   // 캐시 유효 기간 (5분)
+        private const val CACHE_VALIDITY_DURATION_ANALYSIS = 5 * 60 * 1000    // 캐시 유효 기간 (5분)
+        private const val TAG = "PostRepositoryImpl"                          // 로그 태그
     }
 
 
@@ -69,6 +74,8 @@ class PostRepositoryImpl @Inject constructor(
         Log.d(TAG, "submitAnalysisPost: $response")
 
         if (response.isSuccessful) {
+            // 캐시 무효화
+            clearCache()
             // 응답 데이터 반환, null인 경우 예외 발생
             return response.body() ?: throw ApiException("응답 데이터가 null입니다.")
         } else {
@@ -85,18 +92,40 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun getCommunityPostList(forceRefresh: Boolean): List<CommunityResponseDto> {
         // 현재 시간 가져오기
         val currentTime = System.currentTimeMillis()
-        return if (forceRefresh || cachedCommunityPostList.isNullOrEmpty() || currentTime - lastFetchTime > CACHE_VALIDITY_DURATION) {
+        return if (forceRefresh || cachedCommunityPostList.isNullOrEmpty() || currentTime - lastFetchTimeCommunity > CACHE_VALIDITY_DURATION_COMMUNITY) {
             // 강제 새로 고침이 필요하거나 캐시가 비어있거나 캐시 유효 기간이 지난 경우
             // PostApi를 사용하여 전체 커뮤니티 글 목록 요청
             val response = postApi.getAllCommunityPost()
             // 응답 결과를 캐시에 저장
             cachedCommunityPostList = response.result
-            lastFetchTime = currentTime
+            lastFetchTimeCommunity = currentTime
             // 캐시된 커뮤니티 글 목록 반환
             cachedCommunityPostList!!
         } else {
             // 유효한 캐시가 있는 경우 캐시된 목록 반환
             cachedCommunityPostList!!
+        }
+    }
+
+
+    /**
+     * 전체 분석글 목록 요청 (GET)
+     */
+    override suspend fun getAnalysisPostList(forceRefresh: Boolean): List<AnalysisResponseDto> {
+        // 현재 시간 가져오기
+        val currentTime = System.currentTimeMillis()
+        return if (forceRefresh || cachedAnalysisPostList.isNullOrEmpty() || currentTime - lastFetchTimeAnalysis > CACHE_VALIDITY_DURATION_ANALYSIS) {
+            // 강제 새로 고침이 필요하거나 캐시가 비어있거나 캐시 유효 기간이 지난 경우
+            // PostApi를 사용하여 전체 분석글 목록 요청
+            val response = postApi.getAllAnalysisPost()
+            // 응답 결과를 캐시에 저장
+            cachedAnalysisPostList = response.result
+            lastFetchTimeAnalysis = currentTime
+            // 캐시된 분석글 목록 반환
+            cachedAnalysisPostList!!
+        } else {
+            // 유효한 캐시가 있는 경우 캐시된 목록 반환
+            cachedAnalysisPostList!!
         }
     }
 
@@ -119,11 +148,17 @@ class PostRepositoryImpl @Inject constructor(
 
 
     /**
-     * 캐시를 초기화하는 함수
+     * 캐시 무효화
+     * 캐시된 게시글 목록을 초기화
+     * 캐시된 분석글 목록을 초기화
+     * 마지막으로 게시글 목록을 가져온 시간을 0으로 초기화
+     * 마지막으로 분석글 목록을 가져온 시간을 0으로 초기화
      */
     private fun clearCache() {
         cachedCommunityPostList = null
-        lastFetchTime = 0
+        cachedAnalysisPostList = null
+        lastFetchTimeCommunity = 0
+        lastFetchTimeAnalysis = 0
     }
 
     class AuthException(message: String) : Exception(message)  // 로그인 관련 예외 클래스

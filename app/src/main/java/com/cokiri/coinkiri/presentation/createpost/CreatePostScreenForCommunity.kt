@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.presentation.createpost.component.WriteContent
+import com.cokiri.coinkiri.util.POST
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -67,7 +68,7 @@ private fun handleContentSubmissionWithoutOptions(
 
                 // 포스트 제출
                 viewModel.submitPostContent()
-                navController.popBackStack()
+                navController.navigate(POST)
             } catch (e: JSONException) {
                 e.printStackTrace()
                 Log.e("handleContentSubmission", "JSON parsing error: ${e.message}")

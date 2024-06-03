@@ -2,6 +2,7 @@ package com.cokiri.coinkiri.data.remote.api
 
 import com.cokiri.coinkiri.data.remote.AuthRequired
 import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
+import com.cokiri.coinkiri.data.remote.model.AnalysisResponse
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.CommentRequest
 import com.cokiri.coinkiri.data.remote.model.CommentResponse
@@ -18,7 +19,9 @@ import retrofit2.http.Path
 
 interface PostApi {
 
-    // 커뮤니티 게시글 작성
+    /**
+     * 커뮤니티 게시글 작성 API
+     */
     @AuthRequired
     @Headers("Content-Type: application/json")
     @POST("/api/v1/post/community/save")
@@ -28,21 +31,30 @@ interface PostApi {
     ): Response<ApiResponse>
 
 
-    // 커뮤니티 게시글 전체조회
+    /**
+     * 커뮤니티 게시글 조회 API
+     */
     @GET("/api/v1/post/community/all")
     suspend fun getAllCommunityPost(): CommunityResponse
 
 
-    // 커뮤니티 게시글 상세조회
+    /**
+     * 커뮤니티 게시글 상세 조회 API
+     */
     @GET("/api/v1/post/community/{postId}")
     suspend fun getCommunityPostDetail(@Path("postId") postId : Long) : CommunityDetailResponse
 
 
-    // 게시글 댓글 조회
+    /**
+     * 댓글 조회 API
+     */
     @GET("/api/v1/comment/{postId}")
     suspend fun getComment(@Path("postId") postId: Long) : CommentResponse
 
-    // 게시글 댓글 작성
+
+    /**
+     * 댓글 작성 API
+     */
     @AuthRequired
     @Headers("Content-Type: application/json")
     @POST("/api/v1/comment/save")
@@ -52,8 +64,9 @@ interface PostApi {
     ): Response<ApiResponse>
 
 
-
-    // 분석글 작성
+    /**
+     * 분석 게시글 작성 API
+     */
     @AuthRequired
     @Headers("Content-Type: application/json")
     @POST("/api/v1/analysis/save")
@@ -61,5 +74,12 @@ interface PostApi {
         @Header("Authorization") accessToken: String,
         @Body analysisPostDataRequest: AnalysisPostDataRequest
     ): Response<ApiResponse>
+
+
+    /**
+     * 분석 전체 게시글 조회 API
+     */
+    @GET("/api/v1/analysis/all")
+    suspend fun getAllAnalysisPost(): AnalysisResponse
 
 }

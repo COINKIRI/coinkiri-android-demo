@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.model.Ticker
+import com.cokiri.coinkiri.domain.usecase.GetAllAnalysisPostsUseCase
 import com.cokiri.coinkiri.domain.usecase.GetCoinsUseCase
 import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
 import com.cokiri.coinkiri.extensions.executeWithLoading
@@ -20,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AnalysisViewModel @Inject constructor(
     private val getCoinsUseCase: GetCoinsUseCase,
-    private val webSocketUseCase: WebSocketUseCase
+    private val webSocketUseCase: WebSocketUseCase,
+    private val getAllAnalysisPostsUseCase: GetAllAnalysisPostsUseCase
 ) : ViewModel() {
 
     // 코인 목록
@@ -71,12 +74,35 @@ class AnalysisViewModel @Inject constructor(
     private val _selectedTargetPriceChangeRate = MutableStateFlow("")
     val selectedTargetPriceChangeRate: StateFlow<String> = _selectedTargetPriceChangeRate.asStateFlow()
 
+    // 분석글 목록을 관리하는 MutableStateFlow
+    private val _analysisPostList = MutableStateFlow<List<AnalysisResponseDto>>(emptyList())
+    val analysisPostList: StateFlow<List<AnalysisResponseDto>> = _analysisPostList.asStateFlow()
+
+
     // 로딩 상태와 에러 메시지 관리용 MutableStateFlow
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+
+
+
+    /**
+     * 분석글 목록을 가져오는 함수
+     */
+    fun fetchAllAnalysisPostList() {
+        viewModelScope.launch {
+            executeWithLoading(_isLoading, _errorMessage) {
+                val result = getAllAnalysisPostsUseCase()
+                if (result.isSuccess) {
+                    _analysisPostList.value = result.getOrDefault(emptyList())
+                }
+                result
+            }
+        }
+    }
+
 
 
     /**
@@ -96,7 +122,7 @@ class AnalysisViewModel @Inject constructor(
     }
 
     /**
-     * 코인 마켓명으로 웹소켓을 통해 해당 코인의 티커를 가져옴
+     * 코인 마켓명으로 웹소켓을 통해 해당 코인의 티커를 가져옴(한번만 받음)
      */
     fun observeCoinTicker(coinMarketId: String) {
         viewModelScope.launch {
@@ -105,6 +131,19 @@ class AnalysisViewModel @Inject constructor(
             }, receiveOnce = true)
         }
     }
+
+
+    /**
+     * 코인 마켓명으로 웹소켓을 통해 해당 코인의 티커를 가져옴(계속 받음)
+     */
+    fun observeCoinTickerContinuously(coinMarketId: String) {
+        viewModelScope.launch {
+            webSocketUseCase.startConnection(listOf(coinMarketId), { ticker ->
+                _singleCoinTicker.value = ticker
+            }, receiveOnce = false)
+        }
+    }
+
 
     /**
      * 선택된 코인의 정보(아이디, 마켓아이디, 이름, 심볼이미지)를 저장
@@ -116,6 +155,7 @@ class AnalysisViewModel @Inject constructor(
         _selectedCoinImagePainter.value = coinSymbolImage
         Log.d("AnalysisViewModel", "coinId: $coinId, coinMarketId: $coinMarketId, coinName: $coinName")
     }
+
 
     /**
      * 선택된 투자의견을 저장
@@ -135,6 +175,7 @@ class AnalysisViewModel @Inject constructor(
         Log.d("AnalysisViewModel", "전일종가: $price")
     }
 
+
     /**
      * 선택한 목표기간을 저장
      */
@@ -142,6 +183,7 @@ class AnalysisViewModel @Inject constructor(
         _selectedTargetPeriod.value = targetPeriod
         Log.d("AnalysisViewModel", "목표기간: $targetPeriod")
     }
+
 
     /**
      * 선택한 날짜를 저장
@@ -151,6 +193,7 @@ class AnalysisViewModel @Inject constructor(
         Log.d("AnalysisViewModel", "달력 선택기간: $date")
     }
 
+
     /**
      * 선택한 목표가격을 저장
      */
@@ -158,6 +201,7 @@ class AnalysisViewModel @Inject constructor(
         _selectedTargetPrice.value = targetPrice
         Log.d("AnalysisViewModel", "목표가격: $targetPrice")
     }
+
 
     /**
      * 목표가격의 변동률을 저장
@@ -181,4 +225,7 @@ class AnalysisViewModel @Inject constructor(
         _selectedTargetPeriod.value = ""
         _selectedDate.value = null
     }
+
+
+
 }

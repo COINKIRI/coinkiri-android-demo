@@ -34,6 +34,10 @@ data class PostResponseDto(
             val dateTime = LocalDateTime.parse(createdAt, DateTimeFormatter.ISO_DATE_TIME)
             return dateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
         }
+
+    val formattedDate: String
+        get() {
+            val dateTime = LocalDateTime.parse(createdAt, DateTimeFormatter.ISO_DATE_TIME)
+            return dateTime.format(DateTimeFormatter.ofPattern("yyyy.MM.dd.HH:mm"))
+        }
 }
-
-

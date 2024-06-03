@@ -1,5 +1,7 @@
 package com.cokiri.coinkiri.presentation.analysis.component
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,12 +17,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,17 +33,43 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cokiri.coinkiri.R
+import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
+import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.PretendardFont
+import com.cokiri.coinkiri.util.byteArrayToPainter
 
 /**
  * 분석글 목록에서 사용되는 분석글 카드
  */
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun AnalysisListItemCard() {
+fun AnalysisListItemCard(
+    analysisPost: AnalysisResponseDto,
+    analysisViewModel: AnalysisViewModel
+) {
+
+    val coinMarket = analysisPost.coin.krwMarket
+    val coinName = analysisPost.coin.koreanName
+    val byteCoinSymbolImage = analysisPost.coin.symbolImage
+    val coinSymbolImage = byteArrayToPainter(byteCoinSymbolImage)
+
+
+    val coinPrevClosingPrice = analysisPost.coinPrevClosingPrice
+    val investmentOption = analysisPost.investmentOption
+    val targetPrice = analysisPost.targetPrice
+    val targetPeriod = analysisPost.targetPeriod
+
+    val memberPicByteArray = analysisPost.memberPic
+    val memberPic = byteArrayToPainter(memberPicByteArray)
+    val memberName = analysisPost.postResponseDto.memberNickname
+    val formattedDate = analysisPost.postResponseDto.formattedDate
+
+
+
     Card(
         onClick = { /*TODO*/ },
         colors =  CardDefaults.cardColors(CoinkiriBackground),
@@ -54,11 +85,11 @@ fun AnalysisListItemCard() {
         ) {
 
             Row(
-                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 20.dp)
                     .padding(horizontal = 20.dp),
+                verticalAlignment = Alignment.Top,
             ) {
                 Card(
                     shape = CircleShape,
@@ -66,7 +97,7 @@ fun AnalysisListItemCard() {
                     elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.ic_launcher_foreground),
+                        painter = coinSymbolImage,
                         contentDescription = "",
                         modifier = Modifier
                             .size(50.dp)
@@ -80,8 +111,14 @@ fun AnalysisListItemCard() {
                 Column(
                     horizontalAlignment = Alignment.Start,
                 ) {
-                    Text(text = "코인종목명")
-                    Text(text = "코인가격")
+                    Text(
+                        text = coinName,
+                        fontSize = 20.sp,
+                    )
+                    Text(
+                        text = "코인가격",
+                        fontSize = 12.sp,
+                    )
                 }
             }
 
@@ -89,44 +126,73 @@ fun AnalysisListItemCard() {
             Row(
                 modifier = Modifier
                     .padding(horizontal = 10.dp, vertical = 5.dp)
-                    .height(120.dp)
+                    .height(85.dp)
                     .fillMaxWidth(1f)
 
             ) {
+                when (investmentOption) {
+                    "강력매수" -> InvestmentOptionCard(investmentOption = investmentOption, colors = Color.Red)
+                    "매수" -> InvestmentOptionCard(investmentOption = investmentOption, colors = Color.Red)
+                    "중립" -> InvestmentOptionCard(investmentOption = investmentOption, colors = Color.Black)
+                    "매도" -> InvestmentOptionCard(investmentOption = investmentOption, colors = Color.Blue)
+                    "강력매도" -> InvestmentOptionCard(investmentOption = investmentOption, colors = Color.Blue)
+                }
 
-                SellCard()
-
-                Column(
+                Row(
                     modifier = Modifier
-                        .padding(vertical = 10.dp, horizontal = 5.dp)
+                        .padding(vertical = 10.dp, horizontal = 5.dp),
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
                     Card(
                         modifier = Modifier
                             .fillMaxHeight()
                             .weight(1f),
-                        colors = CardDefaults.cardColors(Color.LightGray)
+                        colors = CardDefaults.cardColors(Color.LightGray),
+                        shape = RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp)
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = "목표가격 100,000,000")
+                            Text(
+                                text = targetPrice,
+                                fontSize = 18.sp,
+                                fontFamily = PretendardFont,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Text(
+                                text = "목표가",
+                                fontSize = 12.sp,
+                                fontFamily = PretendardFont,
+                                fontWeight = FontWeight.Normal
+                            )
                         }
                     }
-                    Spacer(modifier = Modifier.padding(vertical = 5.dp))
                     Card(
                         modifier = Modifier
                             .fillMaxHeight()
                             .weight(1f),
-                        colors = CardDefaults.cardColors(Color.LightGray)
+                        colors = CardDefaults.cardColors(Color.LightGray),
+                        shape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp)
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = "현재 기대 수익률 +16%")
+                            Text(
+                                text = "+200.00%",
+                                fontSize = 18.sp,
+                                fontFamily = PretendardFont,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Text(
+                                text = "현재 기대 수익률",
+                                fontSize = 12.sp,
+                                fontFamily = PretendardFont,
+                                fontWeight = FontWeight.Normal
+                            )
                         }
                     }
                 }
@@ -148,7 +214,7 @@ fun AnalysisListItemCard() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(
@@ -161,7 +227,7 @@ fun AnalysisListItemCard() {
                         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
                     ) {
                         Image(
-                            painter = painterResource(R.drawable.ic_launcher_foreground),
+                            painter = memberPic,
                             contentDescription = "",
                             modifier = Modifier
                                 .size(35.dp)
@@ -170,10 +236,20 @@ fun AnalysisListItemCard() {
                         )
                     }
                     Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                    Text(text = "작성자 닉네임")
+                    Text(
+                        text = memberName,
+                        fontSize = 15.sp,
+                        fontFamily = PretendardFont,
+                        fontWeight = FontWeight.Medium
+                    )
                 }
 
-                Text(text = "2024.04.04 10:00")
+                Text(
+                    text = formattedDate,
+                    fontSize = 13.sp,
+                    fontFamily = PretendardFont,
+                    fontWeight = FontWeight.Normal
+                )
             }
 
             HorizontalDivider()
@@ -211,24 +287,36 @@ fun AnalysisListItemCard() {
                 Column(
                     horizontalAlignment = Alignment.End
                 ) {
-                    Text(text = "목표기간")
-                    Text(text = "2024.10.10 까지")
+                    Text(
+                        text = "목표기간",
+                        fontSize = 13.sp,
+                        fontFamily = PretendardFont,
+                        fontWeight = FontWeight.Normal
+                    )
+                    Text(
+                        text = "$targetPeriod 까지",
+                        fontSize = 14.sp,
+                        fontFamily = PretendardFont,
+                        fontWeight = FontWeight.Medium
+                    )
                 }
             }
         }
     }
 }
 
-// 매도 카드
-@Preview
 @Composable
-fun SellCard() {
+fun InvestmentOptionCard(
+    investmentOption: String,
+    colors: Color
+) {
     Card(
         modifier = Modifier
             .padding(10.dp)
             .fillMaxHeight()
             .width(90.dp),
-        colors = CardDefaults.cardColors(Color.Blue)
+        colors = CardDefaults.cardColors(colors),
+        shape = RoundedCornerShape(20.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -236,74 +324,18 @@ fun SellCard() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "매도",
-                fontSize = 20.sp,
+                text = investmentOption,
+                fontSize = 17.sp,
+                fontFamily = PretendardFont,
                 color = Color.White,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = "투자의견",
-                color = Color.White
-            )
-        }
-    }
-}
-
-// 중립 카드
-@Preview
-@Composable
-fun NeutralCard() {
-    Card(
-        modifier = Modifier
-            .padding(10.dp)
-            .fillMaxHeight()
-            .width(90.dp),
-        colors = CardDefaults.cardColors(Color.DarkGray)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "중립",
-                fontSize = 20.sp,
+                fontFamily = PretendardFont,
                 color = Color.White,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "투자의견",
-                color = Color.White
-            )
-        }
-    }
-}
-
-// 매수 카드
-@Preview
-@Composable
-fun BuyCard() {
-    Card(
-        modifier = Modifier
-            .padding(10.dp)
-            .fillMaxHeight()
-            .width(90.dp),
-        colors = CardDefaults.cardColors(Color.Red)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "매수",
-                fontSize = 20.sp,
-                color = Color.White,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "투자의견",
-                color = Color.White
+                fontWeight = FontWeight.Normal,
+                fontSize = 13.sp
             )
         }
     }
