@@ -2,7 +2,7 @@ package com.cokiri.coinkiri.data.repository
 
 import android.util.Log
 import com.cokiri.coinkiri.data.remote.PreferencesManager
-import com.cokiri.coinkiri.data.remote.api.PostApi
+import com.cokiri.coinkiri.data.remote.api.CommentApi
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.CommentList
 import com.cokiri.coinkiri.data.remote.model.CommentRequest
@@ -10,7 +10,7 @@ import com.cokiri.coinkiri.domain.repository.CommentRepository
 import javax.inject.Inject
 
 class CommentRepositoryImpl @Inject constructor(
-    private val postApi: PostApi,
+    private val commentApi: CommentApi,
     private val preferencesManager: PreferencesManager
 ) : CommentRepository {
 
@@ -21,7 +21,7 @@ class CommentRepositoryImpl @Inject constructor(
     // 댓글 목록 요청(GET)
     override suspend fun getCommentList(postId: Long): List<CommentList> {
         return try {
-            val response = postApi.getComment(postId)
+            val response = commentApi.getComment(postId)
             Log.d(TAG, "getCommentList: $response")
             response.result
 
@@ -39,7 +39,7 @@ class CommentRepositoryImpl @Inject constructor(
             throw Exception("로그인이 필요합니다.")
         }
 
-        val response = postApi.submitComment("Bearer $accessToken", commentRequest)
+        val response = commentApi.submitComment("Bearer $accessToken", commentRequest)
         Log.d(TAG, "submitComment: $response")
 
         if (response.isSuccessful) {

@@ -8,6 +8,7 @@ import com.cokiri.coinkiri.util.JsonParser
 import com.cokiri.coinkiri.data.remote.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
 import com.cokiri.coinkiri.data.remote.api.CoinApi
+import com.cokiri.coinkiri.data.remote.api.CommentApi
 import com.cokiri.coinkiri.data.remote.api.PostApi
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -150,9 +151,22 @@ object NetworkModule {
         return retrofit.create(CoinApi::class.java)
     }
 
+    /**
+     * PostApi를 제공하는 함수
+     */
     @Provides
     @Singleton
     fun providePostApi(retrofit: Retrofit): PostApi {
         return retrofit.create(PostApi::class.java)
+    }
+
+
+    /**
+     * CommentApi를 제공하는 함수
+     */
+    @Provides
+    @Singleton
+    fun provideCommentApi(retrofit: Retrofit): CommentApi {
+        return retrofit.create(CommentApi::class.java)
     }
 }

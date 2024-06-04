@@ -46,25 +46,6 @@ interface PostApi {
 
 
     /**
-     * 댓글 조회 API
-     */
-    @GET("/api/v1/comment/{postId}")
-    suspend fun getComment(@Path("postId") postId: Long) : CommentResponse
-
-
-    /**
-     * 댓글 작성 API
-     */
-    @AuthRequired
-    @Headers("Content-Type: application/json")
-    @POST("/api/v1/comment/save")
-    suspend fun submitComment(
-        @Header("Authorization") accessToken: String,
-        @Body commentRequest: CommentRequest
-    ): Response<ApiResponse>
-
-
-    /**
      * 분석 게시글 작성 API
      */
     @AuthRequired

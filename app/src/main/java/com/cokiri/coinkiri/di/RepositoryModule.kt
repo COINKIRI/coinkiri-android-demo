@@ -4,19 +4,18 @@ import com.cokiri.coinkiri.data.local.database.AppDatabase
 import com.cokiri.coinkiri.data.remote.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
 import com.cokiri.coinkiri.data.remote.api.CoinApi
+import com.cokiri.coinkiri.data.remote.api.CommentApi
 import com.cokiri.coinkiri.data.remote.api.PostApi
 import com.cokiri.coinkiri.data.repository.CoinRepositoryImpl
 import com.cokiri.coinkiri.data.repository.CommentRepositoryImpl
 import com.cokiri.coinkiri.data.repository.KakaoLoginRepositoryImpl
 import com.cokiri.coinkiri.data.repository.PostRepositoryImpl
 import com.cokiri.coinkiri.data.repository.UserRepositoryImpl
-import com.cokiri.coinkiri.data.remote.service.WebSocketServiceImpl
 import com.cokiri.coinkiri.domain.repository.CoinRepository
 import com.cokiri.coinkiri.domain.repository.CommentRepository
 import com.cokiri.coinkiri.domain.repository.KakaoLoginRepository
 import com.cokiri.coinkiri.domain.repository.PostRepository
 import com.cokiri.coinkiri.domain.repository.UserRepository
-import com.cokiri.coinkiri.domain.service.WebSocketService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -67,13 +66,18 @@ object RepositoryModule {
         return UserRepositoryImpl(authApi, preferencesManager, appDatabase)
     }
 
+
+    /**
+     * CommentRepository를 제공하는 Provider 메소드
+     * CommentRepositoryImpl 클래스가 CommentRepository 인터페이스에 주입되어 반환된다.
+     */
     @Provides
     @Singleton
     fun provideCommentRepository(
-        postApi: PostApi,
+        commentApi: CommentApi,
         preferencesManager: PreferencesManager,
         ): CommentRepository {
-        return CommentRepositoryImpl(postApi, preferencesManager)
+        return CommentRepositoryImpl(commentApi, preferencesManager)
     }
 
 
