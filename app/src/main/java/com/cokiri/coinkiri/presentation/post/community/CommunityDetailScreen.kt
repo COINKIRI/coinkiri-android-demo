@@ -2,7 +2,6 @@ package com.cokiri.coinkiri.presentation.post.community
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -29,7 +28,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -39,8 +37,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -54,7 +50,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -68,6 +63,7 @@ import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.data.remote.model.CommentList
 import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
+import com.cokiri.coinkiri.presentation.comment.CommentScreen
 import com.cokiri.coinkiri.presentation.post.PostViewModel
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
@@ -91,7 +87,7 @@ fun CommunityDetailScreen(
 
     LaunchedEffect(postId) {
         postViewModel.fetchCommunityPostDetails(postId)
-        postViewModel.fetchCommentList(postId)
+        //postViewModel.fetchCommentList(postId)
     }
 
     DisposableEffect(Unit) {
@@ -106,8 +102,6 @@ fun CommunityDetailScreen(
     }
 
     val communityDetail by postViewModel.communityDetail.collectAsStateWithLifecycle()
-    val commentList by postViewModel.commentList.collectAsStateWithLifecycle()
-    val commentContent by postViewModel.commentContent.collectAsStateWithLifecycle()
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutineScope = rememberCoroutineScope()
@@ -121,79 +115,27 @@ fun CommunityDetailScreen(
 
     Scaffold(
         topBar = {
-            Surface(
-                color = CoinkiriBackground,
-                shadowElevation = 5.dp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-            ) {
-                TopAppBar(
-                    title = { },
-                    colors = TopAppBarDefaults.topAppBarColors(CoinkiriBackground),
-                    navigationIcon = {
-                        IconButton(
-                            onClick = {
-                                webViewInstance?.let { webView ->
-                                    (webView.parent as? ViewGroup)?.removeView(webView)
-                                    webView.clearCache(true)
-                                    webView.destroy()
-                                    webViewInstance = null
-                                }
-                                navController.popBackStack()
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "뒤로가기"
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_post_baseline_visibility),
-                                contentDescription = "더보기"
-                            )
-                        }
+            CommunityTopBar(
+                backClick = {
+                    webViewInstance?.let { webView ->
+                        (webView.parent as? ViewGroup)?.removeView(webView)
+                        webView.clearCache(true)
+                        webView.destroy()
+                        webViewInstance = null
                     }
-                )
-            }
+                    navController.popBackStack()
+                }
+            )
         },
-        content = { padding ->
-            when {
-                communityDetail != null -> {
-                    val detail = communityDetail
-
-                    LazyColumn(
-                        modifier = Modifier
-                            .padding(padding)
-                            .padding(vertical = 10.dp)
-                            .fillMaxSize()
-                            .background(CoinkiriBackground)
-                    ) {
-                        item {
-                            if (detail != null) {
-                                TitleSection(detail = detail)
-                                ContentSection(detail, context) { webView ->
-                                    webViewInstance = webView
-                                }
-                            }
-                        }
-                    }
+        content = { paddingValues ->
+            CommunityContent(
+                paddingValues = paddingValues,
+                communityDetail = communityDetail,
+                context = context,
+                webView = { webView ->
+                    webViewInstance = webView
                 }
-
-                else -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(CoinkiriBackground),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-            }
+            )
 
             if (showBottomSheet) {
                 ModalBottomSheet(
@@ -202,135 +144,21 @@ fun CommunityDetailScreen(
                     containerColor = CoinkiriBackground,
                 ) {
 
-                    Scaffold(
-                        topBar = {
-                            Surface(
-                                color = CoinkiriBackground,
-                                shadowElevation = 5.dp,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-
-                            ) {
-                                CenterAlignedTopAppBar(
-                                    title = {
-                                        Text(
-                                            text = "댓글",
-                                            fontSize = 18.sp,
-                                        )
-                                    },
-                                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                                        CoinkiriBackground
-                                    ),
-                                    navigationIcon = {
-                                        IconButton(
-                                            onClick = {
-                                                coroutineScope.launch {
-                                                    showBottomSheet = false
-                                                }
-                                            }
-                                        ) {
-                                            Icon(
-                                                painter = painterResource(id = R.drawable.ic_navi_home),
-                                                contentDescription = "닫기"
-                                            )
-                                        }
-                                    },
-                                )
-                            }
-                        },
-                        content = { paddingValues ->
-                            LazyColumn(modifier = Modifier.padding(paddingValues)) {
-                                items(commentList.size) { index ->
-                                    val comment = commentList[index]
-                                    CommentCard(comment)
-                                }
-                            }
-                        },
-                        bottomBar = {
-                            BottomAppBar(
-                                containerColor = CoinkiriBackground,
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(10.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    TextField(
-                                        shape = RoundedCornerShape(30.dp),
-                                        value = commentContent,
-                                        onValueChange = { newCommentContent ->
-                                            postViewModel.onCommentContentChange(
-                                                newCommentContent
-                                            )
-                                        },
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .padding(end = 8.dp),
-                                        colors = TextFieldDefaults.colors(
-                                            focusedContainerColor = Color.LightGray,
-                                            focusedIndicatorColor = Color.Transparent,
-                                            unfocusedContainerColor = Color.LightGray,
-                                            unfocusedIndicatorColor = Color.Transparent,
-                                        ),
-                                        placeholder = {
-                                            Text(
-                                                text = "댓글을 입력하세요.",
-                                                fontSize = 12.sp,
-                                            )
-                                        },
-
-                                        )
-                                    IconButton(
-                                        onClick = {
-                                            postViewModel.submitComment(postId)
-                                            Log.d("CommunityDetailScreen", "postId: $postId")
-                                            Log.d(
-                                                "CommunityDetailScreen",
-                                                "commentContent: $commentContent"
-                                            )
-                                            postViewModel.onCommentContentChange("")
-                                        }
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.ic_navi_home),
-                                            contentDescription = "전송"
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                    /**
+                     * 댓글 작성화면
+                     */
+                    CommentScreen(
+                        closeClick = { coroutineScope.launch { showBottomSheet = false } },
+                        postId = postId
                     )
+
                 }
             }
         },
         bottomBar = {
-            BottomAppBar(
-                modifier = Modifier
-                    .height(50.dp)
-                    .fillMaxWidth(),
-                containerColor = CoinkiriBackground,
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_post_baseline_thumb_up),
-                            contentDescription = "좋아요"
-                        )
-                    }
-                    IconButton(
-                        onClick = { coroutineScope.launch { showBottomSheet = true } },
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_post_baseline_visibility),
-                            contentDescription = "댓글"
-                        )
-                    }
-                }
-            }
+            CommunityBottomBar(
+                clickComment = { coroutineScope.launch { showBottomSheet = true } }
+            )
         }
     )
 }
@@ -452,7 +280,9 @@ fun ContentSection(
 }
 
 @Composable
-fun CommentCard(comment: CommentList) {
+fun CommentCard(
+    comment: CommentList
+) {
 
     val level = comment.member.level
     val name = comment.member.nickname
@@ -504,3 +334,120 @@ fun CommentCard(comment: CommentList) {
         HorizontalDivider()
     }
 }
+
+
+/**
+ * 커뮤니티 작성글 화면의 TopBar
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CommunityTopBar(
+    backClick: () -> Unit
+) {
+    Surface(
+        color = CoinkiriBackground,
+        shadowElevation = 5.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+    ) {
+        TopAppBar(
+            title = { },
+            colors = TopAppBarDefaults.topAppBarColors(CoinkiriBackground),
+            navigationIcon = {
+                IconButton(onClick = backClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "뒤로가기"
+                    )
+                }
+            },
+            actions = {
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_post_baseline_visibility),
+                        contentDescription = "더보기"
+                    )
+                }
+            }
+        )
+    }
+}
+
+
+/**
+ * 커뮤니티 작성글 화면의 content
+ */
+@Composable
+fun CommunityContent(
+    paddingValues: PaddingValues,
+    communityDetail: CommunityDetailResponseDto?,
+    context: Context,
+    webView: (WebView) -> Unit
+
+){
+    when {
+        communityDetail != null -> {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .padding(vertical = 10.dp)
+                    .fillMaxSize()
+                    .background(CoinkiriBackground)
+            ) {
+                item {
+                    TitleSection(detail = communityDetail)
+                    ContentSection(communityDetail, context) {
+                        webView(it)
+                    }
+                }
+            }
+        }
+
+        else -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(CoinkiriBackground),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+    }
+}
+
+/**
+ * 커뮤니티 작성글 화면의 BottomBar
+ */
+@Composable
+fun CommunityBottomBar(
+    clickComment: () -> Unit
+) {
+    BottomAppBar(
+        modifier = Modifier
+            .height(50.dp)
+            .fillMaxWidth(),
+        containerColor = CoinkiriBackground,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_post_baseline_thumb_up),
+                    contentDescription = "좋아요"
+                )
+            }
+            IconButton(onClick = clickComment) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_post_baseline_visibility),
+                    contentDescription = "댓글"
+                )
+            }
+        }
+    }
+}
+
+
