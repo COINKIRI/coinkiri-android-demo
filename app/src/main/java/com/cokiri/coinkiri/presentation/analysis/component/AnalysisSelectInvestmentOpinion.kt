@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
 import com.cokiri.coinkiri.ui.component.OpinionCard
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.util.calculateTargetPriceOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -131,12 +131,12 @@ fun TargetPriceBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        containerColor = CoinkiriBackground,
+        containerColor = CoinkiriWhite,
     ) {
         CenterAlignedTopAppBar(
             title = { Text(text = "목표가격설정", fontSize = 18.sp) },
             modifier = Modifier.height(50.dp),
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(CoinkiriBackground),
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(CoinkiriWhite),
             navigationIcon = {
                 IconButton(onClick = { coroutineScope.launch { onDismissRequest() } }) {
                     Icon(
@@ -148,7 +148,7 @@ fun TargetPriceBottomSheet(
         )
         LazyColumn(
             modifier = Modifier
-                .background(CoinkiriBackground)
+                .background(CoinkiriWhite)
                 .padding(5.dp)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -161,7 +161,7 @@ fun TargetPriceBottomSheet(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Card(
-                        colors = CardDefaults.cardColors(CoinkiriBackground),
+                        colors = CardDefaults.cardColors(CoinkiriWhite),
                         elevation = CardDefaults.cardElevation(3.dp),
                         shape = RoundedCornerShape(10.dp),
                         onClick = {
@@ -203,7 +203,7 @@ fun OpinionSelectionCard(
     shape: Shape = RoundedCornerShape(10.dp)
 ) {
     Card(
-        colors = CardDefaults.cardColors(CoinkiriBackground),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
         elevation = CardDefaults.cardElevation(3.dp),
         shape = shape,
         modifier = Modifier.padding(10.dp)
@@ -285,7 +285,7 @@ fun TargetPriceCard(
     val currentPrice by rememberUpdatedState(newValue = selectedCoinPrevClosingPrice)
 
     Card(
-        colors = CardDefaults.cardColors(CoinkiriBackground),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
         elevation = CardDefaults.cardElevation(3.dp),
         shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp),
         modifier = Modifier.padding(horizontal = 10.dp)

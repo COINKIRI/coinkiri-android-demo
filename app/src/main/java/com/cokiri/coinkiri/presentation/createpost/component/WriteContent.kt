@@ -13,7 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.cokiri.coinkiri.presentation.createpost.CreatePostViewModel
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 
 /**
  * 글 작성 화면의 내용을 보여주는 컴포넌트입니다.
@@ -28,7 +28,7 @@ fun WriteContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(CoinkiriBackground)
+            .background(CoinkiriWhite)
     ) {
         TextField(
             value = title,
@@ -36,8 +36,8 @@ fun WriteContent(
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("제목을 입력해주세요.") },
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = CoinkiriBackground,
-                unfocusedContainerColor = CoinkiriBackground,
+                focusedContainerColor = CoinkiriWhite,
+                unfocusedContainerColor = CoinkiriWhite,
             )
         )
         WebViewComponent(communityWriteViewModel, webView)

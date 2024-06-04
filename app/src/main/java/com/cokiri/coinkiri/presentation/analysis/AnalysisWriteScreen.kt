@@ -39,7 +39,7 @@ import com.cokiri.coinkiri.presentation.analysis.component.SelectCoinItemContent
 import com.cokiri.coinkiri.presentation.analysis.component.SelectInvestmentOpinion
 import com.cokiri.coinkiri.presentation.analysis.component.TargetPeriodContent
 import com.cokiri.coinkiri.ui.component.CustomSnackbarHost
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.util.CREATE_POST_SCREEN_FOR_ANALYSIS
 import kotlinx.coroutines.launch
@@ -139,7 +139,7 @@ fun AnalysisWriteTopBar(
                 Text(text = "취소")
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(CoinkiriBackground)
+        colors = TopAppBarDefaults.topAppBarColors(CoinkiriWhite)
     )
 }
 
@@ -161,7 +161,7 @@ fun AnalysisWriteContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(CoinkiriBackground)
+            .background(CoinkiriWhite)
             .padding(paddingValues)
     ) {
 
@@ -179,6 +179,10 @@ fun AnalysisWriteContent(
                 onShowSnackbar("종목을 먼저 선택하세요.")
             }
         }
+
+        // 해당 분석에 대한 요약 정보 입력 필드
+
+
 
         // 목표 기간 선택(1개월, 3개월, 6개월, 1년, 직접입력)
         TargetPeriodContent(
@@ -206,7 +210,7 @@ fun AnalysisWriteBottomBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
-            .background(CoinkiriBackground)
+            .background(CoinkiriWhite)
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),

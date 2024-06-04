@@ -14,7 +14,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,9 +27,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.data.local.entity.MemberInfoEntity
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.util.FOLLOW
-import com.cokiri.coinkiri.util.byteArrayToPainter
 
 @Composable
 fun MemberInfoCard(
@@ -44,7 +42,7 @@ fun MemberInfoCard(
         modifier = Modifier
             .fillMaxWidth(1f)
             .padding(10.dp),
-        colors = CardDefaults.cardColors(CoinkiriBackground),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
         shape = CardDefaults.shape,
         elevation = CardDefaults.cardElevation(5.dp)
     ) {

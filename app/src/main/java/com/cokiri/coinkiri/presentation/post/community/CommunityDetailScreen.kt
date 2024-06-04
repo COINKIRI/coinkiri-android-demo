@@ -30,7 +30,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
@@ -61,11 +60,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.R
-import com.cokiri.coinkiri.data.remote.model.CommentList
 import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
 import com.cokiri.coinkiri.presentation.comment.CommentScreen
 import com.cokiri.coinkiri.presentation.post.PostViewModel
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.util.buildHtmlContent
 import com.cokiri.coinkiri.util.byteArrayToPainter
@@ -140,7 +138,7 @@ fun CommunityDetailScreen(
                 ModalBottomSheet(
                     onDismissRequest = { coroutineScope.launch { showBottomSheet = false } },
                     sheetState = sheetState,
-                    containerColor = CoinkiriBackground,
+                    containerColor = CoinkiriWhite,
                 ) {
 
                     /**
@@ -178,13 +176,13 @@ fun TitleSection(
     Column(
         modifier = Modifier
             .padding(10.dp)
-            .background(CoinkiriBackground)
+            .background(CoinkiriWhite)
             .fillMaxWidth()
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(CoinkiriBackground)
+                .background(CoinkiriWhite)
         ) {
             Text(
                 text = title,
@@ -196,7 +194,7 @@ fun TitleSection(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(CoinkiriBackground)
+                .background(CoinkiriWhite)
                 .padding(5.dp),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -289,7 +287,7 @@ fun CommunityTopBar(
     backClick: () -> Unit
 ) {
     Surface(
-        color = CoinkiriBackground,
+        color = CoinkiriWhite,
         shadowElevation = 5.dp,
         modifier = Modifier
             .fillMaxWidth()
@@ -297,7 +295,7 @@ fun CommunityTopBar(
     ) {
         TopAppBar(
             title = { },
-            colors = TopAppBarDefaults.topAppBarColors(CoinkiriBackground),
+            colors = TopAppBarDefaults.topAppBarColors(CoinkiriWhite),
             navigationIcon = {
                 IconButton(onClick = backClick) {
                     Icon(
@@ -337,7 +335,7 @@ fun CommunityContent(
                     .padding(paddingValues)
                     .padding(vertical = 10.dp)
                     .fillMaxSize()
-                    .background(CoinkiriBackground)
+                    .background(CoinkiriWhite)
             ) {
                 item {
                     TitleSection(detail = communityDetail)
@@ -352,7 +350,7 @@ fun CommunityContent(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(CoinkiriBackground),
+                    .background(CoinkiriWhite),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
@@ -372,7 +370,7 @@ fun CommunityBottomBar(
         modifier = Modifier
             .height(50.dp)
             .fillMaxWidth(),
-        containerColor = CoinkiriBackground,
+        containerColor = CoinkiriWhite,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

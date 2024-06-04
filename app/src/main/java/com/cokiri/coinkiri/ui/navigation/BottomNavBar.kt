@@ -5,19 +5,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
-import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 
 @Composable
 fun BottomNavBar(
@@ -28,7 +25,7 @@ fun BottomNavBar(
     val currentRoute = navBackStackEntry.value?.destination?.route
 
     BottomNavigation(
-        backgroundColor = CoinkiriBackground
+        backgroundColor = CoinkiriWhite
     ) {
 
         tabs.forEach { tab ->

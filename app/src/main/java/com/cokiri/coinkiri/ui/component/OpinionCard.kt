@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 
 /**
@@ -30,7 +30,7 @@ fun OpinionCard(
 ) {
     Card(
         onClick = onClick,
-        colors = CardDefaults.cardColors(CoinkiriBackground),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
         border = BorderStroke(
             when {
                 isSelected -> 2.dp

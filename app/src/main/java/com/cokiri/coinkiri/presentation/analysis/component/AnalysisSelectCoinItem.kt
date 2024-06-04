@@ -13,11 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -53,10 +51,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.PretendardFont
 import com.cokiri.coinkiri.util.byteArrayToPainter
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
@@ -135,12 +132,12 @@ fun CoinSelectionBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onClose,
         sheetState = coinSheetState,
-        containerColor = CoinkiriBackground,
+        containerColor = CoinkiriWhite,
     ) {
         CenterAlignedTopAppBar(
             title = { Text(text = "코인선택", fontSize = 18.sp) },
             modifier = Modifier.height(50.dp),
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(CoinkiriBackground),
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(CoinkiriWhite),
             navigationIcon = {
                 IconButton(onClick = onClose) {
                     Icon(painter = painterResource(id = R.drawable.ic_close), contentDescription = "닫기")
@@ -149,7 +146,7 @@ fun CoinSelectionBottomSheet(
         )
         LazyColumn(
             modifier = Modifier
-                .background(CoinkiriBackground)
+                .background(CoinkiriWhite)
                 .fillMaxSize(),
         ) {
             items(coinList.size) { index ->
@@ -179,21 +176,21 @@ fun SelectCoinCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RectangleShape,
-        colors = CardDefaults.cardColors(CoinkiriBackground),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
         onClick = { onClick(coinId, coinMarket, coinName, coinSymbolImage) }
     ) {
         Column {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(CoinkiriBackground)
+                    .background(CoinkiriWhite)
                     .padding(horizontal = 5.dp)
                     .padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Card(
                     shape = CircleShape,
-                    colors = CardDefaults.cardColors(CoinkiriBackground),
+                    colors = CardDefaults.cardColors(CoinkiriWhite),
                     border = BorderStroke(1.dp, Color.LightGray),
                     elevation = CardDefaults.cardElevation(5.dp),
                 ) {
@@ -246,7 +243,7 @@ fun SelectionPromptCard(
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(3.dp),
-        colors = CardDefaults.cardColors(CoinkiriBackground)
+        colors = CardDefaults.cardColors(CoinkiriWhite)
     ) {
         Row(
             modifier = Modifier
@@ -299,7 +296,7 @@ fun SelectionHeader(
             .clickable(onClick = onClick),
         shape = shape,
         elevation = CardDefaults.cardElevation(3.dp),
-        colors = CardDefaults.cardColors(CoinkiriBackground)
+        colors = CardDefaults.cardColors(CoinkiriWhite)
     ) {
         Row(
             modifier = Modifier
@@ -329,7 +326,7 @@ fun SelectionDetails(
             .fillMaxWidth(),
         shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp),
         elevation = CardDefaults.cardElevation(3.dp),
-        colors = CardDefaults.cardColors(CoinkiriBackground)
+        colors = CardDefaults.cardColors(CoinkiriWhite)
     ) {
         Row(
             modifier = Modifier
@@ -341,7 +338,7 @@ fun SelectionDetails(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Card(
                     shape = CircleShape,
-                    colors = CardDefaults.cardColors(CoinkiriBackground),
+                    colors = CardDefaults.cardColors(CoinkiriWhite),
                     border = BorderStroke(1.dp, Color.LightGray),
                     elevation = CardDefaults.cardElevation(5.dp),
                 ) {

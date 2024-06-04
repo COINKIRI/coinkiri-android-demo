@@ -31,7 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.data.remote.model.CommentList
 import com.cokiri.coinkiri.presentation.comment.component.CommentCard
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 
 @Composable
 fun CommentScreen(
@@ -84,7 +84,7 @@ fun CommentTopBar(
     closeClick: () -> Unit
 ) {
     Surface(
-        color = CoinkiriBackground,
+        color = CoinkiriWhite,
         shadowElevation = 5.dp,
         modifier = Modifier
             .fillMaxWidth()
@@ -97,7 +97,7 @@ fun CommentTopBar(
                     fontSize = 18.sp,
                 )
             },
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(CoinkiriBackground),
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(CoinkiriWhite),
             navigationIcon = {
                 IconButton(
                     onClick = closeClick
@@ -142,7 +142,7 @@ fun CommentBottomBar(
     onSubmitClick : () -> Unit
 ) {
     BottomAppBar(
-        containerColor = CoinkiriBackground,
+        containerColor = CoinkiriWhite,
     ) {
         Row(
             modifier = Modifier

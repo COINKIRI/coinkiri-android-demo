@@ -38,7 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cokiri.coinkiri.data.remote.model.CoinInfoDetail
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.PretendardFont
 import com.cokiri.coinkiri.util.byteArrayToPainter
 import kotlinx.coroutines.delay
@@ -60,7 +60,7 @@ fun CoinCard(
             .padding(horizontal = 3.dp, vertical = 2.dp)
             .height(60.dp)
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(CoinkiriBackground),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
     ) {
         Row(
@@ -131,7 +131,7 @@ fun CoinImage(coinPainter: Painter) {
             contentDescription = "coin symbol image",
             modifier = Modifier
                 .size(30.dp)
-                .background(CoinkiriBackground),
+                .background(CoinkiriWhite),
             contentScale = ContentScale.Crop
         )
     }

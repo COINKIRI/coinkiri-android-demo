@@ -1,6 +1,7 @@
 package com.cokiri.coinkiri.presentation.analysis
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -32,6 +33,7 @@ import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.presentation.analysis.component.AnalysisListItemCard
 import com.cokiri.coinkiri.ui.component.FloatingActionMenu
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.util.ANALYSIS_WRITE_SCREEN
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -56,7 +58,7 @@ fun AnalysisScreen(
         topBar = {
             TopAppBar(
                 title = { Text("분석") },
-                colors = TopAppBarDefaults.topAppBarColors(CoinkiriBackground),
+                colors = TopAppBarDefaults.topAppBarColors(CoinkiriWhite),
                 actions = {
                     IconButton(onClick = { /*TODO*/ }) {
                         Image(
@@ -102,6 +104,7 @@ fun AnalysisScreen(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(paddingValues)
+                                    .background(CoinkiriBackground)
                             ) {
                                 items(analysisPostList.size) { index ->
                                     val analysisPost = analysisPostList[index]

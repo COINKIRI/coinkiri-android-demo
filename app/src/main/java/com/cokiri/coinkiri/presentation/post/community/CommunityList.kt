@@ -16,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.presentation.post.PostViewModel
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.util.COMMUNITY_DETAIL_SCREEN
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -61,7 +61,7 @@ fun CommunityList(
             }
         } else {
             LazyColumn(
-                modifier = Modifier.background(CoinkiriBackground)
+                modifier = Modifier.background(CoinkiriWhite)
             ) {
                 items(communityPostList.size) { index ->
                     val communityResponseDto = communityPostList[index]

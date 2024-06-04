@@ -32,7 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.presentation.post.community.CommunityList
 import com.cokiri.coinkiri.ui.component.FloatingActionMenu
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.util.CREATE_POST_SCREEN_FOR_COMMUNITY
 
@@ -72,7 +72,7 @@ fun PostScreen(
                 modifier = Modifier
                     .padding(paddingValues)
                     .fillMaxSize()
-                    .background(CoinkiriBackground)
+                    .background(CoinkiriWhite)
             )
         },
         floatingActionButton = {
@@ -100,7 +100,7 @@ fun PostScreenTopBar(
         title = {
             TabRow(
                 selectedTabIndex = selectedTabIndex,
-                containerColor = CoinkiriBackground,
+                containerColor = CoinkiriWhite,
                 indicator = { tabPositions ->
                     SecondaryIndicator(
                         Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
@@ -132,7 +132,7 @@ fun PostScreenTopBar(
                 )
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(CoinkiriBackground)
+        colors = TopAppBarDefaults.topAppBarColors(CoinkiriWhite)
     )
 }
 

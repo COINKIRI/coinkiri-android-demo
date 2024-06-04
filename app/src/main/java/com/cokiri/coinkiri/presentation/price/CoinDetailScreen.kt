@@ -3,10 +3,7 @@ package com.cokiri.coinkiri.presentation.price
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
-import android.widget.ImageView
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,10 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -43,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -54,10 +46,9 @@ import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.data.remote.model.CoinPrice
 import com.cokiri.coinkiri.domain.model.Ticker
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.ui.theme.PretendardFont
-import com.cokiri.coinkiri.ui.theme.kakaoColor
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.components.YAxis
@@ -114,7 +105,7 @@ fun CoinDetailScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(CoinkiriBackground)
+                        .background(CoinkiriWhite)
                         .padding(paddingValues),
                     contentAlignment = Alignment.Center
                 ) {
@@ -123,7 +114,7 @@ fun CoinDetailScreen(
             } else {
                 Column(
                     modifier = Modifier
-                        .background(CoinkiriBackground)
+                        .background(CoinkiriWhite)
                         .padding(paddingValues)
                         .fillMaxSize()
                 ) {
@@ -146,8 +137,8 @@ fun CoinDetailTopBar(
     addCoinToWatchlistClick: () -> Unit
 ) {
     CenterAlignedTopAppBar(
-        modifier = Modifier.background(CoinkiriBackground),
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(CoinkiriBackground),
+        modifier = Modifier.background(CoinkiriWhite),
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(CoinkiriWhite),
         title = {
             Text(
                 text = "$coinKoreaName($marketName)",
@@ -197,7 +188,7 @@ fun CoinDetailContent(
 
 
     Card(
-        colors = CardDefaults.cardColors(CoinkiriBackground),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
         elevation = CardDefaults.cardElevation(2.dp),
         modifier = Modifier
             .fillMaxWidth()
@@ -206,7 +197,7 @@ fun CoinDetailContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(CoinkiriBackground)
+                .background(CoinkiriWhite)
                 .padding(15.dp)
         ) {
             Row {
@@ -262,7 +253,7 @@ fun CoinChartContent(
     val coinChangeRateColor = if (coinChangeRate.startsWith("-")) Color.Blue else Color.Red
 
     Card(
-        colors = CardDefaults.cardColors(CoinkiriBackground),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
         elevation = CardDefaults.cardElevation(2.dp),
         modifier = Modifier
             .fillMaxWidth()
@@ -271,7 +262,7 @@ fun CoinChartContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(CoinkiriBackground)
+                .background(CoinkiriWhite)
                 .padding(10.dp)
         ) {
             Surface {
@@ -301,7 +292,7 @@ fun CoinChart(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(CoinkiriBackground)
+                .background(CoinkiriWhite)
         ) {
             Row {
                 Icon(
@@ -353,7 +344,7 @@ fun CoinChart(
                 chart.axisRight.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART) // 오른쪽 축 내부로 이동
 
                 // 차트 색 설정
-                chart.setBackgroundColor(CoinkiriBackground.toArgb()) // 차트 배경색 설정
+                chart.setBackgroundColor(CoinkiriWhite.toArgb()) // 차트 배경색 설정
 
                 // CustomMarkerView 설정
                 val markerView = CustomMarkerView(context, R.layout.custom_marker_view)

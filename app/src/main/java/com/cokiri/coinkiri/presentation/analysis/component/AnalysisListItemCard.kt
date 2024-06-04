@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.sp
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
 import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.PretendardFont
 import com.cokiri.coinkiri.util.byteArrayToPainter
 import com.cokiri.coinkiri.util.calculateValueChange
@@ -103,7 +103,7 @@ fun AnalysisListItemCard(
 
     Card(
         onClick = { /*TODO*/ },
-        colors = CardDefaults.cardColors(CoinkiriBackground),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
         elevation = CardDefaults.cardElevation(5.dp),
         modifier = Modifier
             .padding(10.dp)
@@ -132,7 +132,7 @@ fun AnalysisListItemCard(
                         contentDescription = "",
                         modifier = Modifier
                             .size(50.dp)
-                            .background(CoinkiriBackground),
+                            .background(CoinkiriWhite),
                         contentScale = ContentScale.Crop
                     )
                 }
@@ -307,7 +307,7 @@ fun AnalysisListItemCard(
                         contentDescription = "",
                         modifier = Modifier
                             .size(35.dp)
-                            .background(CoinkiriBackground),
+                            .background(CoinkiriWhite),
                         contentScale = ContentScale.Crop
                     )
                 }

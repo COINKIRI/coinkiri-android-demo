@@ -27,7 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.data.remote.model.CoinInfoDetail
 import com.cokiri.coinkiri.presentation.price.component.CoinCard
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriBlack
 import com.cokiri.coinkiri.util.COIN_DETAIL_SCREEN
 
@@ -77,7 +77,7 @@ fun PriceTopBar(
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = CoinkiriBackground,
+            containerColor = CoinkiriWhite,
             titleContentColor = CoinkiriBlack,
         ),
         title = {

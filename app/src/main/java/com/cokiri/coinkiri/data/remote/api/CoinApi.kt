@@ -7,6 +7,7 @@ import com.cokiri.coinkiri.data.remote.model.CoinResponse
 import com.cokiri.coinkiri.data.remote.model.WatchlistResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
@@ -47,7 +48,7 @@ interface CoinApi {
      */
     @AuthRequired
     @Headers("Content-Type: application/json")
-    @POST("/api/v1/interest/delete/{coinId}")
+    @DELETE("/api/v1/interest/delete/{coinId}")
     suspend fun deleteCoinFromWatchlist(
         @Header("Authorization") accessToken: String,
         @Path("coinId") coinId: Long

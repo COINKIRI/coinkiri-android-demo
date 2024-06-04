@@ -60,7 +60,7 @@ import com.cokiri.coinkiri.presentation.login.LoginUiState
 import com.cokiri.coinkiri.presentation.login.LoginViewModel
 import com.cokiri.coinkiri.presentation.profile.component.MemberInfoCard
 import com.cokiri.coinkiri.util.LOGIN
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriBlack
 import com.cokiri.coinkiri.ui.theme.PretendardFont
 import com.cokiri.coinkiri.util.byteArrayToPainter
@@ -100,7 +100,7 @@ fun ProfileScreen(
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = CoinkiriBackground,
+                    containerColor = CoinkiriWhite,
                     titleContentColor = CoinkiriBlack,
                 ),
                 actions = {
@@ -169,7 +169,7 @@ fun ProfileBottomSheet(
     ) {
         Column(
             modifier = Modifier
-                .background(CoinkiriBackground)
+                .background(CoinkiriWhite)
                 .padding(bottom = 35.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -226,7 +226,7 @@ fun MemberCoinWatchlistCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp),
-        colors = CardDefaults.cardColors(CoinkiriBackground),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
         shape = CardDefaults.shape,
         elevation = CardDefaults.cardElevation(5.dp),
     ) {
@@ -300,7 +300,7 @@ fun CoinWatchlistItem(
             .width(250.dp)
             .height(200.dp)
             .padding(horizontal = 5.dp),
-        colors = CardDefaults.cardColors(CoinkiriBackground),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
         elevation = CardDefaults.cardElevation(5.dp),
     ) {
 

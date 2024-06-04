@@ -32,8 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
 import com.cokiri.coinkiri.ui.component.OpinionCard
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
-import kotlinx.coroutines.CoroutineScope
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -125,7 +124,7 @@ fun TargetPeriodBottomSheet(
     ModalBottomSheet(
         onDismissRequest = { onDismissRequest() },
         sheetState = targetPeriodSheetState,
-        containerColor = CoinkiriBackground,
+        containerColor = CoinkiriWhite,
     ) {
         Column(
             modifier = Modifier
@@ -160,7 +159,7 @@ fun TargetPeriodCard(
     onDirectInputClick: () -> Unit,
 ) {
     Card(
-        colors = CardDefaults.cardColors(CoinkiriBackground),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
         elevation = CardDefaults.cardElevation(3.dp),
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier.padding(10.dp)

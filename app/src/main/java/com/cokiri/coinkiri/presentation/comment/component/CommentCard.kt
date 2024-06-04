@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cokiri.coinkiri.data.remote.model.CommentList
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.util.byteArrayToPainter
 
 @Composable
@@ -41,7 +41,7 @@ fun CommentCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 3.dp),
-        colors = CardDefaults.cardColors(CoinkiriBackground)
+        colors = CardDefaults.cardColors(CoinkiriWhite)
     ) {
         Row(
             modifier = Modifier.padding(15.dp),

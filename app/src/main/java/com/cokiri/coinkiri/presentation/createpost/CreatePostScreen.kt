@@ -14,7 +14,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,7 +47,7 @@ fun CreatePostCommonScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(CoinkiriBackground),
+                        .background(CoinkiriWhite),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()
@@ -56,7 +56,7 @@ fun CreatePostCommonScreen(
                 Column(
                     modifier = Modifier
                         .padding(it)
-                        .background(CoinkiriBackground)
+                        .background(CoinkiriWhite)
                 ) {
                     content()
                 }

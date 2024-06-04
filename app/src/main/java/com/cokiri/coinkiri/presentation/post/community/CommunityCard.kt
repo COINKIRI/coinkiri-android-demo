@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.data.remote.model.CommunityResponseDto
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriGreen
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 
@@ -42,7 +42,7 @@ fun CommunityCard(
 
     Card(
         onClick = onclick,
-        colors = CardDefaults.cardColors(CoinkiriBackground),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
         shape = RectangleShape,
         modifier = Modifier
             .fillMaxWidth()

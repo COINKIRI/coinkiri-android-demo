@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.cokiri.coinkiri.presentation.createpost.CreatePostViewModel
 import com.cokiri.coinkiri.presentation.main.MainActivity
-import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 
 /**
  * WebView 컴포넌트
@@ -30,7 +30,7 @@ fun WebViewComponent(
         modifier = Modifier
             .fillMaxSize()
             .padding(0.dp)
-            .background(CoinkiriBackground),
+            .background(CoinkiriWhite),
         factory = {
             webView.apply {
                 setupWebView(communityWriteViewModel)
