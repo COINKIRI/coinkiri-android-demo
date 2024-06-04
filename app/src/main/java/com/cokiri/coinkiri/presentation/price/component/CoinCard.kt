@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.presentation.price
+package com.cokiri.coinkiri.presentation.price.component
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState

@@ -14,6 +14,7 @@ import com.cokiri.coinkiri.domain.usecase.GetCoinDaysInfoUseCase
 import com.cokiri.coinkiri.domain.usecase.GetCoinsUseCase
 import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
 import com.cokiri.coinkiri.extensions.executeWithLoading
+import com.cokiri.coinkiri.util.logLongMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -58,6 +59,15 @@ class PriceViewModel @Inject constructor(
     // 관심 목록에 코인이 있는지 여부를 저장하는 StateFlow
     private val _isCoinInWatchlist = MutableStateFlow(false)
     val isCoinInWatchlist: StateFlow<Boolean> get() = _isCoinInWatchlist
+
+
+    // 상승률 상위 5개 코인을 저장하는 StateFlow
+    private val _topGainers = MutableStateFlow<List<CoinInfoDetail>>(emptyList())
+    val topGainers: StateFlow<List<CoinInfoDetail>> = _topGainers.asStateFlow()
+
+    // 하락률 상위 5개 코인을 저장하는 StateFlow
+    private val _topLosers = MutableStateFlow<List<CoinInfoDetail>>(emptyList())
+    val topLosers: StateFlow<List<CoinInfoDetail>> = _topLosers.asStateFlow()
 
 
     // 로딩 상태를 저장하는 StateFlow
@@ -161,6 +171,7 @@ class PriceViewModel @Inject constructor(
                 coinInfoDetails.add(updatedCoinInfoDetail) // 새로운 코인 정보 추가
             }
             _coinInfoDetailList.value = coinInfoDetails // 코인 상세 정보 리스트 갱신
+            updateTopCoins() // 상승률과 하락률이 높은 상위 5개의 코인 갱신
         }
     }
 
@@ -203,6 +214,31 @@ class PriceViewModel @Inject constructor(
                 Log.e("PriceViewModel", "Error checking watchlist status", e)
             }
         }
+    }
+
+
+    /**
+     * 상승률과 하락률이 높은 상위 5개의 코인을 갱신하는 함수
+     */
+    private fun updateTopCoins() {
+        viewModelScope.launch {
+            val topCoins = getTopCoins()
+            _topGainers.value = topCoins.first
+            _topLosers.value = topCoins.second
+            logLongMessage("Top gainers updated", _topGainers.value.toString())
+            logLongMessage("Top losers updated", _topLosers.value.toString())
+        }
+    }
+
+
+    /**
+     * 상승률과 하락률이 높은 상위 5개의 코인을 반환하는 함수
+     */
+    private fun getTopCoins(): Pair<List<CoinInfoDetail>, List<CoinInfoDetail>> {
+        val sortedCoins = _coinInfoDetailList.value.sortedByDescending { it.ticker?.changeRate }
+        val topGainers = sortedCoins.take(5)
+        val topLosers = sortedCoins.takeLast(5)
+        return Pair(topGainers, topLosers)
     }
 
 
