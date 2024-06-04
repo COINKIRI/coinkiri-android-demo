@@ -13,8 +13,12 @@ import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
 import com.cokiri.coinkiri.extensions.executeWithLoading
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -78,6 +82,15 @@ class AnalysisViewModel @Inject constructor(
     private val _analysisPostList = MutableStateFlow<List<AnalysisResponseDto>>(emptyList())
     val analysisPostList: StateFlow<List<AnalysisResponseDto>> = _analysisPostList.asStateFlow()
 
+    // 코인 티커들을 관리하는 Map
+    private val _coinTickers = MutableStateFlow<Map<String, Ticker?>>(emptyMap())
+    val coinTickers: StateFlow<Map<String, Ticker?>> = _coinTickers.asStateFlow()
+
+    // 코인 로딩 상태를 관리하는 Map
+    private val _loadingStates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
+    val loadingStates: StateFlow<Map<String, Boolean>> = _loadingStates.asStateFlow()
+
+
 
     // 로딩 상태와 에러 메시지 관리용 MutableStateFlow
     private val _isLoading = MutableStateFlow(false)
@@ -86,6 +99,14 @@ class AnalysisViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
+
+    /**
+     * 초기화 블록
+     */
+    init {
+        // 초기 데이터 로드(분석글 목록)
+        fetchAllAnalysisPostList()
+    }
 
 
     /**
@@ -104,7 +125,6 @@ class AnalysisViewModel @Inject constructor(
     }
 
 
-
     /**
      * 코인 목록을 가져옴
      */
@@ -121,6 +141,7 @@ class AnalysisViewModel @Inject constructor(
         }
     }
 
+
     /**
      * 코인 마켓명으로 웹소켓을 통해 해당 코인의 티커를 가져옴(한번만 받음)
      */
@@ -133,17 +154,26 @@ class AnalysisViewModel @Inject constructor(
     }
 
 
-    /**
-     * 코인 마켓명으로 웹소켓을 통해 해당 코인의 티커를 가져옴(계속 받음)
-     */
+    // 코인 마켓명으로 웹소켓을 통해 해당 코인의 티커를 가져옴(계속 받음)
     fun observeCoinTickerContinuously(coinMarketId: String) {
         viewModelScope.launch {
+            _loadingStates.update { it + (coinMarketId to true) }
             webSocketUseCase.startConnection(listOf(coinMarketId), { ticker ->
-                _singleCoinTicker.value = ticker
+                _coinTickers.update { it + (coinMarketId to ticker) }
+                _loadingStates.update { it + (coinMarketId to false) }
             }, receiveOnce = false)
         }
     }
 
+    // 특정 코인의 티커를 반환하는 메서드
+    fun getCoinTicker(coinMarketId: String): StateFlow<Ticker?> {
+        return _coinTickers.map { it[coinMarketId] }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    }
+
+    // 특정 코인의 로딩 상태를 반환하는 메서드
+    fun isLoading(coinMarketId: String): StateFlow<Boolean> {
+        return _loadingStates.map { it[coinMarketId] ?: false }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+    }
 
     /**
      * 선택된 코인의 정보(아이디, 마켓아이디, 이름, 심볼이미지)를 저장
@@ -210,6 +240,7 @@ class AnalysisViewModel @Inject constructor(
         _selectedTargetPriceChangeRate.value = rate
         Log.d("AnalysisViewModel", "목표가격 변동률: $rate")
     }
+
 
     /**
      * 상태 초기화

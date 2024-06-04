@@ -1,6 +1,5 @@
 package com.cokiri.coinkiri.presentation.analysis
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,13 +50,7 @@ fun AnalysisScreen(
     var isRefreshing by remember { mutableStateOf(false) }
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing)
 
-    // 초기 화면 로드 시 게시글 리스트 불러오기
-    LaunchedEffect(Unit) {
-        analysisViewModel.fetchAllAnalysisPostList()
-    }
-
     val analysisPostList by analysisViewModel.analysisPostList.collectAsState()
-    Log.d("AnalysisScreen", "analysisPostList: $analysisPostList")
 
     Scaffold(
         topBar = {
@@ -113,7 +106,7 @@ fun AnalysisScreen(
                                 items(analysisPostList.size) { index ->
                                     val analysisPost = analysisPostList[index]
                                     AnalysisListItemCard(
-                                        analysisPost = analysisPost,
+                                        analysisResponseDto = analysisPost,
                                         analysisViewModel = analysisViewModel
                                     )
                                 }

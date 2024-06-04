@@ -20,12 +20,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +43,7 @@ import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.PretendardFont
 import com.cokiri.coinkiri.util.byteArrayToPainter
+import com.cokiri.coinkiri.util.calculateValueChange
 
 /**
  * 분석글 목록에서 사용되는 분석글 카드
@@ -48,31 +51,59 @@ import com.cokiri.coinkiri.util.byteArrayToPainter
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun AnalysisListItemCard(
-    analysisPost: AnalysisResponseDto,
+    analysisResponseDto: AnalysisResponseDto,
     analysisViewModel: AnalysisViewModel
 ) {
 
-    val coinMarket = analysisPost.coin.krwMarket
-    val coinName = analysisPost.coin.koreanName
-    val byteCoinSymbolImage = analysisPost.coin.symbolImage
+    val coinMarket = analysisResponseDto.coin.krwMarket
+    val coinName = analysisResponseDto.coin.koreanName
+    val byteCoinSymbolImage = analysisResponseDto.coin.symbolImage
     val coinSymbolImage = byteArrayToPainter(byteCoinSymbolImage)
 
 
-    val coinPrevClosingPrice = analysisPost.coinPrevClosingPrice
-    val investmentOption = analysisPost.investmentOption
-    val targetPrice = analysisPost.targetPrice
-    val targetPeriod = analysisPost.targetPeriod
+    val coinPrevClosingPrice = analysisResponseDto.coinPrevClosingPrice
+    val investmentOption = analysisResponseDto.investmentOption
+    val targetPrice = analysisResponseDto.targetPrice
+    val targetPeriod = analysisResponseDto.targetPeriod
 
-    val memberPicByteArray = analysisPost.memberPic
+    val memberPicByteArray = analysisResponseDto.memberPic
     val memberPic = byteArrayToPainter(memberPicByteArray)
-    val memberName = analysisPost.postResponseDto.memberNickname
-    val formattedDate = analysisPost.postResponseDto.formattedDate
+    val memberName = analysisResponseDto.postResponseDto.memberNickname
+    val formattedDate = analysisResponseDto.postResponseDto.formattedDate
+
+    LaunchedEffect(coinMarket) {
+        analysisViewModel.observeCoinTickerContinuously(coinMarket)
+    }
+
+    val coinTicker by analysisViewModel.getCoinTicker(coinMarket).collectAsState(initial = null)
+    val isLoading by analysisViewModel.isLoading(coinMarket).collectAsState(initial = false)
+
+    val coinTracePrice = coinTicker?.formattedTradePrice
+    val coinSignedChangeRate = coinTicker?.formattedSignedChangeRate
+    val coinSignedChangeRateColor = if (coinSignedChangeRate?.contains("-") == false) {
+        Color.Red
+    } else {
+        Color.Blue
+    }
+    val coinSignedSing = if(coinSignedChangeRate?.contains("-") == false) {
+        "+"
+    } else {
+        ""
+    }
+
+    val valueChange = coinTracePrice?.let { calculateValueChange(it, targetPrice) }
+    Log.d("AnalysisListItemCard", "valueChange: $valueChange")
+    val valueChangeColor = if (valueChange?.contains("-") == true) {
+        Color.Blue
+    } else {
+        Color.Red
+    }
 
 
 
     Card(
         onClick = { /*TODO*/ },
-        colors =  CardDefaults.cardColors(CoinkiriBackground),
+        colors = CardDefaults.cardColors(CoinkiriBackground),
         elevation = CardDefaults.cardElevation(5.dp),
         modifier = Modifier
             .padding(10.dp)
@@ -89,7 +120,7 @@ fun AnalysisListItemCard(
                     .fillMaxWidth()
                     .padding(top = 20.dp)
                     .padding(horizontal = 20.dp),
-                verticalAlignment = Alignment.Top,
+                verticalAlignment = Alignment.Bottom,
             ) {
                 Card(
                     shape = CircleShape,
@@ -113,193 +144,237 @@ fun AnalysisListItemCard(
                 ) {
                     Text(
                         text = coinName,
+                        fontFamily = PretendardFont,
+                        fontWeight = FontWeight.Medium,
                         fontSize = 20.sp,
                     )
-                    Text(
-                        text = "코인가격",
-                        fontSize = 12.sp,
-                    )
-                }
-            }
-
-
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 10.dp, vertical = 5.dp)
-                    .height(85.dp)
-                    .fillMaxWidth(1f)
-
-            ) {
-                when (investmentOption) {
-                    "강력매수" -> InvestmentOptionCard(investmentOption = investmentOption, colors = Color.Red)
-                    "매수" -> InvestmentOptionCard(investmentOption = investmentOption, colors = Color.Red)
-                    "중립" -> InvestmentOptionCard(investmentOption = investmentOption, colors = Color.Black)
-                    "매도" -> InvestmentOptionCard(investmentOption = investmentOption, colors = Color.Blue)
-                    "강력매도" -> InvestmentOptionCard(investmentOption = investmentOption, colors = Color.Blue)
-                }
-
-                Row(
-                    modifier = Modifier
-                        .padding(vertical = 10.dp, horizontal = 5.dp),
-                    horizontalArrangement = Arrangement.spacedBy(2.dp),
-                ) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .weight(1f),
-                        colors = CardDefaults.cardColors(Color.LightGray),
-                        shape = RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
+                    if (isLoading) {
+                        CircularProgressIndicator(modifier = Modifier.size(12.dp))
+                    } else if (coinTracePrice != null) {
+                        Row(
+                            verticalAlignment = Alignment.Bottom,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             Text(
-                                text = targetPrice,
-                                fontSize = 18.sp,
+                                text = "₩ $coinTracePrice",
+                                fontSize = 13.sp,
                                 fontFamily = PretendardFont,
                                 fontWeight = FontWeight.Medium
                             )
-                            Text(
-                                text = "목표가",
-                                fontSize = 12.sp,
-                                fontFamily = PretendardFont,
-                                fontWeight = FontWeight.Normal
-                            )
-                        }
-                    }
-                    Card(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .weight(1f),
-                        colors = CardDefaults.cardColors(Color.LightGray),
-                        shape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "+200.00%",
-                                fontSize = 18.sp,
-                                fontFamily = PretendardFont,
-                                fontWeight = FontWeight.Medium
-                            )
-                            Text(
-                                text = "현재 기대 수익률",
-                                fontSize = 12.sp,
-                                fontFamily = PretendardFont,
-                                fontWeight = FontWeight.Normal
-                            )
+                            if (coinSignedChangeRate != null) {
+                                Text(
+                                    text = coinSignedSing+coinSignedChangeRate,
+                                    fontSize = 13.sp,
+                                    fontFamily = PretendardFont,
+                                    color = coinSignedChangeRateColor
+                                )
+                            }
                         }
                     }
                 }
             }
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 5.dp)
-            ) {
-                Text(
-                    text = "분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약",
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+        }
+
+
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 10.dp, vertical = 5.dp)
+                .height(85.dp)
+                .fillMaxWidth(1f)
+
+        ) {
+            when (investmentOption) {
+                "강력매수" -> InvestmentOptionCard(
+                    investmentOption = investmentOption,
+                    colors = Color.Red
+                )
+
+                "매수" -> InvestmentOptionCard(
+                    investmentOption = investmentOption,
+                    colors = Color.Red
+                )
+
+                "중립" -> InvestmentOptionCard(
+                    investmentOption = investmentOption,
+                    colors = Color.Black
+                )
+
+                "매도" -> InvestmentOptionCard(
+                    investmentOption = investmentOption,
+                    colors = Color.Blue
+                )
+
+                "강력매도" -> InvestmentOptionCard(
+                    investmentOption = investmentOption,
+                    colors = Color.Blue
                 )
             }
 
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .padding(vertical = 10.dp, horizontal = 5.dp),
+                horizontalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start,
+                Card(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f),
+                    colors = CardDefaults.cardColors(Color.LightGray),
+                    shape = RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp)
                 ) {
-                    Card(
-                        shape = CircleShape,
-                        border = BorderStroke(1.dp, color = Color.LightGray),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Image(
-                            painter = memberPic,
-                            contentDescription = "",
-                            modifier = Modifier
-                                .size(35.dp)
-                                .background(CoinkiriBackground),
-                            contentScale = ContentScale.Crop
+                        Text(
+                            text = targetPrice,
+                            fontSize = 18.sp,
+                            fontFamily = PretendardFont,
+                            fontWeight = FontWeight.Medium,
+                        )
+                        Text(
+                            text = "목표가",
+                            fontSize = 12.sp,
+                            fontFamily = PretendardFont,
+                            fontWeight = FontWeight.Normal
                         )
                     }
-                    Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                    Text(
-                        text = memberName,
-                        fontSize = 15.sp,
-                        fontFamily = PretendardFont,
-                        fontWeight = FontWeight.Medium
+                }
+                Card(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f),
+                    colors = CardDefaults.cardColors(Color.LightGray),
+                    shape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        if (valueChange != null) {
+                            Text(
+                                text = valueChange,
+                                fontSize = 18.sp,
+                                fontFamily = PretendardFont,
+                                fontWeight = FontWeight.Medium,
+                                color = valueChangeColor
+                            )
+                        }
+                        Text(
+                            text = "현재 기대 수익률",
+                            fontSize = 12.sp,
+                            fontFamily = PretendardFont,
+                            fontWeight = FontWeight.Normal
+                        )
+                    }
+                }
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 5.dp)
+        ) {
+            Text(
+                text = "분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약",
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start,
+            ) {
+                Card(
+                    shape = CircleShape,
+                    border = BorderStroke(1.dp, color = Color.LightGray),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+                ) {
+                    Image(
+                        painter = memberPic,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(35.dp)
+                            .background(CoinkiriBackground),
+                        contentScale = ContentScale.Crop
                     )
                 }
-
+                Spacer(modifier = Modifier.padding(horizontal = 5.dp))
                 Text(
-                    text = formattedDate,
+                    text = memberName,
+                    fontSize = 15.sp,
+                    fontFamily = PretendardFont,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            Text(
+                text = formattedDate,
+                fontSize = 13.sp,
+                fontFamily = PretendardFont,
+                fontWeight = FontWeight.Normal
+            )
+        }
+
+        HorizontalDivider()
+
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { /*TODO*/ }) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_post_baseline_thumb_up),
+                        contentDescription = "",
+                        modifier = Modifier.size(25.dp)
+                    )
+                }
+                Text(text = "1")
+
+                IconButton(onClick = { /*TODO*/ }) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_post_baseline_thumb_up),
+                        contentDescription = "",
+                        modifier = Modifier.size(25.dp)
+                    )
+                }
+                Text(text = "1")
+            }
+
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    text = "목표기간",
                     fontSize = 13.sp,
                     fontFamily = PretendardFont,
                     fontWeight = FontWeight.Normal
                 )
-            }
-
-            HorizontalDivider()
-
-
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_post_baseline_thumb_up),
-                            contentDescription = "",
-                            modifier = Modifier.size(25.dp)
-                        )
-                    }
-                    Text(text = "1")
-
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_post_baseline_thumb_up),
-                            contentDescription = "",
-                            modifier = Modifier.size(25.dp)
-                        )
-                    }
-                    Text(text = "1")
-                }
-
-                Column(
-                    horizontalAlignment = Alignment.End
-                ) {
-                    Text(
-                        text = "목표기간",
-                        fontSize = 13.sp,
-                        fontFamily = PretendardFont,
-                        fontWeight = FontWeight.Normal
-                    )
-                    Text(
-                        text = "$targetPeriod 까지",
-                        fontSize = 14.sp,
-                        fontFamily = PretendardFont,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
+                Text(
+                    text = "$targetPeriod 까지",
+                    fontSize = 14.sp,
+                    fontFamily = PretendardFont,
+                    fontWeight = FontWeight.Medium
+                )
             }
         }
     }
