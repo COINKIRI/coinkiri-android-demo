@@ -30,7 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.data.remote.model.CommentList
-import com.cokiri.coinkiri.presentation.post.community.CommentCard
+import com.cokiri.coinkiri.presentation.comment.component.CommentCard
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 
 @Composable

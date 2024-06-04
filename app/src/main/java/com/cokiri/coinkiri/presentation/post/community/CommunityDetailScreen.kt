@@ -87,7 +87,6 @@ fun CommunityDetailScreen(
 
     LaunchedEffect(postId) {
         postViewModel.fetchCommunityPostDetails(postId)
-        //postViewModel.fetchCommentList(postId)
     }
 
     DisposableEffect(Unit) {
@@ -279,61 +278,6 @@ fun ContentSection(
     )
 }
 
-@Composable
-fun CommentCard(
-    comment: CommentList
-) {
-
-    val level = comment.member.level
-    val name = comment.member.nickname
-    val data = comment.createdAt
-    val content = comment.content
-    val profileImageByteArray = comment.member.pic
-    val profileImage = byteArrayToPainter(profileImageByteArray)
-
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 3.dp),
-        colors = CardDefaults.cardColors(CoinkiriBackground)
-    ) {
-        Row(
-            modifier = Modifier.padding(15.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Card(
-                shape = CircleShape,
-                elevation = CardDefaults.cardElevation(5.dp),
-            ) {
-                Image(
-                    painter = profileImage,
-                    contentScale = ContentScale.Crop,
-                    contentDescription = "Profile Image",
-                    modifier = Modifier
-                        .size(40.dp)
-                )
-            }
-            Spacer(modifier = Modifier.size(10.dp))
-            Column(
-                modifier = Modifier
-                    .padding(start = 5.dp, bottom = 3.dp),
-                verticalArrangement = Arrangement.spacedBy(1.dp)
-            ) {
-                Text(
-                    text = "Lv.$level $name $data",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 10.sp
-                )
-                Text(
-                    text = content,
-                    fontSize = 13.sp
-                )
-            }
-        }
-        HorizontalDivider()
-    }
-}
 
 
 /**
