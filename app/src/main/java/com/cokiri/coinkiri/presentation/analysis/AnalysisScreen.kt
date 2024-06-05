@@ -34,6 +34,7 @@ import com.cokiri.coinkiri.presentation.analysis.component.AnalysisListItemCard
 import com.cokiri.coinkiri.ui.component.FloatingActionMenu
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
+import com.cokiri.coinkiri.util.ANALYSIS_DETAIL_SCREEN
 import com.cokiri.coinkiri.util.ANALYSIS_WRITE_SCREEN
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -108,9 +109,11 @@ fun AnalysisScreen(
                             ) {
                                 items(analysisPostList.size) { index ->
                                     val analysisPost = analysisPostList[index]
+                                    val postId = analysisPost.postResponseDto.id
                                     AnalysisListItemCard(
                                         analysisResponseDto = analysisPost,
-                                        analysisViewModel = analysisViewModel
+                                        analysisViewModel = analysisViewModel,
+                                        analysisCardClick = { navController.navigate("$ANALYSIS_DETAIL_SCREEN/$postId")}
                                     )
                                 }
                             }

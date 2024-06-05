@@ -6,11 +6,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.cokiri.coinkiri.presentation.analysis.AnalysisDetailScreen
 import com.cokiri.coinkiri.presentation.analysis.AnalysisScreen
 import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
 import com.cokiri.coinkiri.presentation.analysis.AnalysisWriteScreen
 import com.cokiri.coinkiri.presentation.createpost.CreatePostScreenForAnalysis
 import com.cokiri.coinkiri.util.ANALYSIS
+import com.cokiri.coinkiri.util.ANALYSIS_DETAIL_SCREEN
 import com.cokiri.coinkiri.util.ANALYSIS_WRITE_SCREEN
 import com.cokiri.coinkiri.util.CREATE_POST_SCREEN_FOR_ANALYSIS
 
@@ -35,5 +37,10 @@ fun NavGraphBuilder.analysisNavGraph(
             val analysisViewModel = hiltViewModel<AnalysisViewModel>(parentEntry)
             CreatePostScreenForAnalysis(navController = navController, analysisViewModel = analysisViewModel)
         }
+    }
+
+    composable("$ANALYSIS_DETAIL_SCREEN/{postId}") { backStackEntry ->
+        val postId = backStackEntry.arguments?.getString("postId") ?: return@composable
+        AnalysisDetailScreen(navController, postId)
     }
 }

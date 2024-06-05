@@ -1,5 +1,6 @@
 package com.cokiri.coinkiri.domain.repository
 
+import com.cokiri.coinkiri.data.remote.model.AnalysisDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
 import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
@@ -39,4 +40,9 @@ interface PostRepository {
      * 커뮤니티 게시글 상세 조회
      */
     suspend fun getCommunityPostDetail(postId: Long) : CommunityDetailResponseDto
+
+    /**
+     * 분석 게시글 상세 조회
+     */
+    suspend fun getAnalysisPostDetail(postId: Long) : AnalysisDetailResponseDto
 }

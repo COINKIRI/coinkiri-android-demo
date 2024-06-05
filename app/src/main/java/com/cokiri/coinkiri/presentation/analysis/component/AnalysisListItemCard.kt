@@ -52,7 +52,8 @@ import com.cokiri.coinkiri.util.calculateValueChange
 @Composable
 fun AnalysisListItemCard(
     analysisResponseDto: AnalysisResponseDto,
-    analysisViewModel: AnalysisViewModel
+    analysisViewModel: AnalysisViewModel,
+    analysisCardClick: () -> Unit
 ) {
 
     val coinMarket = analysisResponseDto.coin.krwMarket
@@ -102,7 +103,7 @@ fun AnalysisListItemCard(
 
 
     Card(
-        onClick = { /*TODO*/ },
+        onClick = analysisCardClick,
         colors = CardDefaults.cardColors(CoinkiriWhite),
         elevation = CardDefaults.cardElevation(5.dp),
         modifier = Modifier

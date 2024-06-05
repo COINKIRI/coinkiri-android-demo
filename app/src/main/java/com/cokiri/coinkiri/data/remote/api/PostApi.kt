@@ -1,8 +1,10 @@
 package com.cokiri.coinkiri.data.remote.api
 
 import com.cokiri.coinkiri.data.remote.AuthRequired
+import com.cokiri.coinkiri.data.remote.model.AnalysisDetailResponse
 import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
 import com.cokiri.coinkiri.data.remote.model.AnalysisResponse
+import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.CommentRequest
 import com.cokiri.coinkiri.data.remote.model.CommentResponse
@@ -63,6 +65,14 @@ interface PostApi {
      */
     @GET("/api/v1/analysis/all")
     suspend fun getAllAnalysisPost(): AnalysisResponse
+
+
+    /**
+     * 분석글 게시글 상세 조회 API
+     */
+    @GET("/api/v1/analysis/{postId}")
+    suspend fun getAnalysisPostDetail(@Path("postId") postId : Long) : AnalysisDetailResponse
+
 
 
     /**

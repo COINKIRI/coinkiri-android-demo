@@ -4,10 +4,12 @@ import android.util.Log
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cokiri.coinkiri.data.remote.model.AnalysisDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.domain.usecase.GetAllAnalysisPostsUseCase
+import com.cokiri.coinkiri.domain.usecase.GetAnalysisDetailUseCase
 import com.cokiri.coinkiri.domain.usecase.GetCoinsUseCase
 import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
 import com.cokiri.coinkiri.extensions.executeWithLoading
@@ -27,7 +29,8 @@ import javax.inject.Inject
 class AnalysisViewModel @Inject constructor(
     private val getCoinsUseCase: GetCoinsUseCase,
     private val webSocketUseCase: WebSocketUseCase,
-    private val getAllAnalysisPostsUseCase: GetAllAnalysisPostsUseCase
+    private val getAllAnalysisPostsUseCase: GetAllAnalysisPostsUseCase,
+    private val getAnalysisDetailUseCase: GetAnalysisDetailUseCase
 ) : ViewModel() {
 
     // 코인 목록
@@ -82,6 +85,10 @@ class AnalysisViewModel @Inject constructor(
     private val _analysisPostList = MutableStateFlow<List<AnalysisResponseDto>>(emptyList())
     val analysisPostList: StateFlow<List<AnalysisResponseDto>> = _analysisPostList.asStateFlow()
 
+    // 선택한 분석글의 상세 정보를 관리하는 MutableStateFlow
+    private val _analysisDetail = MutableStateFlow<AnalysisDetailResponseDto?>(null)
+    val analysisDetail: StateFlow<AnalysisDetailResponseDto?> = _analysisDetail.asStateFlow()
+
     // 코인 티커들을 관리하는 Map
     private val _coinTickers = MutableStateFlow<Map<String, Ticker?>>(emptyMap())
     val coinTickers: StateFlow<Map<String, Ticker?>> = _coinTickers.asStateFlow()
@@ -118,6 +125,23 @@ class AnalysisViewModel @Inject constructor(
                 val result = getAllAnalysisPostsUseCase()
                 if (result.isSuccess) {
                     _analysisPostList.value = result.getOrDefault(emptyList())
+                }
+                result
+            }
+        }
+    }
+
+
+    /**
+     * 분석글 상세 정보를 가져오는 함수
+     * @param postId 가져올 게시글의 ID
+     */
+    suspend fun fetchAnalysisDetail(postId: Long) {
+        viewModelScope.launch {
+            executeWithLoading(_isLoading, _errorMessage) {
+                val result = getAnalysisDetailUseCase(postId)
+                if (result.isSuccess) {
+                    _analysisDetail.value = result.getOrNull()
                 }
                 result
             }

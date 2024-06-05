@@ -3,6 +3,7 @@ package com.cokiri.coinkiri.data.repository
 import android.util.Log
 import com.cokiri.coinkiri.data.remote.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.PostApi
+import com.cokiri.coinkiri.data.remote.model.AnalysisDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
 import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
@@ -164,6 +165,23 @@ class PostRepositoryImpl @Inject constructor(
         return try {
             // PostApi를 사용하여 글 상세 요청
             val response = postApi.getCommunityPostDetail(postId)
+            response.result
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+
+    /**
+     * 분석글 상세 요청 (GET)
+     * @param postId 요청할 글의 ID
+     * @return AnalysisDetailResponseDto 글 상세 정보
+     * @throws Exception 요청 중 발생한 예외
+     */
+    override suspend fun getAnalysisPostDetail(postId: Long) : AnalysisDetailResponseDto {
+        return try {
+            // PostApi를 사용하여 분석글 상세 요청
+            val response = postApi.getAnalysisPostDetail(postId)
             response.result
         } catch (e: Exception) {
             throw e

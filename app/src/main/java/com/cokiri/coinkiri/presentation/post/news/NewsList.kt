@@ -40,7 +40,6 @@ fun NewsList(
     }
 
     val newsList by postViewModel.newsList.collectAsState()
-    Log.d("NewsList", "newsList: $newsList")
 
     val isLoading by postViewModel.isLoading.collectAsState()
     val errorMessage by postViewModel.errorMessage.collectAsState()
@@ -78,7 +77,6 @@ fun NewsList(
             ) {
                 items(newsList.size) { index ->
                     val newsList = newsList[index]
-                    //val newsTitle = newsList.title
                     val newsLink = newsList.link
                     NewsCard(
                         newsList = newsList,
