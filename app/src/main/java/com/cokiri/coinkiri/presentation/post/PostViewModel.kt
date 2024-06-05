@@ -7,9 +7,11 @@ import com.cokiri.coinkiri.data.remote.model.CommentList
 import com.cokiri.coinkiri.data.remote.model.CommentRequest
 import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.CommunityResponseDto
+import com.cokiri.coinkiri.data.remote.model.NewsList
 import com.cokiri.coinkiri.domain.usecase.GetAllCommentsUseCase
 import com.cokiri.coinkiri.domain.usecase.GetCommunityPostDetailsUseCase
 import com.cokiri.coinkiri.domain.usecase.GetAllCommunityPostsUseCase
+import com.cokiri.coinkiri.domain.usecase.GetAllNewsUseCase
 import com.cokiri.coinkiri.domain.usecase.SubmitCommentUseCase
 import com.cokiri.coinkiri.extensions.executeWithLoading
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +24,7 @@ import javax.inject.Inject
 class PostViewModel @Inject constructor(
     private val getAllCommunityPostsUseCase: GetAllCommunityPostsUseCase,
     private val getCommunityPostDetailsUseCase: GetCommunityPostDetailsUseCase,
+    private val getAllNewsUseCase: GetAllNewsUseCase
 ) : ViewModel() {
 
     // 커뮤니티 게시글 목록을 관리하는 MutableStateFlow
@@ -31,6 +34,10 @@ class PostViewModel @Inject constructor(
     // 커뮤니티 게시글 상세 정보를 관리하는 MutableStateFlow
     private val _communityDetail = MutableStateFlow<CommunityDetailResponseDto?>(null)
     val communityDetail: StateFlow<CommunityDetailResponseDto?> = _communityDetail
+
+    // 뉴스 목록을 관리하는 MutableStateFlow
+    private val _newsList = MutableStateFlow<List<NewsList>>(emptyList())
+    val newsList: StateFlow<List<NewsList>> = _newsList
 
     // 로딩 상태를 관리하는 MutableStateFlow
     private val _isLoading = MutableStateFlow(false)
@@ -67,6 +74,22 @@ class PostViewModel @Inject constructor(
                 val result = getCommunityPostDetailsUseCase(postId)
                 if (result.isSuccess) {
                     _communityDetail.value = result.getOrNull()
+                }
+                result
+            }
+        }
+    }
+
+
+    /**
+     * 뉴스 목록을 가져오는 함수
+     */
+    fun fetchAllNewsList() {
+        viewModelScope.launch {
+            executeWithLoading(_isLoading, _errorMessage) {
+                val result = getAllNewsUseCase()
+                if (result.isSuccess) {
+                    _newsList.value = result.getOrDefault(emptyList())
                 }
                 result
             }

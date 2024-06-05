@@ -5,6 +5,7 @@ import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.CommunityResponseDto
+import com.cokiri.coinkiri.data.remote.model.NewsList
 import com.cokiri.coinkiri.data.remote.model.PostRequestDto
 
 interface PostRepository {
@@ -28,6 +29,11 @@ interface PostRepository {
      * 분석 전체 게시글 목록 조회
      */
     suspend fun getAnalysisPostList(forceRefresh: Boolean = false): List<AnalysisResponseDto>
+
+    /**
+     * 뉴스 전체 목록 조회
+     */
+    suspend fun getNewsList(forceRefresh: Boolean = false): List<NewsList>
 
     /**
      * 커뮤니티 게시글 상세 조회

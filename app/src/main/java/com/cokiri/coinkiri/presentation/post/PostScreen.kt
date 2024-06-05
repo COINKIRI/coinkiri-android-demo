@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.presentation.post.community.CommunityList
+import com.cokiri.coinkiri.presentation.post.news.NewsList
 import com.cokiri.coinkiri.ui.component.FloatingActionMenu
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
@@ -42,19 +43,14 @@ fun PostScreen(
     navController: NavHostController,
     postViewModel: PostViewModel = hiltViewModel()
 ) {
-    val tabs = remember { listOf("커뮤니티", "뉴스", "미션") }
+    val tabs = remember { listOf("커뮤니티", "뉴스") }
     val menuItems = listOf(
         Triple("커뮤니티 글작성", Icons.Default.Create) { navController.navigate(CREATE_POST_SCREEN_FOR_COMMUNITY) },
-        Triple("미션 생성", Icons.Default.Create) { /*TODO*/ }
     )
 
     var isMenuExpanded by remember { mutableStateOf(false) }
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
-    // 초기 화면 로드 시 게시글 리스트 불러오기
-    LaunchedEffect(Unit) {
-        postViewModel.fetchAllCommunityPostList()
-    }
 
     Scaffold(
         topBar = {
@@ -152,20 +148,9 @@ fun PostScreenContent(
     ) {
         when (selectedTabIndex) {
             0 -> CommunityList(navController, postViewModel)
-            1 -> NewsList()
-            2 -> MissionList()
+            1 -> NewsList(navController, postViewModel)
         }
     }
 }
 
 
-
-@Composable
-fun NewsList() {
-    Text(text = "NewsList")
-}
-
-@Composable
-fun MissionList() {
-    Text(text = "MissionList")
-}

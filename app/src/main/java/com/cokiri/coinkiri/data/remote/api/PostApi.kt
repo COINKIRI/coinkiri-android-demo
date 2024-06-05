@@ -8,6 +8,7 @@ import com.cokiri.coinkiri.data.remote.model.CommentRequest
 import com.cokiri.coinkiri.data.remote.model.CommentResponse
 import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponse
 import com.cokiri.coinkiri.data.remote.model.CommunityResponse
+import com.cokiri.coinkiri.data.remote.model.NewsResponse
 import com.cokiri.coinkiri.data.remote.model.PostRequestDto
 import retrofit2.Response
 import retrofit2.http.Body
@@ -62,5 +63,12 @@ interface PostApi {
      */
     @GET("/api/v1/analysis/all")
     suspend fun getAllAnalysisPost(): AnalysisResponse
+
+
+    /**
+     * 뉴스 조회 API
+     */
+    @GET("/api/v1/news/list")
+    suspend fun getNewsList(): NewsResponse
 
 }

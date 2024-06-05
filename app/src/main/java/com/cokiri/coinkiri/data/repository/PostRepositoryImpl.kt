@@ -8,6 +8,7 @@ import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.CommunityResponseDto
+import com.cokiri.coinkiri.data.remote.model.NewsList
 import com.cokiri.coinkiri.data.remote.model.PostRequestDto
 import com.cokiri.coinkiri.domain.repository.PostRepository
 import javax.inject.Inject
@@ -19,13 +20,16 @@ class PostRepositoryImpl @Inject constructor(
 
     private var cachedCommunityPostList : List<CommunityResponseDto>? = null     // 캐시된 커뮤니티 게시물 목록
     private var cachedAnalysisPostList : List<AnalysisResponseDto>? = null       // 캐시된 분석 게시물 목록
+    private var cachedNewsList : List<NewsList>? = null                                // 캐시된 뉴스 목록
     private var lastFetchTimeCommunity: Long = 0                                 // 마지막으로 게시물 목록을 가져온 시간
     private var lastFetchTimeAnalysis: Long = 0                                  // 마지막으로 분석 게시물 목록을 가져온 시간
+    private var lastNewsFetchTime: Long = 0                                      // 마지막으로 뉴스 목록을 가져온 시간
 
 
     companion object {
         private const val CACHE_VALIDITY_DURATION_COMMUNITY = 5 * 60 * 1000   // 캐시 유효 기간 (5분)
         private const val CACHE_VALIDITY_DURATION_ANALYSIS = 5 * 60 * 1000    // 캐시 유효 기간 (5분)
+        private const val CACHE_VALIDITY_DURATION_NEWS = 5 * 60 * 1000        // 캐시 유효 기간 (5분)
         private const val TAG = "PostRepositoryImpl"                          // 로그 태그
     }
 
@@ -131,6 +135,26 @@ class PostRepositoryImpl @Inject constructor(
 
 
     /**
+     *  뉴스 목록 요청 (GET)
+     */
+    override suspend fun getNewsList(forceRefresh: Boolean) : List<NewsList> {
+        val currentTime = System.currentTimeMillis()
+        return if (cachedNewsList.isNullOrEmpty() || currentTime - lastNewsFetchTime > CACHE_VALIDITY_DURATION_NEWS) {
+            // PostApi를 사용하여 뉴스 목록 요청
+            val response = postApi.getNewsList()
+            // 응답 결과를 캐시에 저장
+            cachedNewsList = response.result
+            lastNewsFetchTime = currentTime
+            // 캐시된 뉴스 목록 반환
+            cachedNewsList!!
+        } else {
+            // 유효한 캐시가 있는 경우 캐시된 목록 반환
+            cachedNewsList!!
+        }
+    }
+
+
+    /**
      * 커뮤니티 글 상세 요청 (GET)
      * @param postId 요청할 글의 ID
      * @return CommunityDetailResponseDto 글 상세 정보
@@ -157,8 +181,10 @@ class PostRepositoryImpl @Inject constructor(
     private fun clearCache() {
         cachedCommunityPostList = null
         cachedAnalysisPostList = null
+        cachedNewsList = null
         lastFetchTimeCommunity = 0
         lastFetchTimeAnalysis = 0
+        lastNewsFetchTime = 0
     }
 
     class AuthException(message: String) : Exception(message)  // 로그인 관련 예외 클래스
