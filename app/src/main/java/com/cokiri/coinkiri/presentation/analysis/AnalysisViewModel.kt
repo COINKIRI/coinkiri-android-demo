@@ -87,7 +87,7 @@ class AnalysisViewModel @Inject constructor(
 
     // 선택한 분석글의 상세 정보를 관리하는 MutableStateFlow
     private val _analysisDetail = MutableStateFlow<AnalysisDetailResponseDto?>(null)
-    val analysisDetail: StateFlow<AnalysisDetailResponseDto?> = _analysisDetail.asStateFlow()
+    val analysisDetail: StateFlow<AnalysisDetailResponseDto?> = _analysisDetail
 
     // 코인 티커들을 관리하는 Map
     private val _coinTickers = MutableStateFlow<Map<String, Ticker?>>(emptyMap())
@@ -281,6 +281,13 @@ class AnalysisViewModel @Inject constructor(
         _selectedDate.value = null
     }
 
+
+    /**
+     * 웹 소켓 연결 종료
+     */
+    fun closeWebSocketConnection() {
+        webSocketUseCase.closeConnection()
+    }
 
 
 }
