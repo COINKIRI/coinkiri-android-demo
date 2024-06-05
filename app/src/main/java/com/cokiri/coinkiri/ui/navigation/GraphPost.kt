@@ -26,7 +26,7 @@ fun NavGraphBuilder.postNavGraph(
 
     composable("$NEWS_DETAIL_SCREEN/{newsLink}") { backStackEntry ->
         val newsLink = backStackEntry.arguments?.getString("newsLink") ?: return@composable
-        NewsDetailScreen(navController, newsLink)
+        NewsDetailScreen(navController,postViewModel, newsLink)
     }
 
     composable(CREATE_POST_SCREEN_FOR_COMMUNITY){ CreatePostScreenForCommunity(navController) }
