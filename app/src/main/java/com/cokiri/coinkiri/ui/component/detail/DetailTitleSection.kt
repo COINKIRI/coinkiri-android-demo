@@ -46,13 +46,13 @@ fun DetailTitleSection(
 
     Column(
         modifier = Modifier
-            .padding(10.dp)
             .background(CoinkiriWhite)
             .fillMaxWidth()
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp)
                 .background(CoinkiriWhite)
         ) {
             Text(
@@ -66,7 +66,8 @@ fun DetailTitleSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(CoinkiriWhite)
-                .padding(5.dp),
+                .padding(bottom = 5.dp)
+                .padding(horizontal = 15.dp),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {

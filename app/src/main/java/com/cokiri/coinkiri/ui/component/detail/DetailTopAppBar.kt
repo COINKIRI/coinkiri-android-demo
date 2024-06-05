@@ -28,7 +28,6 @@ fun DetailTopAppBar(
         shadowElevation = 5.dp,
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp)
     ) {
         TopAppBar(
             title = { },
