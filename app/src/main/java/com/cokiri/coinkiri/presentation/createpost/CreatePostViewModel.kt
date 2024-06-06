@@ -6,8 +6,8 @@ import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.ImageData
 import com.cokiri.coinkiri.data.remote.model.PostRequestDto
-import com.cokiri.coinkiri.domain.usecase.SubmitAnalysisPostContentUseCase
-import com.cokiri.coinkiri.domain.usecase.SubmitPostContentUseCase
+import com.cokiri.coinkiri.domain.usecase.analysis.SubmitAnalysisPostUseCase
+import com.cokiri.coinkiri.domain.usecase.post.SubmitPostUseCase
 import com.cokiri.coinkiri.extensions.executeWithLoading
 import com.cokiri.coinkiri.util.InvestmentOption
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,8 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreatePostViewModel @Inject constructor(
-    private val submitPostContentUseCase: SubmitPostContentUseCase,
-    private val submitAnalysisPostContentUseCase: SubmitAnalysisPostContentUseCase
+    private val submitPostUseCase: SubmitPostUseCase,
+    private val submitAnalysisPostUseCase: SubmitAnalysisPostUseCase
 ) : ViewModel() {
 
     // 게시글 제목을 관리하는 MutableStateFlow
@@ -98,7 +98,7 @@ class CreatePostViewModel @Inject constructor(
                     targetPrice = _targetPrice.value,
                     targetPeriod = _targetPeriod.value
                 )
-                val result = submitAnalysisPostContentUseCase(analysisPostDataRequest)
+                val result = submitAnalysisPostUseCase(analysisPostDataRequest)
                 _submitResult.value = result
                 result
             }
@@ -117,7 +117,7 @@ class CreatePostViewModel @Inject constructor(
                     content = _content.value,
                     images = _images.value.map { ImageData(it.first, it.second) }
                 )
-                val result = submitPostContentUseCase(postRequestDto)
+                val result = submitPostUseCase(postRequestDto)
                 _submitResult.value = result
                 result
             }

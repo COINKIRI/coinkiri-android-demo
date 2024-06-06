@@ -8,7 +8,6 @@ import javax.inject.Inject
 /**
  * 웹소켓 시작,종료를 담당하는 UseCase
  */
-
 class WebSocketUseCase @Inject constructor(
     private val webSocketService: WebSocketService
 ) {

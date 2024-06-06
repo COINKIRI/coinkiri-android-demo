@@ -7,11 +7,11 @@ import com.cokiri.coinkiri.data.remote.model.CoinInfoDetail
 import com.cokiri.coinkiri.data.remote.model.CoinPrice
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.model.Ticker
-import com.cokiri.coinkiri.domain.usecase.AddCoinToWatchlistUseCase
-import com.cokiri.coinkiri.domain.usecase.CheckCoinInWatchlistUseCase
-import com.cokiri.coinkiri.domain.usecase.DeleteCoinFromWatchlistUseCase
-import com.cokiri.coinkiri.domain.usecase.GetCoinDaysInfoUseCase
-import com.cokiri.coinkiri.domain.usecase.GetCoinsUseCase
+import com.cokiri.coinkiri.domain.usecase.watchlist.AddCoinToWatchlistUseCase
+import com.cokiri.coinkiri.domain.usecase.watchlist.CheckCoinInWatchlistUseCase
+import com.cokiri.coinkiri.domain.usecase.watchlist.DeleteCoinFromWatchlistUseCase
+import com.cokiri.coinkiri.domain.usecase.coin.GetCoinDaysInfoUseCase
+import com.cokiri.coinkiri.domain.usecase.coin.GetCoinsUseCase
 import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
 import com.cokiri.coinkiri.extensions.executeWithLoading
 import com.cokiri.coinkiri.util.logLongMessage

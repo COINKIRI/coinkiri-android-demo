@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.CommentList
 import com.cokiri.coinkiri.data.remote.model.CommentRequest
-import com.cokiri.coinkiri.domain.usecase.GetAllCommentsUseCase
-import com.cokiri.coinkiri.domain.usecase.SubmitCommentUseCase
+import com.cokiri.coinkiri.domain.usecase.comment.FetchAllCommentsUseCase
+import com.cokiri.coinkiri.domain.usecase.comment.AddCommentUseCase
 import com.cokiri.coinkiri.extensions.executeWithLoading
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,8 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CommentViewModel @Inject constructor(
-    private val getAllCommentsUseCase: GetAllCommentsUseCase,
-    private val submitCommentUseCase: SubmitCommentUseCase
+    private val fetchAllCommentsUseCase: FetchAllCommentsUseCase,
+    private val addCommentUseCase: AddCommentUseCase
 ) : ViewModel() {
 
     // 댓글 목록을 관리하는 MutableStateFlow
@@ -54,7 +54,7 @@ class CommentViewModel @Inject constructor(
                 }
 
                 val commentRequest = CommentRequest(postId, content)
-                val result = submitCommentUseCase(commentRequest)
+                val result = addCommentUseCase(commentRequest)
                 _submitCommentResult.value = result
 
                 if (result.isSuccess) {
@@ -73,7 +73,7 @@ class CommentViewModel @Inject constructor(
     suspend fun fetchCommentList(postId: Long) {
         viewModelScope.launch {
             executeWithLoading(_isLoading, _errorMessage) {
-                val result = getAllCommentsUseCase(postId)
+                val result = fetchAllCommentsUseCase(postId)
                 if (result.isSuccess) {
                     _commentList.value = result.getOrDefault(emptyList())
                 }

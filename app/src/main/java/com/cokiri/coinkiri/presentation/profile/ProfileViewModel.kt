@@ -7,7 +7,7 @@ import com.cokiri.coinkiri.data.local.entity.MemberInfoEntity
 import com.cokiri.coinkiri.data.remote.model.WatchlistCoinPrice
 import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.domain.repository.UserRepository
-import com.cokiri.coinkiri.domain.usecase.GetCoinWatchlistUseCase
+import com.cokiri.coinkiri.domain.usecase.watchlist.FetchCoinWatchlistUseCase
 import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
 import com.cokiri.coinkiri.extensions.executeWithLoading
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val webSocketUseCase: WebSocketUseCase,                              // WebSocket을 관리하는 유스케이스
-    private val getCoinWatchlistUseCase: GetCoinWatchlistUseCase
+    private val fetchCoinWatchlistUseCase: FetchCoinWatchlistUseCase
 ) : ViewModel() {
 
     private val _memberInfo = MutableStateFlow<MemberInfoEntity?>(null)
@@ -58,7 +58,7 @@ class ProfileViewModel @Inject constructor(
     fun fetchCoinWatchlist() {
         viewModelScope.launch {
             executeWithLoading(_isLoading, _errorMessage) {
-                getCoinWatchlistUseCase()
+                fetchCoinWatchlistUseCase()
             }?.let { coinWatchlist ->
                 _coinWatchlist.value = coinWatchlist
             }

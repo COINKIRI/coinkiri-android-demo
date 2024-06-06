@@ -8,9 +8,9 @@ import com.cokiri.coinkiri.data.remote.model.AnalysisDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.model.Ticker
-import com.cokiri.coinkiri.domain.usecase.GetAllAnalysisPostsUseCase
-import com.cokiri.coinkiri.domain.usecase.GetAnalysisDetailUseCase
-import com.cokiri.coinkiri.domain.usecase.GetCoinsUseCase
+import com.cokiri.coinkiri.domain.usecase.analysis.FetchAllAnalysisPostsUseCase
+import com.cokiri.coinkiri.domain.usecase.analysis.FetchAnalysisDetailUseCase
+import com.cokiri.coinkiri.domain.usecase.coin.GetCoinsUseCase
 import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
 import com.cokiri.coinkiri.extensions.executeWithLoading
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,8 +29,8 @@ import javax.inject.Inject
 class AnalysisViewModel @Inject constructor(
     private val getCoinsUseCase: GetCoinsUseCase,
     private val webSocketUseCase: WebSocketUseCase,
-    private val getAllAnalysisPostsUseCase: GetAllAnalysisPostsUseCase,
-    private val getAnalysisDetailUseCase: GetAnalysisDetailUseCase
+    private val fetchAllAnalysisPostsUseCase: FetchAllAnalysisPostsUseCase,
+    private val fetchAnalysisDetailUseCase: FetchAnalysisDetailUseCase
 ) : ViewModel() {
 
     // 코인 목록
@@ -122,7 +122,7 @@ class AnalysisViewModel @Inject constructor(
     fun fetchAllAnalysisPostList() {
         viewModelScope.launch {
             executeWithLoading(_isLoading, _errorMessage) {
-                val result = getAllAnalysisPostsUseCase()
+                val result = fetchAllAnalysisPostsUseCase()
                 if (result.isSuccess) {
                     _analysisPostList.value = result.getOrDefault(emptyList())
                 }
@@ -139,7 +139,7 @@ class AnalysisViewModel @Inject constructor(
     suspend fun fetchAnalysisDetail(postId: Long) {
         viewModelScope.launch {
             executeWithLoading(_isLoading, _errorMessage) {
-                val result = getAnalysisDetailUseCase(postId)
+                val result = fetchAnalysisDetailUseCase(postId)
                 if (result.isSuccess) {
                     _analysisDetail.value = result.getOrNull()
                 }

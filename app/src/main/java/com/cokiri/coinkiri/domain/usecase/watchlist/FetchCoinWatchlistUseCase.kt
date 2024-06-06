@@ -1,10 +1,13 @@
-package com.cokiri.coinkiri.domain.usecase
+package com.cokiri.coinkiri.domain.usecase.watchlist
 
 import com.cokiri.coinkiri.data.remote.model.WatchlistCoinPrice
 import com.cokiri.coinkiri.domain.repository.CoinRepository
 import javax.inject.Inject
 
-class GetCoinWatchlistUseCase @Inject constructor(
+/**
+ * 코인 관심목록을 가져오는 UseCase
+ */
+class FetchCoinWatchlistUseCase @Inject constructor(
     private val coinRepository: CoinRepository
 ){
     suspend operator fun invoke() : Result<List<WatchlistCoinPrice>> {

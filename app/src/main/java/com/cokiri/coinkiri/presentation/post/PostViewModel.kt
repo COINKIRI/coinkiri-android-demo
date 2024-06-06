@@ -2,17 +2,12 @@ package com.cokiri.coinkiri.presentation.post
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cokiri.coinkiri.data.remote.model.ApiResponse
-import com.cokiri.coinkiri.data.remote.model.CommentList
-import com.cokiri.coinkiri.data.remote.model.CommentRequest
 import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.CommunityResponseDto
 import com.cokiri.coinkiri.data.remote.model.NewsList
-import com.cokiri.coinkiri.domain.usecase.GetAllCommentsUseCase
-import com.cokiri.coinkiri.domain.usecase.GetCommunityPostDetailsUseCase
-import com.cokiri.coinkiri.domain.usecase.GetAllCommunityPostsUseCase
-import com.cokiri.coinkiri.domain.usecase.GetAllNewsUseCase
-import com.cokiri.coinkiri.domain.usecase.SubmitCommentUseCase
+import com.cokiri.coinkiri.domain.usecase.post.FetchCommunityPostDetailsUseCase
+import com.cokiri.coinkiri.domain.usecase.post.FetchAllCommunityPostsUseCase
+import com.cokiri.coinkiri.domain.usecase.post.FetchAllNewsUseCase
 import com.cokiri.coinkiri.extensions.executeWithLoading
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,9 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
-    private val getAllCommunityPostsUseCase: GetAllCommunityPostsUseCase,
-    private val getCommunityPostDetailsUseCase: GetCommunityPostDetailsUseCase,
-    private val getAllNewsUseCase: GetAllNewsUseCase
+    private val fetchAllCommunityPostsUseCase: FetchAllCommunityPostsUseCase,
+    private val fetchCommunityPostDetailsUseCase: FetchCommunityPostDetailsUseCase,
+    private val fetchAllNewsUseCase: FetchAllNewsUseCase
 ) : ViewModel() {
 
     // 커뮤니티 게시글 목록을 관리하는 MutableStateFlow
@@ -54,7 +49,7 @@ class PostViewModel @Inject constructor(
     fun fetchAllCommunityPostList() {
         viewModelScope.launch {
             executeWithLoading(_isLoading, _errorMessage) {
-                val result = getAllCommunityPostsUseCase()
+                val result = fetchAllCommunityPostsUseCase()
                 if (result.isSuccess) {
                     _communityPostList.value = result.getOrDefault(emptyList())
                 }
@@ -71,7 +66,7 @@ class PostViewModel @Inject constructor(
     suspend fun fetchCommunityPostDetails(postId: Long) {
         viewModelScope.launch {
             executeWithLoading(_isLoading, _errorMessage) {
-                val result = getCommunityPostDetailsUseCase(postId)
+                val result = fetchCommunityPostDetailsUseCase(postId)
                 if (result.isSuccess) {
                     _communityDetail.value = result.getOrNull()
                 }
@@ -87,7 +82,7 @@ class PostViewModel @Inject constructor(
     fun fetchAllNewsList() {
         viewModelScope.launch {
             executeWithLoading(_isLoading, _errorMessage) {
-                val result = getAllNewsUseCase()
+                val result = fetchAllNewsUseCase()
                 if (result.isSuccess) {
                     _newsList.value = result.getOrDefault(emptyList())
                 }

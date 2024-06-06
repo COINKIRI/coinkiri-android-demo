@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.domain.usecase
+package com.cokiri.coinkiri.domain.usecase.coin
 
 import android.util.Log
 import com.cokiri.coinkiri.domain.model.Coin

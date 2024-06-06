@@ -1,11 +1,14 @@
-package com.cokiri.coinkiri.domain.usecase
+package com.cokiri.coinkiri.domain.usecase.analysis
 
 import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.domain.repository.AnalysisRepository
 import javax.inject.Inject
 
-class SubmitAnalysisPostContentUseCase @Inject constructor(
+/**
+ * 작성된 분석글을 서버에 전송하는 UseCase
+ */
+class SubmitAnalysisPostUseCase @Inject constructor(
     private val analysisRepository: AnalysisRepository
 ){
     suspend operator fun invoke(analysisPostDataRequest: AnalysisPostDataRequest): Result<ApiResponse> {
