@@ -1,16 +1,19 @@
 package com.cokiri.coinkiri.di
 
 import com.cokiri.coinkiri.data.local.database.AppDatabase
+import com.cokiri.coinkiri.data.remote.api.AnalysisApi
 import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
 import com.cokiri.coinkiri.data.remote.api.CoinApi
 import com.cokiri.coinkiri.data.remote.api.CommentApi
 import com.cokiri.coinkiri.data.remote.api.PostApi
+import com.cokiri.coinkiri.data.repository.AnalysisRepositoryImpl
 import com.cokiri.coinkiri.data.repository.CoinRepositoryImpl
 import com.cokiri.coinkiri.data.repository.CommentRepositoryImpl
 import com.cokiri.coinkiri.data.repository.KakaoLoginRepositoryImpl
 import com.cokiri.coinkiri.data.repository.PostRepositoryImpl
 import com.cokiri.coinkiri.data.repository.UserRepositoryImpl
+import com.cokiri.coinkiri.domain.repository.AnalysisRepository
 import com.cokiri.coinkiri.domain.repository.CoinRepository
 import com.cokiri.coinkiri.domain.repository.CommentRepository
 import com.cokiri.coinkiri.domain.repository.KakaoLoginRepository
@@ -88,5 +91,15 @@ object RepositoryModule {
         preferencesManager: PreferencesManager
     ): PostRepository {
         return PostRepositoryImpl(postApi,preferencesManager)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideAnalysisRepository(
+        analysisApi: AnalysisApi,
+        preferencesManager: PreferencesManager
+    ): AnalysisRepository {
+        return AnalysisRepositoryImpl(analysisApi, preferencesManager)
     }
 }

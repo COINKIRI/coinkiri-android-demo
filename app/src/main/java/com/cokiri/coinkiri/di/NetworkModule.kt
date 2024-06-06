@@ -3,6 +3,7 @@ package com.cokiri.coinkiri.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.cokiri.coinkiri.BuildConfig
+import com.cokiri.coinkiri.data.remote.api.AnalysisApi
 import com.cokiri.coinkiri.data.remote.service.auth.AuthInterceptor
 import com.cokiri.coinkiri.util.JsonParser
 import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
@@ -168,5 +169,15 @@ object NetworkModule {
     @Singleton
     fun provideCommentApi(retrofit: Retrofit): CommentApi {
         return retrofit.create(CommentApi::class.java)
+    }
+
+
+    /**
+     * AnalysisApi를 제공하는 함수
+     */
+    @Provides
+    @Singleton
+    fun provideAnalysisApi(retrofit: Retrofit): AnalysisApi {
+        return retrofit.create(AnalysisApi::class.java)
     }
 }

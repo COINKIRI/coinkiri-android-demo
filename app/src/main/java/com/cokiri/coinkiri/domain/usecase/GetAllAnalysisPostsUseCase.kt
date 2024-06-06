@@ -1,13 +1,13 @@
 package com.cokiri.coinkiri.domain.usecase
 
 import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
-import com.cokiri.coinkiri.domain.repository.PostRepository
+import com.cokiri.coinkiri.domain.repository.AnalysisRepository
 import javax.inject.Inject
 
 class GetAllAnalysisPostsUseCase @Inject constructor(
-    private val postRepository: PostRepository
+    private val analysisRepository: AnalysisRepository
 ) {
     suspend operator fun invoke(): Result<List<AnalysisResponseDto>> {
-        return runCatching { postRepository.getAnalysisPostList() }
+        return runCatching { analysisRepository.getAnalysisPostList() }
     }
 }

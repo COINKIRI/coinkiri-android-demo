@@ -45,30 +45,30 @@ interface PostApi {
     suspend fun getCommunityPostDetail(@Path("postId") postId : Long) : CommunityDetailResponse
 
 
-    /**
-     * 분석 게시글 작성 API
-     */
-    @AuthRequired
-    @Headers("Content-Type: application/json")
-    @POST("/api/v1/analysis/save")
-    suspend fun submitAnalysisPost(
-        @Header("Authorization") accessToken: String,
-        @Body analysisPostDataRequest: AnalysisPostDataRequest
-    ): Response<ApiResponse>
-
-
-    /**
-     * 분석 전체 게시글 조회 API
-     */
-    @GET("/api/v1/analysis/all")
-    suspend fun getAllAnalysisPost(): AnalysisResponse
-
-
-    /**
-     * 분석글 게시글 상세 조회 API
-     */
-    @GET("/api/v1/analysis/{postId}")
-    suspend fun getAnalysisPostDetail(@Path("postId") postId : Long) : AnalysisDetailResponse
+//    /**
+//     * 분석 게시글 작성 API
+//     */
+//    @AuthRequired
+//    @Headers("Content-Type: application/json")
+//    @POST("/api/v1/analysis/save")
+//    suspend fun submitAnalysisPost(
+//        @Header("Authorization") accessToken: String,
+//        @Body analysisPostDataRequest: AnalysisPostDataRequest
+//    ): Response<ApiResponse>
+//
+//
+//    /**
+//     * 분석 전체 게시글 조회 API
+//     */
+//    @GET("/api/v1/analysis/all")
+//    suspend fun getAllAnalysisPost(): AnalysisResponse
+//
+//
+//    /**
+//     * 분석글 게시글 상세 조회 API
+//     */
+//    @GET("/api/v1/analysis/{postId}")
+//    suspend fun getAnalysisPostDetail(@Path("postId") postId : Long) : AnalysisDetailResponse
 
 
 

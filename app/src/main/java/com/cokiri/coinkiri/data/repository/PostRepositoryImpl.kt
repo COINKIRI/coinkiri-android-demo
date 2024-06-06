@@ -1,16 +1,13 @@
 package com.cokiri.coinkiri.data.repository
 
 import android.util.Log
-import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.PostApi
-import com.cokiri.coinkiri.data.remote.model.AnalysisDetailResponseDto
-import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
-import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.CommunityResponseDto
 import com.cokiri.coinkiri.data.remote.model.NewsList
 import com.cokiri.coinkiri.data.remote.model.PostRequestDto
+import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import com.cokiri.coinkiri.domain.repository.PostRepository
 import javax.inject.Inject
 
@@ -20,16 +17,14 @@ class PostRepositoryImpl @Inject constructor(
 ) : PostRepository {
 
     private var cachedCommunityPostList : List<CommunityResponseDto>? = null     // 캐시된 커뮤니티 게시물 목록
-    private var cachedAnalysisPostList : List<AnalysisResponseDto>? = null       // 캐시된 분석 게시물 목록
-    private var cachedNewsList : List<NewsList>? = null                                // 캐시된 뉴스 목록
+
+    private var cachedNewsList : List<NewsList>? = null                          // 캐시된 뉴스 목록
     private var lastFetchTimeCommunity: Long = 0                                 // 마지막으로 게시물 목록을 가져온 시간
-    private var lastFetchTimeAnalysis: Long = 0                                  // 마지막으로 분석 게시물 목록을 가져온 시간
     private var lastNewsFetchTime: Long = 0                                      // 마지막으로 뉴스 목록을 가져온 시간
 
 
     companion object {
         private const val CACHE_VALIDITY_DURATION_COMMUNITY = 5 * 60 * 1000   // 캐시 유효 기간 (5분)
-        private const val CACHE_VALIDITY_DURATION_ANALYSIS = 5 * 60 * 1000    // 캐시 유효 기간 (5분)
         private const val CACHE_VALIDITY_DURATION_NEWS = 5 * 60 * 1000        // 캐시 유효 기간 (5분)
         private const val TAG = "PostRepositoryImpl"                          // 로그 태그
     }
@@ -52,31 +47,6 @@ class PostRepositoryImpl @Inject constructor(
         // PostApi를 사용하여 글 작성 요청
         val response = postApi.submitPost("Bearer $accessToken", postRequestDto)
         Log.d(TAG, "submitPost: $response")
-
-        if (response.isSuccessful) {
-            // 캐시 무효화
-            clearCache()
-            // 응답 데이터 반환, null인 경우 예외 발생
-            return response.body() ?: throw ApiException("응답 데이터가 null입니다.")
-        } else {
-            throw ApiException("응답이 실패하였습니다.")
-        }
-    }
-
-
-    /**
-     * 분석글 작성 요청 (POST)
-     */
-    override suspend fun submitAnalysisPost(analysisPostDataRequest: AnalysisPostDataRequest): ApiResponse {
-        // 액세스 토큰을 preferencesManager에서 가져옴
-        val accessToken = preferencesManager.getAccessToken()
-        if (accessToken.isNullOrEmpty()) {
-            throw AuthException("로그인이 필요합니다.")
-        }
-
-        // PostApi를 사용하여 분석글 작성 요청
-        val response = postApi.submitAnalysisPost("Bearer $accessToken", analysisPostDataRequest)
-        Log.d(TAG, "submitAnalysisPost: $response")
 
         if (response.isSuccessful) {
             // 캐시 무효화
@@ -114,29 +84,9 @@ class PostRepositoryImpl @Inject constructor(
 
 
     /**
-     * 전체 분석글 목록 요청 (GET)
-     */
-    override suspend fun getAnalysisPostList(forceRefresh: Boolean): List<AnalysisResponseDto> {
-        // 현재 시간 가져오기
-        val currentTime = System.currentTimeMillis()
-        return if (forceRefresh || cachedAnalysisPostList.isNullOrEmpty() || currentTime - lastFetchTimeAnalysis > CACHE_VALIDITY_DURATION_ANALYSIS) {
-            // 강제 새로 고침이 필요하거나 캐시가 비어있거나 캐시 유효 기간이 지난 경우
-            // PostApi를 사용하여 전체 분석글 목록 요청
-            val response = postApi.getAllAnalysisPost()
-            // 응답 결과를 캐시에 저장
-            cachedAnalysisPostList = response.result
-            lastFetchTimeAnalysis = currentTime
-            // 캐시된 분석글 목록 반환
-            cachedAnalysisPostList!!
-        } else {
-            // 유효한 캐시가 있는 경우 캐시된 목록 반환
-            cachedAnalysisPostList!!
-        }
-    }
-
-
-    /**
      *  뉴스 목록 요청 (GET)
+     *  @param forceRefresh 강제 새로 고침 여부
+     *  @return List<NewsList> 뉴스 목록
      */
     override suspend fun getNewsList(forceRefresh: Boolean) : List<NewsList> {
         val currentTime = System.currentTimeMillis()
@@ -173,23 +123,6 @@ class PostRepositoryImpl @Inject constructor(
 
 
     /**
-     * 분석글 상세 요청 (GET)
-     * @param postId 요청할 글의 ID
-     * @return AnalysisDetailResponseDto 글 상세 정보
-     * @throws Exception 요청 중 발생한 예외
-     */
-    override suspend fun getAnalysisPostDetail(postId: Long) : AnalysisDetailResponseDto {
-        return try {
-            // PostApi를 사용하여 분석글 상세 요청
-            val response = postApi.getAnalysisPostDetail(postId)
-            response.result
-        } catch (e: Exception) {
-            throw e
-        }
-    }
-
-
-    /**
      * 캐시 무효화
      * 캐시된 게시글 목록을 초기화
      * 캐시된 분석글 목록을 초기화
@@ -198,10 +131,8 @@ class PostRepositoryImpl @Inject constructor(
      */
     private fun clearCache() {
         cachedCommunityPostList = null
-        cachedAnalysisPostList = null
         cachedNewsList = null
         lastFetchTimeCommunity = 0
-        lastFetchTimeAnalysis = 0
         lastNewsFetchTime = 0
     }
 
