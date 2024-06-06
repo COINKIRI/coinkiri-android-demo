@@ -20,19 +20,25 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.presentation.home.component.CoinChangeRateCard
+import com.cokiri.coinkiri.presentation.home.component.MemberCoinWatchlistCard
 import com.cokiri.coinkiri.presentation.price.PriceViewModel
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 
 @Composable
 fun HomeScreen(
-    priceViewModel: PriceViewModel = hiltViewModel()
-) {
+    priceViewModel: PriceViewModel = hiltViewModel(),
+
+    ) {
+
+    LaunchedEffect(Unit) {
+        priceViewModel.fetchCoinWatchlist()
+    }
 
     Scaffold(
         topBar = {
             HomeTopBar()
         },
-        content = {paddingValues ->
+        content = { paddingValues ->
             HomeContent(
                 paddingValues,
                 priceViewModel
@@ -41,17 +47,18 @@ fun HomeScreen(
     )
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopBar() {
     TopAppBar(
         title = {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_logo_coinkrir),
-                    contentDescription = "Logo",
-                    modifier = Modifier
-                        .size(120.dp)
-                )
+            Image(
+                painter = painterResource(id = R.drawable.ic_logo_coinkrir),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .size(120.dp)
+            )
         },
         colors = TopAppBarDefaults.topAppBarColors(CoinkiriWhite),
         windowInsets = TopAppBarDefaults.windowInsets
@@ -72,6 +79,8 @@ fun HomeContent(
 //            Top5RisingCoins(
 //                priceViewModel
 //            )
+
+            MemberCoinWatchlistCard(priceViewModel)
         }
     }
 }
@@ -97,7 +106,7 @@ fun Top5RisingCoins(
 
 
     LazyRow {
-        items(topChangeRate.size){
+        items(topChangeRate.size) {
             val coin = topChangeRate[it]
             CoinChangeRateCard(
                 coinInfoDetail = coin
@@ -106,7 +115,7 @@ fun Top5RisingCoins(
     }
 
     LazyRow {
-        items(bottomChangeRate.size){
+        items(bottomChangeRate.size) {
             val coin = topChangeRate[it]
             CoinChangeRateCard(
                 coinInfoDetail = coin

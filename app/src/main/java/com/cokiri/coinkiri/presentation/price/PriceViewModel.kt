@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.cokiri.coinkiri.data.remote.model.coin.CoinInfoDetail
 import com.cokiri.coinkiri.data.remote.model.coin.CoinPrice
+import com.cokiri.coinkiri.data.remote.model.coin.WatchlistCoinPrice
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
@@ -12,6 +13,7 @@ import com.cokiri.coinkiri.domain.usecase.coin.GetCoinsUseCase
 import com.cokiri.coinkiri.domain.usecase.watchlist.AddCoinToWatchlistUseCase
 import com.cokiri.coinkiri.domain.usecase.watchlist.CheckCoinInWatchlistUseCase
 import com.cokiri.coinkiri.domain.usecase.watchlist.DeleteCoinFromWatchlistUseCase
+import com.cokiri.coinkiri.domain.usecase.watchlist.FetchCoinWatchlistUseCase
 import com.cokiri.coinkiri.util.logLongMessage
 import com.cokiri.coinkiri.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,12 +25,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PriceViewModel @Inject constructor(
-    private val getCoinsUseCase: GetCoinsUseCase,                                // 코인 정보를 가져오는 유스케이스
-    private val webSocketUseCase: WebSocketUseCase,                              // WebSocket을 관리하는 유스케이스
-    private val getCoinDaysInfoUseCase: GetCoinDaysInfoUseCase,                  // 특정 코인의 일간 정보를 가져오는 유스케이스
-    private val addCoinToWatchlistUseCase: AddCoinToWatchlistUseCase,            // 코인 관심 목록에 추가하는 유스케이스
-    private val checkCoinInWatchlistUseCase: CheckCoinInWatchlistUseCase,        // 코인 관심 목록 등록여부 조회 유스케이스
-    private val deleteCoinFromWatchlistUseCase: DeleteCoinFromWatchlistUseCase   // 코인 관심 목록에서 삭제하는 유스케이스
+    private val getCoinsUseCase: GetCoinsUseCase,                                 // 코인 정보를 가져오는 유스케이스
+    private val webSocketUseCase: WebSocketUseCase,                               // WebSocket을 관리하는 유스케이스
+    private val getCoinDaysInfoUseCase: GetCoinDaysInfoUseCase,                   // 특정 코인의 일간 정보를 가져오는 유스케이스
+    private val addCoinToWatchlistUseCase: AddCoinToWatchlistUseCase,             // 코인 관심 목록에 추가하는 유스케이스
+    private val fetchCoinWatchlistUseCase: FetchCoinWatchlistUseCase,             // 코인 관심 목록을 가져오는 유스케이스
+    private val checkCoinInWatchlistUseCase: CheckCoinInWatchlistUseCase,         // 코인 관심 목록 등록여부 조회 유스케이스
+    private val deleteCoinFromWatchlistUseCase: DeleteCoinFromWatchlistUseCase    // 코인 관심 목록에서 삭제하는 유스케이스
 ) : BaseViewModel() {
 
     // 코인 목록을 저장하는 StateFlow
@@ -55,9 +58,14 @@ class PriceViewModel @Inject constructor(
     private val _coinDaysInfo = MutableStateFlow<List<CoinPrice>>(emptyList())
     val coinDaysInfo: StateFlow<List<CoinPrice>> get() = _coinDaysInfo
 
+
     // 관심 목록에 코인이 있는지 여부를 저장하는 StateFlow
     private val _isCoinInWatchlist = MutableStateFlow(false)
     val isCoinInWatchlist: StateFlow<Boolean> get() = _isCoinInWatchlist
+
+
+    private val _coinWatchlist = MutableStateFlow<List<WatchlistCoinPrice>>(emptyList())
+    val coinWatchlist: StateFlow<List<WatchlistCoinPrice>> = _coinWatchlist
 
 
     // 상승률 상위 5개 코인을 저장하는 StateFlow
@@ -131,6 +139,18 @@ class PriceViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 특정 코인들의 티커 정보를 가져오는 함수
+     */
+    fun getTickers(coinMarketIds: List<String>) {
+        viewModelScope.launch {
+            // WebSocket 연결 시작
+            webSocketUseCase.startConnection(coinMarketIds, { ticker ->
+                handleTickerResponse(ticker) // 티커 응답 처리
+            }, receiveOnce = false)
+        }
+    }
+
 
     /**
      * 티커 응답을 처리하는 함수
@@ -199,6 +219,18 @@ class PriceViewModel @Inject constructor(
                 Log.e("PriceViewModel", "Error checking watchlist status", e)
             }
         }
+    }
+
+    /**
+     * 코인 관심 목록을 가져오는 함수
+     */
+    fun fetchCoinWatchlist() {
+        executeWithLoading(
+            block = { fetchCoinWatchlistUseCase() },
+            onSuccess = { coinWatchlist ->
+                _coinWatchlist.value = coinWatchlist
+            }
+        )
     }
 
 
