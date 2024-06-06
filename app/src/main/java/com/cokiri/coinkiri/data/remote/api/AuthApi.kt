@@ -1,6 +1,6 @@
 package com.cokiri.coinkiri.data.remote.api
 
-import com.cokiri.coinkiri.data.remote.AuthRequired
+import com.cokiri.coinkiri.data.remote.service.auth.AuthRequired
 import com.cokiri.coinkiri.data.remote.model.MemberResponse
 import com.cokiri.coinkiri.data.remote.model.SignUpRequest
 import com.cokiri.coinkiri.data.remote.model.SignUpResponse

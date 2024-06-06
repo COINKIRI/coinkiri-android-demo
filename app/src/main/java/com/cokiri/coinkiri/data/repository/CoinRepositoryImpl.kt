@@ -1,13 +1,12 @@
 package com.cokiri.coinkiri.data.repository
 
 import android.util.Log
-import com.cokiri.coinkiri.data.remote.PreferencesManager
+import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.CoinApi
 import com.cokiri.coinkiri.data.remote.mapper.CoinMapper
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.CoinPrice
 import com.cokiri.coinkiri.data.remote.model.WatchlistCoinPrice
-import com.cokiri.coinkiri.data.remote.model.WatchlistResponse
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.repository.CoinRepository
 import javax.inject.Inject

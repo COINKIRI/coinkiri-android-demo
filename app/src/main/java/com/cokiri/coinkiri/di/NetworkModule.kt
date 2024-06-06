@@ -3,9 +3,9 @@ package com.cokiri.coinkiri.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.cokiri.coinkiri.BuildConfig
-import com.cokiri.coinkiri.data.remote.AuthInterceptor
+import com.cokiri.coinkiri.data.remote.service.auth.AuthInterceptor
 import com.cokiri.coinkiri.util.JsonParser
-import com.cokiri.coinkiri.data.remote.PreferencesManager
+import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
 import com.cokiri.coinkiri.data.remote.api.CoinApi
 import com.cokiri.coinkiri.data.remote.api.CommentApi

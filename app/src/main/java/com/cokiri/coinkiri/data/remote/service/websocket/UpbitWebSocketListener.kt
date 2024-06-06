@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.data.remote
+package com.cokiri.coinkiri.data.remote.service.websocket
 
 import android.util.Log
 import com.cokiri.coinkiri.data.remote.mapper.TickerMapper

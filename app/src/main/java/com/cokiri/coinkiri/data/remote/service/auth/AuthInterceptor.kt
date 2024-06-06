@@ -1,5 +1,6 @@
-package com.cokiri.coinkiri.data.remote
+package com.cokiri.coinkiri.data.remote.service.auth
 
+import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject

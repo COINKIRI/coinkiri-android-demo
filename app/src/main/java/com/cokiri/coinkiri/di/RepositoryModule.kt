@@ -1,7 +1,7 @@
 package com.cokiri.coinkiri.di
 
 import com.cokiri.coinkiri.data.local.database.AppDatabase
-import com.cokiri.coinkiri.data.remote.PreferencesManager
+import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
 import com.cokiri.coinkiri.data.remote.api.CoinApi
 import com.cokiri.coinkiri.data.remote.api.CommentApi

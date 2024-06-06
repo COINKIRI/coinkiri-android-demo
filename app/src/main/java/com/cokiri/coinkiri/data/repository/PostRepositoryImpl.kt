@@ -1,7 +1,7 @@
 package com.cokiri.coinkiri.data.repository
 
 import android.util.Log
-import com.cokiri.coinkiri.data.remote.PreferencesManager
+import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.PostApi
 import com.cokiri.coinkiri.data.remote.model.AnalysisDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest

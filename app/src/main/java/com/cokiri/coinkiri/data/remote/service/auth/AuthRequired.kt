@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.data.remote
+package com.cokiri.coinkiri.data.remote.service.auth
 
 /**
  * 인증이 필요한 API에 사용하는 어노테이션

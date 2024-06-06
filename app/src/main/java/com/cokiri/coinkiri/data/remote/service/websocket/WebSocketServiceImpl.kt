@@ -1,6 +1,5 @@
-package com.cokiri.coinkiri.data.remote.service
+package com.cokiri.coinkiri.data.remote.service.websocket
 
-import com.cokiri.coinkiri.data.remote.UpbitWebSocketListener
 import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.domain.service.WebSocketService
 import com.cokiri.coinkiri.util.JsonParser

@@ -1,6 +1,6 @@
 package com.cokiri.coinkiri.di
 
-import com.cokiri.coinkiri.data.remote.service.WebSocketServiceImpl
+import com.cokiri.coinkiri.data.remote.service.websocket.WebSocketServiceImpl
 import com.cokiri.coinkiri.domain.service.WebSocketService
 import dagger.Module
 import dagger.Provides

@@ -1,12 +1,11 @@
 package com.cokiri.coinkiri.data.remote.api
 
-import com.cokiri.coinkiri.data.remote.AuthRequired
+import com.cokiri.coinkiri.data.remote.service.auth.AuthRequired
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.CoinDaysResponse
 import com.cokiri.coinkiri.data.remote.model.CoinResponse
 import com.cokiri.coinkiri.data.remote.model.WatchlistResponse
 import retrofit2.Response
-import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
