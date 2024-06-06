@@ -1,26 +1,23 @@
 package com.cokiri.coinkiri.presentation.createpost
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.ImageData
 import com.cokiri.coinkiri.data.remote.model.PostRequestDto
 import com.cokiri.coinkiri.domain.usecase.analysis.SubmitAnalysisPostUseCase
 import com.cokiri.coinkiri.domain.usecase.post.SubmitPostUseCase
-import com.cokiri.coinkiri.extensions.executeWithLoading
 import com.cokiri.coinkiri.util.InvestmentOption
+import com.cokiri.coinkiri.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CreatePostViewModel @Inject constructor(
     private val submitPostUseCase: SubmitPostUseCase,
     private val submitAnalysisPostUseCase: SubmitAnalysisPostUseCase
-) : ViewModel() {
+) : BaseViewModel() {
 
     // 게시글 제목을 관리하는 MutableStateFlow
     private val _title = MutableStateFlow("")
@@ -29,14 +26,6 @@ class CreatePostViewModel @Inject constructor(
     // 게시글 내용을 관리하는 MutableStateFlow
     private val _content = MutableStateFlow("")
     val content: StateFlow<String> = _content
-
-    // 로딩 상태를 관리하는 MutableStateFlow
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
-    // 에러 메시지를 관리하는 MutableStateFlow
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage
 
     // 이미지 목록을 관리하는 MutableStateFlow
     private val _images = MutableStateFlow<List<Pair<Int, String>>>(emptyList())
@@ -82,10 +71,9 @@ class CreatePostViewModel @Inject constructor(
      * 분석글 내용을 서버에 제출하는 함수
      */
     fun submitAnalysisPostContent() {
-        viewModelScope.launch {
-            executeWithLoading(_isLoading, _errorMessage) {
+        executeWithLoading(
+            block = {
                 val englishInvestmentOption = InvestmentOption.toEnglish(_investmentOption.value)
-
                 val analysisPostDataRequest = AnalysisPostDataRequest(
                     postRequestDto = PostRequestDto(
                         title = _title.value,
@@ -98,11 +86,16 @@ class CreatePostViewModel @Inject constructor(
                     targetPrice = _targetPrice.value,
                     targetPeriod = _targetPeriod.value
                 )
-                val result = submitAnalysisPostUseCase(analysisPostDataRequest)
-                _submitResult.value = result
-                result
+                submitAnalysisPostUseCase(analysisPostDataRequest)
+            },
+            onSuccess = { result ->
+                _submitResult.value = Result.success(result)
+                clearForm()
+            },
+            onFailure = { error ->
+                _submitResult.value = Result.failure(error)
             }
-        }
+        )
     }
 
 
@@ -110,18 +103,23 @@ class CreatePostViewModel @Inject constructor(
      * 게시글 내용을 서버에 제출하는 함수
      */
     fun submitPostContent() {
-        viewModelScope.launch {
-            executeWithLoading(_isLoading, _errorMessage) {
+        executeWithLoading(
+            block = {
                 val postRequestDto = PostRequestDto(
                     title = _title.value,
                     content = _content.value,
                     images = _images.value.map { ImageData(it.first, it.second) }
                 )
-                val result = submitPostUseCase(postRequestDto)
-                _submitResult.value = result
-                result
+                submitPostUseCase(postRequestDto)
+            },
+            onSuccess = { result ->
+                _submitResult.value = Result.success(result)
+                clearForm()
+            },
+            onFailure = { error ->
+                _submitResult.value = Result.failure(error)
             }
-        }
+        )
     }
 
 
@@ -146,5 +144,15 @@ class CreatePostViewModel @Inject constructor(
      */
     fun onImagesChange(newImages: List<Pair<Int, String>>) {
         _images.value = newImages
+    }
+
+
+    /**
+     * 폼 초기화 함수
+     */
+    private fun clearForm() {
+        _title.value = ""
+        _content.value = ""
+        _images.value = emptyList()
     }
 }

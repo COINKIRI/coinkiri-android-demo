@@ -1,13 +1,12 @@
 package com.cokiri.coinkiri.presentation.comment
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.CommentList
 import com.cokiri.coinkiri.data.remote.model.CommentRequest
-import com.cokiri.coinkiri.domain.usecase.comment.FetchAllCommentsUseCase
 import com.cokiri.coinkiri.domain.usecase.comment.AddCommentUseCase
-import com.cokiri.coinkiri.extensions.executeWithLoading
+import com.cokiri.coinkiri.domain.usecase.comment.FetchAllCommentsUseCase
+import com.cokiri.coinkiri.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +17,7 @@ import javax.inject.Inject
 class CommentViewModel @Inject constructor(
     private val fetchAllCommentsUseCase: FetchAllCommentsUseCase,
     private val addCommentUseCase: AddCommentUseCase
-) : ViewModel() {
+) : BaseViewModel() {
 
     // 댓글 목록을 관리하는 MutableStateFlow
     private val _commentList = MutableStateFlow<List<CommentList>>(emptyList())
@@ -32,37 +31,29 @@ class CommentViewModel @Inject constructor(
     private val _submitCommentResult = MutableStateFlow<Result<ApiResponse>?>(null)
 
 
-    // 로딩 상태를 관리하는 MutableStateFlow
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
-    // 에러 메시지를 관리하는 MutableStateFlow
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage
-
-
     /**
      * 댓글을 작성하는 함수
      * @param postId 댓글을 작성할 게시글의 ID
      */
     fun submitComment(postId: Long) {
-        viewModelScope.launch {
-            executeWithLoading(_isLoading, _errorMessage) {
+        executeWithLoading(
+            block = {
                 val content = _commentContent.value
                 if (content.isBlank()) {
                     throw IllegalArgumentException("댓글 내용을 입력해주세요.")
                 }
 
                 val commentRequest = CommentRequest(postId, content)
-                val result = addCommentUseCase(commentRequest)
-                _submitCommentResult.value = result
-
-                if (result.isSuccess) {
-                    fetchCommentList(postId)
-                }
-                result
+                addCommentUseCase(commentRequest)
+            },
+            onSuccess = { result ->
+                _submitCommentResult.value = Result.success(result)
+                fetchCommentList(postId)
+            },
+            onFailure = { error ->
+                _submitCommentResult.value = Result.failure(error)
             }
-        }
+        )
     }
 
 
@@ -70,16 +61,16 @@ class CommentViewModel @Inject constructor(
      * 댓글 목록을 가져오는 함수
      * @param postId 댓글 목록을 가져올 게시글의 ID
      */
-    suspend fun fetchCommentList(postId: Long) {
-        viewModelScope.launch {
-            executeWithLoading(_isLoading, _errorMessage) {
-                val result = fetchAllCommentsUseCase(postId)
-                if (result.isSuccess) {
-                    _commentList.value = result.getOrDefault(emptyList())
-                }
-                result
+    fun fetchCommentList(postId: Long) {
+        executeWithLoading(
+            block = { fetchAllCommentsUseCase(postId) },
+            onSuccess = { commentList ->
+                _commentList.value = commentList
+            },
+            onFailure = { error ->
+                _commentList.value = emptyList()
             }
-        }
+        )
     }
 
 

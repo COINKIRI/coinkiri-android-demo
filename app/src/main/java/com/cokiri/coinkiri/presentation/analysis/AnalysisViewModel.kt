@@ -2,17 +2,16 @@ package com.cokiri.coinkiri.presentation.analysis
 
 import android.util.Log
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cokiri.coinkiri.data.remote.model.AnalysisDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.model.Ticker
+import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
 import com.cokiri.coinkiri.domain.usecase.analysis.FetchAllAnalysisPostsUseCase
 import com.cokiri.coinkiri.domain.usecase.analysis.FetchAnalysisDetailUseCase
 import com.cokiri.coinkiri.domain.usecase.coin.GetCoinsUseCase
-import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
-import com.cokiri.coinkiri.extensions.executeWithLoading
+import com.cokiri.coinkiri.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,7 +30,7 @@ class AnalysisViewModel @Inject constructor(
     private val webSocketUseCase: WebSocketUseCase,
     private val fetchAllAnalysisPostsUseCase: FetchAllAnalysisPostsUseCase,
     private val fetchAnalysisDetailUseCase: FetchAnalysisDetailUseCase
-) : ViewModel() {
+) : BaseViewModel() {
 
     // 코인 목록
     private val _coinList = MutableStateFlow<List<Coin>>(emptyList())
@@ -98,15 +97,6 @@ class AnalysisViewModel @Inject constructor(
     val loadingStates: StateFlow<Map<String, Boolean>> = _loadingStates.asStateFlow()
 
 
-
-    // 로딩 상태와 에러 메시지 관리용 MutableStateFlow
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
-
-
     /**
      * 초기화 블록
      */
@@ -120,15 +110,12 @@ class AnalysisViewModel @Inject constructor(
      * 분석글 목록을 가져오는 함수
      */
     fun fetchAllAnalysisPostList() {
-        viewModelScope.launch {
-            executeWithLoading(_isLoading, _errorMessage) {
-                val result = fetchAllAnalysisPostsUseCase()
-                if (result.isSuccess) {
-                    _analysisPostList.value = result.getOrDefault(emptyList())
-                }
-                result
+        executeWithLoading(
+            block = { fetchAllAnalysisPostsUseCase() },
+            onSuccess = { analysisPostList ->
+                _analysisPostList.value = analysisPostList
             }
-        }
+        )
     }
 
 
@@ -137,15 +124,12 @@ class AnalysisViewModel @Inject constructor(
      * @param postId 가져올 게시글의 ID
      */
     suspend fun fetchAnalysisDetail(postId: Long) {
-        viewModelScope.launch {
-            executeWithLoading(_isLoading, _errorMessage) {
-                val result = fetchAnalysisDetailUseCase(postId)
-                if (result.isSuccess) {
-                    _analysisDetail.value = result.getOrNull()
-                }
-                result
+        executeWithLoading(
+            block = { fetchAnalysisDetailUseCase(postId) },
+            onSuccess = { analysisDetail ->
+                _analysisDetail.value = analysisDetail
             }
-        }
+        )
     }
 
 
@@ -153,16 +137,16 @@ class AnalysisViewModel @Inject constructor(
      * 코인 목록을 가져옴
      */
     fun fetchCoins() {
-        viewModelScope.launch {
-            executeWithLoading(_isLoading, _errorMessage) {
-                getCoinsUseCase().onSuccess { coins ->
-                    _coinList.value = coins
-                    Result.success(Unit)
-                }.onFailure { e ->
-                    Result.failure<Unit>(e)
-                }
+        executeWithLoading(
+            block = { getCoinsUseCase() },
+            onSuccess = { coins ->
+                _coinList.value = coins
+            },
+            onFailure = { error ->
+                Log.e("AnalysisViewModel", "코인 목록을 가져오는데 실패했습니다. $error")
+                _coinList.value = emptyList()
             }
-        }
+        )
     }
 
 

@@ -1,15 +1,14 @@
 package com.cokiri.coinkiri.presentation.profile
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cokiri.coinkiri.data.local.entity.MemberInfoEntity
 import com.cokiri.coinkiri.data.remote.model.WatchlistCoinPrice
 import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.domain.repository.UserRepository
-import com.cokiri.coinkiri.domain.usecase.watchlist.FetchCoinWatchlistUseCase
 import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
-import com.cokiri.coinkiri.extensions.executeWithLoading
+import com.cokiri.coinkiri.domain.usecase.watchlist.FetchCoinWatchlistUseCase
+import com.cokiri.coinkiri.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,9 +19,9 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val webSocketUseCase: WebSocketUseCase,                              // WebSocket을 관리하는 유스케이스
+    private val webSocketUseCase: WebSocketUseCase,
     private val fetchCoinWatchlistUseCase: FetchCoinWatchlistUseCase
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _memberInfo = MutableStateFlow<MemberInfoEntity?>(null)
     val memberInfo: StateFlow<MemberInfoEntity?> = _memberInfo
@@ -30,19 +29,10 @@ class ProfileViewModel @Inject constructor(
     private val _coinWatchlist = MutableStateFlow<List<WatchlistCoinPrice>>(emptyList())
     val coinWatchlist: StateFlow<List<WatchlistCoinPrice>> = _coinWatchlist
 
-
     // 티커 정보를 저장하는 StateFlow
     private val _tickers = MutableStateFlow<Map<String, Ticker>>(emptyMap())
     val tickers: StateFlow<Map<String, Ticker>> = _tickers.asStateFlow()
 
-
-    // 로딩 상태를 저장하는 StateFlow
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
-    // 에러 메시지를 저장하는 StateFlow
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
 
     init {
@@ -56,13 +46,12 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun fetchCoinWatchlist() {
-        viewModelScope.launch {
-            executeWithLoading(_isLoading, _errorMessage) {
-                fetchCoinWatchlistUseCase()
-            }?.let { coinWatchlist ->
+        executeWithLoading(
+            block = { fetchCoinWatchlistUseCase() },
+            onSuccess = { coinWatchlist ->
                 _coinWatchlist.value = coinWatchlist
             }
-        }
+        )
     }
 
 
