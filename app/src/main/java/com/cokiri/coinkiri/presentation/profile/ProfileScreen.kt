@@ -54,8 +54,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.R
-import com.cokiri.coinkiri.data.remote.model.WatchlistCoinPrice
-import com.cokiri.coinkiri.data.remote.model.WatchlistPrice
+import com.cokiri.coinkiri.data.remote.model.coin.WatchlistCoinPrice
+import com.cokiri.coinkiri.data.remote.model.coin.WatchlistPrice
 import com.cokiri.coinkiri.presentation.login.LoginUiState
 import com.cokiri.coinkiri.presentation.login.LoginViewModel
 import com.cokiri.coinkiri.presentation.profile.component.MemberInfoCard
@@ -84,6 +84,9 @@ fun ProfileScreen(
     val memberInfo by profileViewModel.memberInfo.collectAsStateWithLifecycle()
     val isLoading by profileViewModel.isLoading.collectAsStateWithLifecycle()
 
+    /**
+     * 로그인 상태가 초기 상태일 때 로그인 화면으로 이동
+     */
     LaunchedEffect(loginUiState) {
         if (loginUiState is LoginUiState.Initial) {
             navController.navigate(LOGIN) {

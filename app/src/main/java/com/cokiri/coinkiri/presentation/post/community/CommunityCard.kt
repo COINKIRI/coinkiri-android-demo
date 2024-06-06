@@ -21,7 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cokiri.coinkiri.R
-import com.cokiri.coinkiri.data.remote.model.CommunityResponseDto
+import com.cokiri.coinkiri.data.remote.model.post.community.CommunityResponseDto
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriGreen
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen

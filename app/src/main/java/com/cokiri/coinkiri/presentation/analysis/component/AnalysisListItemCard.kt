@@ -39,7 +39,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cokiri.coinkiri.R
-import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisResponseDto
 import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.PretendardFont

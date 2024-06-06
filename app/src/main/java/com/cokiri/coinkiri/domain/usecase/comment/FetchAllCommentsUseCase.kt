@@ -1,6 +1,6 @@
 package com.cokiri.coinkiri.domain.usecase.comment
 
-import com.cokiri.coinkiri.data.remote.model.CommentList
+import com.cokiri.coinkiri.data.remote.model.comment.CommentList
 import com.cokiri.coinkiri.domain.repository.CommentRepository
 import javax.inject.Inject
 

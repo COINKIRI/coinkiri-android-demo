@@ -4,8 +4,8 @@ import android.util.Log
 import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.CommentApi
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
-import com.cokiri.coinkiri.data.remote.model.CommentList
-import com.cokiri.coinkiri.data.remote.model.CommentRequest
+import com.cokiri.coinkiri.data.remote.model.comment.CommentList
+import com.cokiri.coinkiri.data.remote.model.comment.CommentRequest
 import com.cokiri.coinkiri.domain.repository.CommentRepository
 import javax.inject.Inject
 

@@ -2,8 +2,8 @@ package com.cokiri.coinkiri.data.remote.api
 
 import com.cokiri.coinkiri.data.remote.service.auth.AuthRequired
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
-import com.cokiri.coinkiri.data.remote.model.CommentRequest
-import com.cokiri.coinkiri.data.remote.model.CommentResponse
+import com.cokiri.coinkiri.data.remote.model.comment.CommentRequest
+import com.cokiri.coinkiri.data.remote.model.comment.CommentResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

@@ -1,9 +1,9 @@
 package com.cokiri.coinkiri.presentation.post
 
 import android.util.Log
-import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
-import com.cokiri.coinkiri.data.remote.model.CommunityResponseDto
-import com.cokiri.coinkiri.data.remote.model.NewsList
+import com.cokiri.coinkiri.data.remote.model.post.community.CommunityDetailResponseDto
+import com.cokiri.coinkiri.data.remote.model.post.community.CommunityResponseDto
+import com.cokiri.coinkiri.data.remote.model.post.news.NewsList
 import com.cokiri.coinkiri.domain.usecase.post.FetchAllCommunityPostsUseCase
 import com.cokiri.coinkiri.domain.usecase.post.FetchAllNewsUseCase
 import com.cokiri.coinkiri.domain.usecase.post.FetchCommunityPostDetailsUseCase

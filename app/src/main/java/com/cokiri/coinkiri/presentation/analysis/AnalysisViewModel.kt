@@ -3,8 +3,8 @@ package com.cokiri.coinkiri.presentation.analysis
 import android.util.Log
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.lifecycle.viewModelScope
-import com.cokiri.coinkiri.data.remote.model.AnalysisDetailResponseDto
-import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisDetailResponseDto
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisResponseDto
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase

@@ -1,5 +1,6 @@
-package com.cokiri.coinkiri.data.remote.model
+package com.cokiri.coinkiri.data.remote.model.analysis
 
+import com.cokiri.coinkiri.data.remote.model.post.community.PostDetailResponseDto
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)

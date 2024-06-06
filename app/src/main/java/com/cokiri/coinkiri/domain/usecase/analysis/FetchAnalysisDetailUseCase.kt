@@ -1,6 +1,6 @@
 package com.cokiri.coinkiri.domain.usecase.analysis
 
-import com.cokiri.coinkiri.data.remote.model.AnalysisDetailResponseDto
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisDetailResponseDto
 import com.cokiri.coinkiri.domain.repository.AnalysisRepository
 import javax.inject.Inject
 

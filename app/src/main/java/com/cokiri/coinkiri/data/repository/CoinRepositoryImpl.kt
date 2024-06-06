@@ -5,8 +5,8 @@ import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.CoinApi
 import com.cokiri.coinkiri.data.remote.mapper.CoinMapper
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
-import com.cokiri.coinkiri.data.remote.model.CoinPrice
-import com.cokiri.coinkiri.data.remote.model.WatchlistCoinPrice
+import com.cokiri.coinkiri.data.remote.model.coin.CoinPrice
+import com.cokiri.coinkiri.data.remote.model.coin.WatchlistCoinPrice
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.repository.CoinRepository
 import javax.inject.Inject
@@ -27,11 +27,11 @@ class CoinRepositoryImpl @Inject constructor(
     /**
      * 코인 목록을 가져옴
      */
-    override suspend fun getCoins(): List<Coin> {
+    override suspend fun coinList(): List<Coin> {
         return try {
             // 캐시된 코인 리스트가 없으면 API를 통해 코인 리스트를 가져옴
             if (cachedCoins.isNullOrEmpty()) {
-                val coinResponses = coinApi.getCoins()
+                val coinResponses = coinApi.getList()
                 val coins = CoinMapper.mapToCoins(coinResponses)
                 cachedCoins = coins
                 coins

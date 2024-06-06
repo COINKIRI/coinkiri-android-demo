@@ -1,6 +1,6 @@
 package com.cokiri.coinkiri.data.remote.mapper
 
-import com.cokiri.coinkiri.data.remote.model.UpbitTickerResponse
+import com.cokiri.coinkiri.data.remote.model.coin.UpbitTickerResponse
 import com.cokiri.coinkiri.domain.model.Ticker
 
 object TickerMapper {

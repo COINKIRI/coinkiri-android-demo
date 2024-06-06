@@ -1,7 +1,7 @@
 package com.cokiri.coinkiri.data.remote.mapper
 
-import com.cokiri.coinkiri.data.remote.model.CoinInfo
-import com.cokiri.coinkiri.data.remote.model.CoinResponse
+import com.cokiri.coinkiri.data.remote.model.coin.CoinInfo
+import com.cokiri.coinkiri.data.remote.model.coin.CoinListResponse
 import com.cokiri.coinkiri.domain.model.Coin
 
 object CoinMapper {
@@ -9,7 +9,7 @@ object CoinMapper {
     // CoinInfo Coin으로 변환하는 함수
     private fun mapToCoin(coinInfo: CoinInfo): Coin {
         return Coin(
-            coinId = coinInfo.coinId,
+            coinId = coinInfo.id,
             market = coinInfo.market,
             koreanName = coinInfo.koreanName,
             englishName = coinInfo.englishName,
@@ -18,7 +18,7 @@ object CoinMapper {
     }
 
     // CoinResponse() List<Coin>으로 변환하는 함수
-    fun mapToCoins(coinResponses: CoinResponse): List<Coin> {
+    fun mapToCoins(coinResponses: CoinListResponse): List<Coin> {
         return coinResponses.result.map { coinInfo ->
             mapToCoin(coinInfo)
         }

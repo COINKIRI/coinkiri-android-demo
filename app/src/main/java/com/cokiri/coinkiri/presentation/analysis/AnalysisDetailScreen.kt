@@ -43,8 +43,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.cokiri.coinkiri.data.remote.model.AnalysisDetailResponseDto
-import com.cokiri.coinkiri.data.remote.model.Coin
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisDetailResponseDto
+import com.cokiri.coinkiri.data.remote.model.analysis.Coin
 import com.cokiri.coinkiri.presentation.comment.CommentScreen
 import com.cokiri.coinkiri.ui.component.detail.DetailAuthorProfile
 import com.cokiri.coinkiri.ui.component.detail.DetailBottomAppBar

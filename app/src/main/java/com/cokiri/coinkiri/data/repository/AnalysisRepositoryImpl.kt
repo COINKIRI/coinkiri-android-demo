@@ -2,9 +2,9 @@ package com.cokiri.coinkiri.data.repository
 
 import android.util.Log
 import com.cokiri.coinkiri.data.remote.api.AnalysisApi
-import com.cokiri.coinkiri.data.remote.model.AnalysisDetailResponseDto
-import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
-import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisDetailResponseDto
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisPostDataRequest
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisResponseDto
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import com.cokiri.coinkiri.domain.repository.AnalysisRepository

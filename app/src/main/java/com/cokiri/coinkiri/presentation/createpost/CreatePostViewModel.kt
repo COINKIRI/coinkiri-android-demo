@@ -1,9 +1,9 @@
 package com.cokiri.coinkiri.presentation.createpost
 
-import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisPostDataRequest
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
-import com.cokiri.coinkiri.data.remote.model.ImageData
-import com.cokiri.coinkiri.data.remote.model.PostRequestDto
+import com.cokiri.coinkiri.data.remote.model.analysis.ImageData
+import com.cokiri.coinkiri.data.remote.model.analysis.PostRequestDto
 import com.cokiri.coinkiri.domain.usecase.analysis.SubmitAnalysisPostUseCase
 import com.cokiri.coinkiri.domain.usecase.post.SubmitPostUseCase
 import com.cokiri.coinkiri.util.InvestmentOption

@@ -1,7 +1,10 @@
-package com.cokiri.coinkiri.data.remote.model
+package com.cokiri.coinkiri.data.remote.model.coin
 
 import com.squareup.moshi.JsonClass
 
+/**
+ * 관심 코인 조회 응답
+ */
 @JsonClass(generateAdapter = true)
 data class WatchlistResponse(
     val code: String,

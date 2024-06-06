@@ -3,7 +3,7 @@ package com.cokiri.coinkiri.presentation.profile
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.cokiri.coinkiri.data.local.entity.MemberInfoEntity
-import com.cokiri.coinkiri.data.remote.model.WatchlistCoinPrice
+import com.cokiri.coinkiri.data.remote.model.coin.WatchlistCoinPrice
 import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.domain.repository.UserRepository
 import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
@@ -32,7 +32,6 @@ class ProfileViewModel @Inject constructor(
     // 티커 정보를 저장하는 StateFlow
     private val _tickers = MutableStateFlow<Map<String, Ticker>>(emptyMap())
     val tickers: StateFlow<Map<String, Ticker>> = _tickers.asStateFlow()
-
 
 
     init {

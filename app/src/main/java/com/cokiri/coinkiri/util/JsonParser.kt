@@ -1,6 +1,6 @@
 package com.cokiri.coinkiri.util
 
-import com.cokiri.coinkiri.data.remote.model.UpbitTickerResponse
+import com.cokiri.coinkiri.data.remote.model.coin.UpbitTickerResponse
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import javax.inject.Inject

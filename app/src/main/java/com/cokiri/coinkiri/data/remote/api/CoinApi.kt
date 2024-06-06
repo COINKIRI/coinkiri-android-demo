@@ -2,9 +2,9 @@ package com.cokiri.coinkiri.data.remote.api
 
 import com.cokiri.coinkiri.data.remote.service.auth.AuthRequired
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
-import com.cokiri.coinkiri.data.remote.model.CoinDaysResponse
-import com.cokiri.coinkiri.data.remote.model.CoinResponse
-import com.cokiri.coinkiri.data.remote.model.WatchlistResponse
+import com.cokiri.coinkiri.data.remote.model.coin.CoinDaysResponse
+import com.cokiri.coinkiri.data.remote.model.coin.CoinListResponse
+import com.cokiri.coinkiri.data.remote.model.coin.WatchlistResponse
 import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -19,7 +19,7 @@ interface CoinApi {
      * 코인 목록 조회
      */
     @GET("/api/v1/coin/all")
-    suspend fun getCoins(): CoinResponse
+    suspend fun getList(): CoinListResponse
 
 
     /**

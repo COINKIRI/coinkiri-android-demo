@@ -1,8 +1,8 @@
 package com.cokiri.coinkiri.domain.repository
 
-import com.cokiri.coinkiri.data.remote.model.AnalysisDetailResponseDto
-import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
-import com.cokiri.coinkiri.data.remote.model.AnalysisResponseDto
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisDetailResponseDto
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisPostDataRequest
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisResponseDto
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 
 interface AnalysisRepository {

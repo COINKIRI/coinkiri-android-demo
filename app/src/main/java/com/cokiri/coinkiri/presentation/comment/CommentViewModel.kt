@@ -1,16 +1,14 @@
 package com.cokiri.coinkiri.presentation.comment
 
-import androidx.lifecycle.viewModelScope
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
-import com.cokiri.coinkiri.data.remote.model.CommentList
-import com.cokiri.coinkiri.data.remote.model.CommentRequest
+import com.cokiri.coinkiri.data.remote.model.comment.CommentList
+import com.cokiri.coinkiri.data.remote.model.comment.CommentRequest
 import com.cokiri.coinkiri.domain.usecase.comment.AddCommentUseCase
 import com.cokiri.coinkiri.domain.usecase.comment.FetchAllCommentsUseCase
 import com.cokiri.coinkiri.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

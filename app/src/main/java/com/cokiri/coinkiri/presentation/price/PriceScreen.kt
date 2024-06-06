@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.cokiri.coinkiri.data.remote.model.CoinInfoDetail
+import com.cokiri.coinkiri.data.remote.model.coin.CoinInfoDetail
 import com.cokiri.coinkiri.presentation.price.component.CoinCard
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriBlack

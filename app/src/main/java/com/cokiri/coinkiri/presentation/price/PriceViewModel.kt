@@ -1,20 +1,19 @@
 package com.cokiri.coinkiri.presentation.price
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cokiri.coinkiri.data.remote.model.CoinInfoDetail
-import com.cokiri.coinkiri.data.remote.model.CoinPrice
+import com.cokiri.coinkiri.data.remote.model.coin.CoinInfoDetail
+import com.cokiri.coinkiri.data.remote.model.coin.CoinPrice
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.model.Ticker
+import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
+import com.cokiri.coinkiri.domain.usecase.coin.GetCoinDaysInfoUseCase
+import com.cokiri.coinkiri.domain.usecase.coin.GetCoinsUseCase
 import com.cokiri.coinkiri.domain.usecase.watchlist.AddCoinToWatchlistUseCase
 import com.cokiri.coinkiri.domain.usecase.watchlist.CheckCoinInWatchlistUseCase
 import com.cokiri.coinkiri.domain.usecase.watchlist.DeleteCoinFromWatchlistUseCase
-import com.cokiri.coinkiri.domain.usecase.coin.GetCoinDaysInfoUseCase
-import com.cokiri.coinkiri.domain.usecase.coin.GetCoinsUseCase
-import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
-import com.cokiri.coinkiri.extensions.executeWithLoading
 import com.cokiri.coinkiri.util.logLongMessage
+import com.cokiri.coinkiri.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,7 +29,7 @@ class PriceViewModel @Inject constructor(
     private val addCoinToWatchlistUseCase: AddCoinToWatchlistUseCase,            // 코인 관심 목록에 추가하는 유스케이스
     private val checkCoinInWatchlistUseCase: CheckCoinInWatchlistUseCase,        // 코인 관심 목록 등록여부 조회 유스케이스
     private val deleteCoinFromWatchlistUseCase: DeleteCoinFromWatchlistUseCase   // 코인 관심 목록에서 삭제하는 유스케이스
-) : ViewModel() {
+) : BaseViewModel() {
 
     // 코인 목록을 저장하는 StateFlow
     private val _coinList = MutableStateFlow<List<Coin>>(emptyList())
@@ -63,20 +62,12 @@ class PriceViewModel @Inject constructor(
 
     // 상승률 상위 5개 코인을 저장하는 StateFlow
     private val _topGainers = MutableStateFlow<List<CoinInfoDetail>>(emptyList())
-    val topGainers: StateFlow<List<CoinInfoDetail>> = _topGainers.asStateFlow()
+    val topGainers: StateFlow<List<CoinInfoDetail>> = _topGainers
 
     // 하락률 상위 5개 코인을 저장하는 StateFlow
     private val _topLosers = MutableStateFlow<List<CoinInfoDetail>>(emptyList())
     val topLosers: StateFlow<List<CoinInfoDetail>> = _topLosers.asStateFlow()
 
-
-    // 로딩 상태를 저장하는 StateFlow
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
-    // 에러 메시지를 저장하는 StateFlow
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
     // ViewModel 초기화 시 코인 목록을 로드
     init {
@@ -88,14 +79,13 @@ class PriceViewModel @Inject constructor(
      * 코인 목록을 로드하는 함수 (코인 정보 가져오기)
      */
     private fun loadCoins() {
-        viewModelScope.launch {
-            executeWithLoading(_isLoading, _errorMessage) {
-                getCoinsUseCase() // 코인 정보를 가져오는 유스케이스 호출
-            }?.let { coins ->
-                _coinList.value = coins // 코인 목록 갱신
-                _krwMarketString.value = convertCoinInfoResponse(coins) // KRW 시장 문자열 갱신
+        executeWithLoading(
+            block = { getCoinsUseCase() },
+            onSuccess = { coins ->
+                _coinList.value = coins
+                _krwMarketString.value = convertCoinInfoResponse(coins)
             }
-        }
+        )
     }
 
 
@@ -103,13 +93,12 @@ class PriceViewModel @Inject constructor(
      *  특정 코인의 일간 가격 정보를 가져오는 함수
      */
     fun getCoinDaysInfo(coinId: String) {
-        viewModelScope.launch {
-            executeWithLoading(_isLoading, _errorMessage) {
-                getCoinDaysInfoUseCase(coinId)     // 특정 코인의 일간 정보 가져오기
-            }?.let { coinDaysInfo ->
-                _coinDaysInfo.value = coinDaysInfo // 일간 정보 갱신
+        executeWithLoading(
+            block = { getCoinDaysInfoUseCase(coinId) },
+            onSuccess = { coinDaysInfo ->
+                _coinDaysInfo.value = coinDaysInfo
             }
-        }
+        )
     }
 
 
@@ -180,12 +169,10 @@ class PriceViewModel @Inject constructor(
      * 코인 관심 목록에 추가하는 함수
      */
     fun addCoinToWatchlist(coinId: Long) {
-        viewModelScope.launch {
-            executeWithLoading(_isLoading, _errorMessage) {
-                _isCoinInWatchlist.value = true
-                addCoinToWatchlistUseCase(coinId) // 코인 관심 목록에 추가하는 유스케이스 호출
-            }
-        }
+        executeWithLoading(
+            block = { addCoinToWatchlistUseCase(coinId) },
+            onSuccess = { _isCoinInWatchlist.value = true }
+        )
     }
 
 
@@ -193,12 +180,10 @@ class PriceViewModel @Inject constructor(
      * 코인 관심 목록에서 삭제하는 함수
      */
     fun deleteCoinFromWatchlist(coinId: Long) {
-        viewModelScope.launch {
-            executeWithLoading(_isLoading, _errorMessage) {
-                _isCoinInWatchlist.value = false
-                deleteCoinFromWatchlistUseCase(coinId) // 코인 관심 목록에서 삭제하는 유스케이스 호출
-            }
-        }
+        executeWithLoading(
+            block = { deleteCoinFromWatchlistUseCase(coinId) },
+            onSuccess = { _isCoinInWatchlist.value = false }
+        )
     }
 
 

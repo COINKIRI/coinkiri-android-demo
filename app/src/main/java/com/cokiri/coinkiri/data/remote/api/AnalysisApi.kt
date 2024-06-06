@@ -1,8 +1,8 @@
 package com.cokiri.coinkiri.data.remote.api
 
-import com.cokiri.coinkiri.data.remote.model.AnalysisDetailResponse
-import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
-import com.cokiri.coinkiri.data.remote.model.AnalysisResponse
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisDetailResponse
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisPostDataRequest
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisResponse
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.service.auth.AuthRequired
 import retrofit2.Response

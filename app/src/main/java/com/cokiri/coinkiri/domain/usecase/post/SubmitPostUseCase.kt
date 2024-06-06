@@ -1,7 +1,7 @@
 package com.cokiri.coinkiri.domain.usecase.post
 
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
-import com.cokiri.coinkiri.data.remote.model.PostRequestDto
+import com.cokiri.coinkiri.data.remote.model.analysis.PostRequestDto
 import com.cokiri.coinkiri.domain.repository.PostRepository
 import javax.inject.Inject
 

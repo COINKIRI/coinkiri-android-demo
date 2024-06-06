@@ -44,7 +44,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.R
-import com.cokiri.coinkiri.data.remote.model.CoinPrice
+import com.cokiri.coinkiri.data.remote.model.coin.CoinPrice
 import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen

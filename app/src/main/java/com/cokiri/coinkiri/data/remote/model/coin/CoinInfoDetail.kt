@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.data.remote.model
+package com.cokiri.coinkiri.data.remote.model.coin
 
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.model.Ticker

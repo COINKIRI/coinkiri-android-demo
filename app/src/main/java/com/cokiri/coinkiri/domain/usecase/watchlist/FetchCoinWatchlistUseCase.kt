@@ -1,6 +1,6 @@
 package com.cokiri.coinkiri.domain.usecase.watchlist
 
-import com.cokiri.coinkiri.data.remote.model.WatchlistCoinPrice
+import com.cokiri.coinkiri.data.remote.model.coin.WatchlistCoinPrice
 import com.cokiri.coinkiri.domain.repository.CoinRepository
 import javax.inject.Inject
 

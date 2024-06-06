@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.data.remote.model
+package com.cokiri.coinkiri.data.remote.model.coin
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

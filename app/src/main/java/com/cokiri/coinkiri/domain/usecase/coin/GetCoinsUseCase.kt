@@ -10,8 +10,8 @@ class GetCoinsUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(): Result<List<Coin>> {
         return try {
-            val coins = coinRepository.getCoins()
-            Result.success(coins)
+            val coinList = coinRepository.coinList()
+            Result.success(coinList)
         } catch (e: Exception) {
             Log.e("GetCoinsUseCase", "Failed to get coins", e)
             Result.failure(e)

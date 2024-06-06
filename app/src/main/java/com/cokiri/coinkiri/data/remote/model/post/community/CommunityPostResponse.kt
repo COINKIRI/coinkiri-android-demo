@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.data.remote.model
+package com.cokiri.coinkiri.data.remote.model.post.community
 
 import com.squareup.moshi.JsonClass
 import java.time.LocalDateTime

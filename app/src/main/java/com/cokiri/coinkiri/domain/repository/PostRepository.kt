@@ -1,10 +1,10 @@
 package com.cokiri.coinkiri.domain.repository
 
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
-import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
-import com.cokiri.coinkiri.data.remote.model.CommunityResponseDto
-import com.cokiri.coinkiri.data.remote.model.NewsList
-import com.cokiri.coinkiri.data.remote.model.PostRequestDto
+import com.cokiri.coinkiri.data.remote.model.post.community.CommunityDetailResponseDto
+import com.cokiri.coinkiri.data.remote.model.post.community.CommunityResponseDto
+import com.cokiri.coinkiri.data.remote.model.post.news.NewsList
+import com.cokiri.coinkiri.data.remote.model.analysis.PostRequestDto
 
 interface PostRepository {
 

@@ -1,6 +1,6 @@
 package com.cokiri.coinkiri.domain.usecase.post
 
-import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
+import com.cokiri.coinkiri.data.remote.model.post.community.CommunityDetailResponseDto
 import com.cokiri.coinkiri.domain.repository.PostRepository
 import javax.inject.Inject
 

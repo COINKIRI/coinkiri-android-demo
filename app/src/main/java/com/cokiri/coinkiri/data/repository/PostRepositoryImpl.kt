@@ -3,10 +3,10 @@ package com.cokiri.coinkiri.data.repository
 import android.util.Log
 import com.cokiri.coinkiri.data.remote.api.PostApi
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
-import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponseDto
-import com.cokiri.coinkiri.data.remote.model.CommunityResponseDto
-import com.cokiri.coinkiri.data.remote.model.NewsList
-import com.cokiri.coinkiri.data.remote.model.PostRequestDto
+import com.cokiri.coinkiri.data.remote.model.post.community.CommunityDetailResponseDto
+import com.cokiri.coinkiri.data.remote.model.post.community.CommunityResponseDto
+import com.cokiri.coinkiri.data.remote.model.post.news.NewsList
+import com.cokiri.coinkiri.data.remote.model.analysis.PostRequestDto
 import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import com.cokiri.coinkiri.domain.repository.PostRepository
 import javax.inject.Inject

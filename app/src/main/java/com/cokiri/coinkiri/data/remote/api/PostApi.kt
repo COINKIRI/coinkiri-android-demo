@@ -1,14 +1,11 @@
 package com.cokiri.coinkiri.data.remote.api
 
 import com.cokiri.coinkiri.data.remote.service.auth.AuthRequired
-import com.cokiri.coinkiri.data.remote.model.AnalysisDetailResponse
-import com.cokiri.coinkiri.data.remote.model.AnalysisPostDataRequest
-import com.cokiri.coinkiri.data.remote.model.AnalysisResponse
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
-import com.cokiri.coinkiri.data.remote.model.CommunityDetailResponse
-import com.cokiri.coinkiri.data.remote.model.CommunityResponse
-import com.cokiri.coinkiri.data.remote.model.NewsResponse
-import com.cokiri.coinkiri.data.remote.model.PostRequestDto
+import com.cokiri.coinkiri.data.remote.model.post.community.CommunityDetailResponse
+import com.cokiri.coinkiri.data.remote.model.post.community.CommunityResponse
+import com.cokiri.coinkiri.data.remote.model.post.news.NewsListResponse
+import com.cokiri.coinkiri.data.remote.model.analysis.PostRequestDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -45,37 +42,10 @@ interface PostApi {
     suspend fun getCommunityPostDetail(@Path("postId") postId : Long) : CommunityDetailResponse
 
 
-//    /**
-//     * 분석 게시글 작성 API
-//     */
-//    @AuthRequired
-//    @Headers("Content-Type: application/json")
-//    @POST("/api/v1/analysis/save")
-//    suspend fun submitAnalysisPost(
-//        @Header("Authorization") accessToken: String,
-//        @Body analysisPostDataRequest: AnalysisPostDataRequest
-//    ): Response<ApiResponse>
-//
-//
-//    /**
-//     * 분석 전체 게시글 조회 API
-//     */
-//    @GET("/api/v1/analysis/all")
-//    suspend fun getAllAnalysisPost(): AnalysisResponse
-//
-//
-//    /**
-//     * 분석글 게시글 상세 조회 API
-//     */
-//    @GET("/api/v1/analysis/{postId}")
-//    suspend fun getAnalysisPostDetail(@Path("postId") postId : Long) : AnalysisDetailResponse
-
-
-
     /**
      * 뉴스 조회 API
      */
     @GET("/api/v1/news/list")
-    suspend fun getNewsList(): NewsResponse
+    suspend fun getNewsList(): NewsListResponse
 
 }
