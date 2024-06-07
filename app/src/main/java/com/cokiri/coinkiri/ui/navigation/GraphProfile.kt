@@ -5,14 +5,18 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.cokiri.coinkiri.presentation.login.LoginViewModel
 import com.cokiri.coinkiri.presentation.profile.FollowScreen
+import com.cokiri.coinkiri.presentation.profile.ProfileModifyScreen
 import com.cokiri.coinkiri.presentation.profile.ProfileScreen
 import com.cokiri.coinkiri.util.FOLLOW
 import com.cokiri.coinkiri.util.PROFILE
+import com.cokiri.coinkiri.util.PROFILE_MODIFY_SCREEN
 
 fun NavGraphBuilder.profileNavGraph(
     navController: NavHostController,
-    loginViewModel: LoginViewModel
+    loginViewModel: LoginViewModel,
+
 ) {
+
     composable(PROFILE) {
         ProfileScreen(
             loginViewModel = loginViewModel,
@@ -20,8 +24,11 @@ fun NavGraphBuilder.profileNavGraph(
         )
     }
 
-    composable(FOLLOW) {
-        FollowScreen(navController)
+    composable(FOLLOW) { FollowScreen(navController) }
+
+
+    composable(PROFILE_MODIFY_SCREEN) {
+        ProfileModifyScreen(navController = navController)
     }
 
 }

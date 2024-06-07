@@ -34,6 +34,12 @@ fun HomeScreen(
         priceViewModel.fetchCoinWatchlist()
     }
 
+    DisposableEffect(Unit) {
+        onDispose {
+            priceViewModel.stopWebSocketConnection()
+        }
+    }
+
     Scaffold(
         topBar = {
             HomeTopBar()

@@ -1,7 +1,8 @@
 package com.cokiri.coinkiri.presentation.profile.component
 
+import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,41 +10,43 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.data.local.entity.MemberInfoEntity
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
+import com.cokiri.coinkiri.ui.theme.PretendardFont
 import com.cokiri.coinkiri.util.FOLLOW
+import com.cokiri.coinkiri.util.byteArrayToPainter
 
 @Composable
 fun MemberInfoCard(
-    memberInfo: MemberInfoEntity?,
-    navController: NavHostController
+
+    navController: NavHostController,
+    memberInfo: MemberInfoEntity?
 ) {
-//    val bytePic = memberInfo?.pic
-//    val memberProfile = byteArrayToPainter(bytePic)
+
+
+    //val memberProfile = memberInfo?.pic?.let { byteArrayToPainter(it) }
 
     Card(
         modifier = Modifier
             .fillMaxWidth(1f)
             .padding(10.dp),
         colors = CardDefaults.cardColors(CoinkiriWhite),
-        shape = CardDefaults.shape,
         elevation = CardDefaults.cardElevation(5.dp)
     ) {
         Column(
@@ -55,86 +58,109 @@ fun MemberInfoCard(
                 modifier = Modifier
                     .fillMaxWidth(1f)
                     .padding(5.dp),
-                verticalAlignment = Alignment.Bottom
+                verticalAlignment = Alignment.CenterVertically
             ) {
+
                 Card(
                     shape = CircleShape,
                     elevation = CardDefaults.cardElevation(5.dp),
                 ) {
                     Image(
+//                        painter = memberProfile,
                         painter = painterResource(id = R.drawable.ic_launcher_foreground),
                         contentScale = ContentScale.Crop,
                         contentDescription = "Profile Image",
                         modifier = Modifier
-                            .size(50.dp)
+                            .size(85.dp)
                     )
                 }
 
-                Column(
+                Row(
                     modifier = Modifier
-                        .padding(start = 10.dp, bottom = 5.dp),
-                    verticalArrangement = Arrangement.spacedBy(1.dp)
+                        .fillMaxWidth(1f)
+                        .padding(start = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    memberInfo?.let {
-                        Text(
-                            text = "Lv." + it.level.toString(),
-                        )
-                        Text(
-                            text = it.nickname,
-                            fontWeight = FontWeight.Bold,
-                        )
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .pointerInput(Unit) {
+                                detectTapGestures(
+                                    onTap = {
+                                        navController.navigate(FOLLOW)
+                                    }
+                                )
+                            }
+                    ) {
+                        memberInfo?.let {
+                            Text(it.followerCount.toString())
+                        }
+                        Text("팔로워")
+                    }
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .pointerInput(Unit) {
+                                detectTapGestures(
+                                    onTap = {
+                                        navController.navigate(FOLLOW)
+                                    }
+                                )
+                            }
+                    ) {
+                        memberInfo?.let {
+                            Text(it.followingCount.toString())
+                        }
+                        Text("팔로잉")
                     }
                 }
             }
 
-            Surface(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth(1f)
-                    .padding(vertical = 15.dp, horizontal = 10.dp),
-                shape = CutCornerShape(topEnd = 10.dp),
+                    .padding(top = 10.dp, start = 10.dp, end = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                memberInfo?.let {
+                    Text(
+                        text = "Lv." + it.level.toString(),
+                        fontFamily = PretendardFont,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 18.sp,
+                    )
+                    Text(
+                        text = it.nickname,
+                        fontFamily = PretendardFont,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .padding(horizontal = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 memberInfo?.let {
                     Text(
                         text = it.statusMessage,
-                        modifier = Modifier
-                            .padding(5.dp)
+                        fontFamily = PretendardFont,
+                        fontWeight = FontWeight.Thin,
+                        fontSize = 15.sp,
                     )
                 }
             }
         }
-
-        Row(
-            modifier = Modifier
-                .background(Color.LightGray)
-                .fillMaxWidth(1f),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            CustomTextButton(
-                onClick = { navController.navigate(FOLLOW) },
-                text = "팔로워"
-            )
-            CustomTextButton(
-                onClick = { navController.navigate(FOLLOW) },
-                text = "팔로잉"
-            )
-        }
     }
 }
 
-@Composable
-fun CustomTextButton(
-    onClick: () -> Unit,
-    text: String
-) {
-    androidx.compose.material.TextButton(
-        onClick = onClick,
-    ) {
-        Text(
-            text = "$text 0",
-        )
-    }
-}
 
 @Preview
 @Composable
@@ -155,4 +181,8 @@ fun MemberInfoCardPreview() {
         navController = navController
     )
 }
+
+
+
+
 

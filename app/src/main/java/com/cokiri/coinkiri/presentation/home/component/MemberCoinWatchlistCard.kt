@@ -60,8 +60,10 @@ fun MemberCoinWatchlistCard(
 
     val tickers by priceViewModel.tickers.collectAsStateWithLifecycle()
     val priceList = tickers.values.map { it.formattedTradePrice } // 가격 리스트
-    val formattedSignedChangePriceList = tickers.values.map { it.formattedSignedChangePrice } // 변동 가격 리스트
-    val formattedSignedChangeRateList = tickers.values.map { it.formattedSignedChangeRate } // 변동률 리스트
+    val formattedSignedChangePriceList =
+        tickers.values.map { it.formattedSignedChangePrice } // 변동 가격 리스트
+    val formattedSignedChangeRateList =
+        tickers.values.map { it.formattedSignedChangeRate } // 변동률 리스트
 
 
 
@@ -194,7 +196,7 @@ fun CoinWatchlistItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = changePriceSign+changeRate,
+                    text = changePriceSign + changeRate,
                     fontFamily = PretendardFont,
                     fontWeight = FontWeight.Normal,
                     fontSize = 13.sp,

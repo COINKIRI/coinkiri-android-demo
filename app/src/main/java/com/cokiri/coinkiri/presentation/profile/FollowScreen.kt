@@ -20,7 +20,9 @@ import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FollowScreen(navController: NavHostController) {
+fun FollowScreen(
+    navController: NavHostController,
+) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf("팔로워", "팔로잉")
 

@@ -140,7 +140,10 @@ fun CoinSelectionBottomSheet(
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(CoinkiriWhite),
             navigationIcon = {
                 IconButton(onClick = onClose) {
-                    Icon(painter = painterResource(id = R.drawable.ic_close), contentDescription = "닫기")
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_close),
+                        contentDescription = "닫기"
+                    )
                 }
             }
         )
@@ -177,7 +180,9 @@ fun SelectCoinCard(
         modifier = Modifier.fillMaxWidth(),
         shape = RectangleShape,
         colors = CardDefaults.cardColors(CoinkiriWhite),
-        onClick = { onClick(coinId, coinMarket, coinName, coinSymbolImage) }
+        onClick = {
+            onClick(coinId, coinMarket, coinName, coinSymbolImage)
+        }
     ) {
         Column {
             Row(

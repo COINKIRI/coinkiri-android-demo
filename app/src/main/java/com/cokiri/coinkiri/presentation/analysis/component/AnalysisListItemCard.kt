@@ -87,7 +87,7 @@ fun AnalysisListItemCard(
     } else {
         Color.Blue
     }
-    val coinSignedSing = if(coinSignedChangeRate?.contains("-") == false) {
+    val coinSignedSing = if (coinSignedChangeRate?.contains("-") == false) {
         "+"
     } else {
         ""
@@ -171,7 +171,7 @@ fun AnalysisListItemCard(
                             )
                             if (coinSignedChangeRate != null) {
                                 Text(
-                                    text = coinSignedSing+coinSignedChangeRate,
+                                    text = coinSignedSing + coinSignedChangeRate,
                                     fontSize = 13.sp,
                                     fontFamily = PretendardFont,
                                     color = coinSignedChangeRateColor

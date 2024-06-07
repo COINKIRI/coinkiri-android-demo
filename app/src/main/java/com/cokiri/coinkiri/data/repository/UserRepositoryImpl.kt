@@ -5,8 +5,10 @@ import com.cokiri.coinkiri.data.local.database.AppDatabase
 import com.cokiri.coinkiri.data.local.entity.MemberInfoEntity
 import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
+import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.auth.MemberInfo
 import com.cokiri.coinkiri.data.remote.model.auth.SignUpRequest
+import com.cokiri.coinkiri.data.remote.model.auth.UpdateMemberInfoRequest
 import com.cokiri.coinkiri.domain.repository.UserRepository
 import javax.inject.Inject
 
@@ -92,6 +94,32 @@ class UserRepositoryImpl @Inject constructor(
     }
 
 
+    override suspend fun updateMemberInfo(updateMemberInfoRequest: UpdateMemberInfoRequest) : ApiResponse {
+        // 액세스 토큰을 preferencesManager에서 가져옴
+        val accessToken = preferencesManager.getAccessToken()
+        if (accessToken.isNullOrEmpty()) {
+            throw AuthException("로그인이 필요합니다.")
+        }
+
+        // authApi를 사용하여 사용자 정보 수정 요청
+        val response = authApi.updateMemberInfo("Bearer $accessToken", updateMemberInfoRequest)
+        Log.d(TAG, "updateMemberInfo: $response")
+
+        if (response.isSuccessful) {
+            // 사용자 정보 수정 성공
+            // 사용자 정보 업데이트
+            //val memberInfoEntity = response.result.toEntity()
+            //insertMemberInfo(memberInfoEntity)
+            // 응답 데이터 반환
+            return response.body() ?: throw ApiException("응답 데이터가 null입니다.")
+        } else {
+            throw ApiException("응답이 실패하였습니다.")
+        }
+    }
+
+
+
+
     override fun isLoggedIn(): Boolean {
         return !preferencesManager.getAccessToken().isNullOrEmpty()
     }
@@ -102,10 +130,6 @@ class UserRepositoryImpl @Inject constructor(
 
     private suspend fun deleteMemberInfo() {
         appDatabase.memberInfoDao().deleteAll()
-    }
-
-    override suspend fun updateMemberInfo(memberInfo: MemberInfoEntity) {
-        appDatabase.memberInfoDao().updateMemberInfo(memberInfo)
     }
 
     private fun MemberInfo.toEntity() = MemberInfoEntity(
@@ -119,4 +143,8 @@ class UserRepositoryImpl @Inject constructor(
         followingCount = followingCount,
         followerCount = followerCount
     )
+
+
+    class AuthException(message: String) : Exception(message)  // 로그인 관련 예외 클래스
+    class ApiException(message: String) : Exception(message)   // API 요청 관련 예외 클래스
 }

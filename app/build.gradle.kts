@@ -120,6 +120,8 @@ dependencies {
     kapt(libs.room.compiler)
 
     implementation("com.google.accompanist:accompanist-swiperefresh:0.24.13-rc")
+    implementation("io.coil-kt:coil:2.1.0")
+
 
     /* testImplementation */
     testImplementation(libs.junit)
