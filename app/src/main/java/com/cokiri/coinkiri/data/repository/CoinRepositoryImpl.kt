@@ -6,6 +6,8 @@ import com.cokiri.coinkiri.data.remote.api.CoinApi
 import com.cokiri.coinkiri.data.remote.mapper.CoinMapper
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.coin.CoinPrice
+import com.cokiri.coinkiri.data.remote.model.coin.CoinTalk
+import com.cokiri.coinkiri.data.remote.model.coin.CoinTalkRequest
 import com.cokiri.coinkiri.data.remote.model.coin.WatchlistCoinPrice
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.repository.CoinRepository
@@ -147,6 +149,42 @@ class CoinRepositoryImpl @Inject constructor(
             response.result.coinPrices
         } catch (e: Exception) {
             Log.e(TAG, "코인 관심 목록을 가져오는 중에 오류가 발생했습니다. : ${e.message}")
+            emptyList()
+        }
+    }
+
+
+    /**
+     * 코인톡 작성 요청(POST)
+     */
+    override suspend fun submitCoinTalk(coinTalkRequest: CoinTalkRequest): ApiResponse {
+        val accessToken = preferencesManager.getAccessToken()
+        if (accessToken.isNullOrEmpty()) {
+            throw Exception("로그인이 필요합니다.")
+        }
+
+        val response = coinApi.submitCoinTalk("Bearer $accessToken", coinTalkRequest)
+        Log.d(TAG, "submitCoinTalk: $response")
+
+        if (response.isSuccessful) {
+            return response.body() ?: throw Exception("응답 데이터가 null입니다.")
+        } else {
+            throw Exception("응답이 실패하였습니다.")
+        }
+    }
+
+
+    /**
+     *  코인톡 목록 요청(GET)
+     */
+    override suspend fun fetchCoinTalkList(coinId: Long): List<CoinTalk> {
+        return try {
+            val response = coinApi.fetchCoinTalk(coinId)
+            Log.d(TAG, "getCoinTalkList: $response")
+            response.result
+
+        } catch (e: Exception) {
+            Log.d(TAG, "getCoinTalkList: $e")
             emptyList()
         }
     }

@@ -2,12 +2,19 @@ package com.cokiri.coinkiri.presentation.price
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.coin.CoinInfoDetail
 import com.cokiri.coinkiri.data.remote.model.coin.CoinPrice
+import com.cokiri.coinkiri.data.remote.model.coin.CoinTalk
+import com.cokiri.coinkiri.data.remote.model.coin.CoinTalkRequest
 import com.cokiri.coinkiri.data.remote.model.coin.WatchlistCoinPrice
+import com.cokiri.coinkiri.data.remote.model.comment.CommentList
+import com.cokiri.coinkiri.data.remote.model.comment.CommentRequest
 import com.cokiri.coinkiri.domain.model.Coin
 import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
+import com.cokiri.coinkiri.domain.usecase.coin.AddCoinTalkUseCase
+import com.cokiri.coinkiri.domain.usecase.coin.FetchCoinTalkUseCase
 import com.cokiri.coinkiri.domain.usecase.coin.GetCoinDaysInfoUseCase
 import com.cokiri.coinkiri.domain.usecase.coin.GetCoinsUseCase
 import com.cokiri.coinkiri.domain.usecase.watchlist.AddCoinToWatchlistUseCase
@@ -31,7 +38,9 @@ class PriceViewModel @Inject constructor(
     private val addCoinToWatchlistUseCase: AddCoinToWatchlistUseCase,             // 코인 관심 목록에 추가하는 유스케이스
     private val fetchCoinWatchlistUseCase: FetchCoinWatchlistUseCase,             // 코인 관심 목록을 가져오는 유스케이스
     private val checkCoinInWatchlistUseCase: CheckCoinInWatchlistUseCase,         // 코인 관심 목록 등록여부 조회 유스케이스
-    private val deleteCoinFromWatchlistUseCase: DeleteCoinFromWatchlistUseCase    // 코인 관심 목록에서 삭제하는 유스케이스
+    private val deleteCoinFromWatchlistUseCase: DeleteCoinFromWatchlistUseCase,    // 코인 관심 목록에서 삭제하는 유스케이스
+    private val addCoinTalkUseCase: AddCoinTalkUseCase,                            // 코인톡 작성 유스케이스
+    private val fetchCoinTalkUseCase: FetchCoinTalkUseCase                          // 코인톡 목록을 가져오는 유스케이스
 ) : BaseViewModel() {
 
     // 코인 목록을 저장하는 StateFlow
@@ -58,15 +67,13 @@ class PriceViewModel @Inject constructor(
     private val _coinDaysInfo = MutableStateFlow<List<CoinPrice>>(emptyList())
     val coinDaysInfo: StateFlow<List<CoinPrice>> get() = _coinDaysInfo
 
-
     // 관심 목록에 코인이 있는지 여부를 저장하는 StateFlow
     private val _isCoinInWatchlist = MutableStateFlow(false)
     val isCoinInWatchlist: StateFlow<Boolean> get() = _isCoinInWatchlist
 
-
+    // 관심 목록에 코인을 저장하는 StateFlow
     private val _coinWatchlist = MutableStateFlow<List<WatchlistCoinPrice>>(emptyList())
     val coinWatchlist: StateFlow<List<WatchlistCoinPrice>> = _coinWatchlist
-
 
     // 상승률 상위 5개 코인을 저장하는 StateFlow
     private val _topGainers = MutableStateFlow<List<CoinInfoDetail>>(emptyList())
@@ -75,6 +82,18 @@ class PriceViewModel @Inject constructor(
     // 하락률 상위 5개 코인을 저장하는 StateFlow
     private val _topLosers = MutableStateFlow<List<CoinInfoDetail>>(emptyList())
     val topLosers: StateFlow<List<CoinInfoDetail>> = _topLosers.asStateFlow()
+
+
+    // 코인톡 목록을 관리하는 MutableStateFlow
+    private val _coinTalkList = MutableStateFlow<List<CoinTalk>>(emptyList())
+    val coinTalkList: StateFlow<List<CoinTalk>> = _coinTalkList
+
+    // 작성 중인 코인톡 내용을 관리하는 MutableStateFlow
+    private val _coinTalkContent = MutableStateFlow("")
+    val coinTalkContent: StateFlow<String> = _coinTalkContent
+
+    // 코인톡 작성 결과를 관리하는 MutableStateFlow
+    private val _submitCoinTalkResult = MutableStateFlow<Result<ApiResponse>?>(null)
 
 
     // ViewModel 초기화 시 코인 목록을 로드
@@ -259,6 +278,54 @@ class PriceViewModel @Inject constructor(
         val topLosers = sortedCoinsByLoss.take(5)
 
         return Pair(topGainers, topLosers)
+    }
+
+
+    /**
+     * 코인톡을 작성하는 함수
+     */
+    fun submitCoinTalk(coinId: Long) {
+        executeWithLoading(
+            block = {
+                val content = _coinTalkContent.value
+                if (content.isBlank()) {
+                    throw IllegalArgumentException("코인톡 내용을 입력해주세요.")
+                }
+
+                val coinTalkRequest = CoinTalkRequest(coinId, content)
+                addCoinTalkUseCase(coinTalkRequest)
+            },
+            onSuccess = { result ->
+                _submitCoinTalkResult.value = Result.success(result)
+                fetchCoinTalk(coinId)
+            },
+            onFailure = { error ->
+                _submitCoinTalkResult.value = Result.failure(error)
+            }
+        )
+    }
+
+
+    /**
+     * 코인톡 목록을 가져오는 함수
+     */
+    fun fetchCoinTalk(coinId: Long) {
+        executeWithLoading(
+            block = { fetchCoinTalkUseCase(coinId) },
+            onSuccess = { coinTalkList ->
+                _coinTalkList.value = coinTalkList
+            },
+            onFailure = { error ->
+                _coinTalkList.value = emptyList()
+            }
+        )
+    }
+
+    /**
+     * 코인톡 내용이 변경될 때 호출되는 함수
+     */
+    fun onCoinTalkContentChanged(content: String) {
+        _coinTalkContent.value = content
     }
 
 

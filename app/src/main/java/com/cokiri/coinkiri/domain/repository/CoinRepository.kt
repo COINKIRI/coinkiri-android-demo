@@ -2,6 +2,8 @@ package com.cokiri.coinkiri.domain.repository
 
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.coin.CoinPrice
+import com.cokiri.coinkiri.data.remote.model.coin.CoinTalk
+import com.cokiri.coinkiri.data.remote.model.coin.CoinTalkRequest
 import com.cokiri.coinkiri.data.remote.model.coin.WatchlistCoinPrice
 import com.cokiri.coinkiri.domain.model.Coin
 
@@ -24,5 +26,11 @@ interface CoinRepository {
 
     // 코인 관심 목록을 가져옴
     suspend fun getCoinWatchlist() : List<WatchlistCoinPrice>
+
+    // 코인톡 작성
+    suspend fun submitCoinTalk(coinTalkRequest: CoinTalkRequest) : ApiResponse
+
+    // 코인톡 조회
+    suspend fun fetchCoinTalkList(coinId: Long) : List<CoinTalk>
 
 }

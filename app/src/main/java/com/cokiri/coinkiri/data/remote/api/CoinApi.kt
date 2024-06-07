@@ -1,11 +1,14 @@
 package com.cokiri.coinkiri.data.remote.api
 
-import com.cokiri.coinkiri.data.remote.service.auth.AuthRequired
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
 import com.cokiri.coinkiri.data.remote.model.coin.CoinDaysResponse
 import com.cokiri.coinkiri.data.remote.model.coin.CoinListResponse
+import com.cokiri.coinkiri.data.remote.model.coin.CoinTalkRequest
+import com.cokiri.coinkiri.data.remote.model.coin.CoinTalkResponse
 import com.cokiri.coinkiri.data.remote.model.coin.WatchlistResponse
+import com.cokiri.coinkiri.data.remote.service.auth.AuthRequired
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -73,4 +76,23 @@ interface CoinApi {
     suspend fun getCoinWatchlist(
         @Header("Authorization") accessToken: String
     ): WatchlistResponse
+
+
+    /**
+     * 코인 톡 작성 API
+     */
+    @AuthRequired
+    @Headers("Content-Type: application/json")
+    @POST("/api/v1/talk/save")
+    suspend fun submitCoinTalk(
+        @Header("Authorization") accessToken: String,
+        @Body coinTalkRequest: CoinTalkRequest
+    ): Response<ApiResponse>
+
+
+    /**
+     * 코인 톡 조회 API
+     */
+    @GET("/api/v1/talk/list/{coinId}")
+    suspend fun fetchCoinTalk(@Path("coinId") coinId: Long): CoinTalkResponse
 }
