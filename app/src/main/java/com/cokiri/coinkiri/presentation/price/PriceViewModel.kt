@@ -252,9 +252,12 @@ class PriceViewModel @Inject constructor(
      * 상승률과 하락률이 높은 상위 5개의 코인을 반환하는 함수
      */
     private fun getTopCoins(): Pair<List<CoinInfoDetail>, List<CoinInfoDetail>> {
-        val sortedCoins = _coinInfoDetailList.value.sortedByDescending { it.ticker?.changeRate }
-        val topGainers = sortedCoins.take(5)
-        val topLosers = sortedCoins.takeLast(5)
+        val sortedCoinsByGain = _coinInfoDetailList.value.sortedByDescending { it.ticker?.signedChangeRate }
+        val topGainers = sortedCoinsByGain.take(5)
+
+        val sortedCoinsByLoss = _coinInfoDetailList.value.sortedBy { it.ticker?.signedChangeRate }
+        val topLosers = sortedCoinsByLoss.take(5)
+
         return Pair(topGainers, topLosers)
     }
 
