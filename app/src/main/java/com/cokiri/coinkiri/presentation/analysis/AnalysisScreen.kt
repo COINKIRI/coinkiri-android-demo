@@ -3,6 +3,7 @@ package com.cokiri.coinkiri.presentation.analysis
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.R
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisResponseDto
 import com.cokiri.coinkiri.presentation.analysis.component.AnalysisListItemCard
 import com.cokiri.coinkiri.ui.component.FloatingActionMenu
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
@@ -37,40 +39,27 @@ import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.util.ANALYSIS_DETAIL_SCREEN
 import com.cokiri.coinkiri.util.ANALYSIS_WRITE_SCREEN
 import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnalysisScreen(
     navController: NavHostController,
     analysisViewModel: AnalysisViewModel = hiltViewModel()
 ) {
-    val menuItems = listOf(Triple("분석글 작성", Icons.Default.Create) { navController.navigate(ANALYSIS_WRITE_SCREEN)})
+    val menuItems = listOf(
+        Triple("분석글 작성", Icons.Default.Create) { navController.navigate(ANALYSIS_WRITE_SCREEN) }
+    )
     var isMenuExpanded by remember { mutableStateOf(false) }
 
     val isLoading by analysisViewModel.isLoading.collectAsState()
     val errorMessage by analysisViewModel.errorMessage.collectAsState()
     var isRefreshing by remember { mutableStateOf(false) }
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing)
-
     val analysisPostList by analysisViewModel.analysisPostList.collectAsState()
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("분석") },
-                colors = TopAppBarDefaults.topAppBarColors(CoinkiriWhite),
-                actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_navi_home),
-                            contentDescription = "",
-                            modifier = Modifier.size(25.dp)
-                        )
-                    }
-                }
-            )
-        },
+        topBar = { AnalysisTopBar() },
         floatingActionButton = {
             FloatingActionMenu(
                 isMenuExpanded = isMenuExpanded,
@@ -79,55 +68,105 @@ fun AnalysisScreen(
             )
         },
         content = { paddingValues ->
-            SwipeRefresh(
-                state = swipeRefreshState,
+            AnalysisSwipeRefreshContent(
+                isLoading = isLoading,
+                errorMessage = errorMessage,
+                analysisPostList = analysisPostList,
+                isRefreshing = isRefreshing,
+                swipeRefreshState = swipeRefreshState,
                 onRefresh = {
                     isRefreshing = true
                     analysisViewModel.fetchAllAnalysisPostList()
+                },
+                paddingValues = paddingValues,
+                navController = navController,
+                analysisViewModel = analysisViewModel
+            )
+        }
+    )
+
+    LaunchedEffect(isLoading) {
+        if (!isLoading) {
+            isRefreshing = false
+        }
+    }
+}
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AnalysisTopBar() {
+    TopAppBar(
+        title = { Text("분석") },
+        colors = TopAppBarDefaults.topAppBarColors(CoinkiriWhite),
+        actions = {
+            IconButton(onClick = { /*TODO*/ }) {
+                Image(
+                    painter = painterResource(R.drawable.ic_navi_home),
+                    contentDescription = "",
+                    modifier = Modifier.size(25.dp)
+                )
+            }
+        }
+    )
+}
+
+
+
+@Composable
+fun AnalysisSwipeRefreshContent(
+    isLoading: Boolean,
+    errorMessage: String?,
+    analysisPostList: List<AnalysisResponseDto>,
+    isRefreshing: Boolean,
+    swipeRefreshState: SwipeRefreshState,
+    onRefresh: () -> Unit,
+    paddingValues: PaddingValues,
+    navController: NavHostController,
+    analysisViewModel: AnalysisViewModel
+) {
+    SwipeRefresh(
+        state = swipeRefreshState,
+        onRefresh = onRefresh
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            when {
+                isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-            ) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    when {
-                        isLoading -> {
-                            // 로딩 상태일 때 로딩 인디케이터 표시
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                CircularProgressIndicator()
-                            }
-                        }
-                        errorMessage != null -> {
-                            // 에러 상태일 때 에러 메시지 표시
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Text(text = errorMessage ?: "Unknown error")
-                            }
-                        }
-                        else -> {
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(paddingValues)
-                                    .background(CoinkiriBackground)
-                            ) {
-                                items(analysisPostList.size) { index ->
-                                    val analysisPost = analysisPostList[index]
-                                    val postId = analysisPost.postResponseDto.id
-                                    AnalysisListItemCard(
-                                        analysisResponseDto = analysisPost,
-                                        analysisViewModel = analysisViewModel,
-                                        analysisCardClick = { navController.navigate("$ANALYSIS_DETAIL_SCREEN/$postId")}
-                                    )
-                                }
-                            }
+                errorMessage != null -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = errorMessage)
+                    }
+                }
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .background(CoinkiriBackground)
+                    ) {
+                        items(analysisPostList.size) { index ->
+                            val analysisPost = analysisPostList[index]
+                            val postId = analysisPost.postResponseDto.id
+                            AnalysisListItemCard(
+                                analysisResponseDto = analysisPost,
+                                analysisViewModel = analysisViewModel,
+                                analysisCardClick = { navController.navigate("$ANALYSIS_DETAIL_SCREEN/$postId") }
+                            )
                         }
                     }
                 }
             }
-        }
-    )
-
-    // Refresh 완료 시 상태 업데이트
-    LaunchedEffect(isLoading) {
-        if (!isLoading) {
-            isRefreshing = false
         }
     }
 }
