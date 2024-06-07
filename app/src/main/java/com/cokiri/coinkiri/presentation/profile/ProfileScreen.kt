@@ -48,6 +48,7 @@ import com.cokiri.coinkiri.presentation.login.LoginUiState
 import com.cokiri.coinkiri.presentation.login.LoginViewModel
 import com.cokiri.coinkiri.presentation.profile.component.MemberInfoCard
 import com.cokiri.coinkiri.presentation.profile.component.ProfileBottomSheet
+import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriBlack
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
@@ -174,6 +175,7 @@ fun ProfileScreenContent(
     LazyColumn(
         modifier = Modifier
             .padding(paddingValues)
+            .background(CoinkiriBackground)
             .fillMaxSize()
     ) {
         item{
@@ -199,12 +201,15 @@ fun MemberPostCard() {
 
     Card(
         modifier = Modifier
-            .padding(vertical = 10.dp)
+            .padding(5.dp)
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(CoinkiriWhite),
         elevation = CardDefaults.cardElevation(5.dp)
     ){
         TabRow(
+            modifier = Modifier
+                .padding(horizontal = 10.dp)
+                .fillMaxWidth(),
             selectedTabIndex = selectedTabIndex,
             containerColor = CoinkiriWhite,
             contentColor = CoinkiriBlack,

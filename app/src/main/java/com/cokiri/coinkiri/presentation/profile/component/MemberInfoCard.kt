@@ -39,7 +39,7 @@ fun MemberInfoCard(
     Card(
         modifier = Modifier
             .fillMaxWidth(1f)
-            .padding(vertical = 10.dp),
+            .padding(5.dp),
         colors = CardDefaults.cardColors(CoinkiriWhite),
         elevation = CardDefaults.cardElevation(5.dp)
     ) {

@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -18,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.presentation.home.component.CoinChangeRateCard
 import com.cokiri.coinkiri.presentation.home.component.MemberCoinWatchlistCard
@@ -27,6 +27,7 @@ import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 @Composable
 fun HomeScreen(
     priceViewModel: PriceViewModel = hiltViewModel(),
+    navController: NavHostController,
 
     ) {
 
@@ -47,7 +48,7 @@ fun HomeScreen(
         content = { paddingValues ->
             HomeContent(
                 paddingValues,
-                priceViewModel
+                priceViewModel,
             )
         }
     )
@@ -75,18 +76,18 @@ fun HomeTopBar() {
 @Composable
 fun HomeContent(
     paddingValues: PaddingValues,
-    priceViewModel: PriceViewModel
+    priceViewModel: PriceViewModel,
 ) {
     LazyColumn(
         contentPadding = paddingValues
     ) {
         item {
-            Text("홈화면")
 //            Top5RisingCoins(
 //                priceViewModel
 //            )
-
-            MemberCoinWatchlistCard(priceViewModel)
+            MemberCoinWatchlistCard(
+                priceViewModel
+            )
         }
     }
 }
