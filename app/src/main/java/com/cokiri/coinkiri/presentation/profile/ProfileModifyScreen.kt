@@ -1,8 +1,5 @@
 package com.cokiri.coinkiri.presentation.profile
 
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,7 +34,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,8 +41,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -59,7 +55,7 @@ import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.PretendardFont
 import com.cokiri.coinkiri.util.PROFILE
-import com.cokiri.coinkiri.util.loadImageAndConvertToBase64
+import com.cokiri.coinkiri.util.byteArrayToPainter
 
 @Composable
 fun ProfileModifyScreen(
@@ -73,6 +69,7 @@ fun ProfileModifyScreen(
     val memberInfo by profileViewModel.memberInfo.collectAsStateWithLifecycle()
     val memberName = memberInfo?.nickname
     val memberStatusMessage = memberInfo?.statusMessage
+    val memberProfile = memberInfo?.pic?.let { byteArrayToPainter(it) }
 
     val nickName by profileViewModel.nickName.collectAsStateWithLifecycle()
     val statusMessage by profileViewModel.statusMessage.collectAsStateWithLifecycle()
@@ -115,16 +112,19 @@ fun ProfileModifyScreen(
                     CircularProgressIndicator()
                 }
             } else {
-                ProfileModifyContent(
-                    memberName = memberName,
-                    memberStatusMessage = memberStatusMessage,
-                    paddingValues = paddingValues,
-                    nickNameValue = nickName,
-                    statusMessageValue = statusMessage,
-                    onNickNameChange = { newNickName -> profileViewModel.onNickNameChanged(newNickName) },
-                    onStatusMessageChange = { newStatusMessage -> profileViewModel.onStatusMessageChanged(newStatusMessage) },
-//                    onProfileImageClick = { imagePickerLauncher.launch("image/*") }
-                )
+                if (memberProfile != null) {
+                    ProfileModifyContent(
+                        memberName = memberName,
+                        memberStatusMessage = memberStatusMessage,
+                        memberProfile = memberProfile,
+                        paddingValues = paddingValues,
+                        nickNameValue = nickName,
+                        statusMessageValue = statusMessage,
+                        onNickNameChange = { newNickName -> profileViewModel.onNickNameChanged(newNickName) },
+                        onStatusMessageChange = { newStatusMessage -> profileViewModel.onStatusMessageChanged(newStatusMessage) },
+            //                    onProfileImageClick = { imagePickerLauncher.launch("image/*") }
+                    )
+                }
             }
 
             if (showDialog) {
@@ -187,6 +187,7 @@ fun ProfileModifyContent(
     onStatusMessageChange: (String) -> Unit,
     memberName: String?,
     memberStatusMessage: String?,
+    memberProfile: BitmapPainter,
 //    onProfileImageClick: () -> Unit
 ) {
     Column(
@@ -204,7 +205,7 @@ fun ProfileModifyContent(
 //            onClick = onProfileImageClick
         ) {
             Image(
-                painter = painterResource(R.drawable.ic_launcher_foreground),
+                painter = memberProfile,
                 contentScale = ContentScale.Crop,
                 contentDescription = "Profile Image",
                 modifier = Modifier
