@@ -3,6 +3,7 @@ package com.cokiri.coinkiri.presentation.home
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,6 +29,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,6 +56,8 @@ import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.PretendardFont
 import com.cokiri.coinkiri.util.byteArrayToPainter
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun HomeScreen(
@@ -59,6 +65,9 @@ fun HomeScreen(
     analysisViewModel: AnalysisViewModel = hiltViewModel()
 ) {
     val isLoading by priceViewModel.isLoading.collectAsStateWithLifecycle()
+
+    var isRefreshing by remember { mutableStateOf(false) }
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing)
 
     LaunchedEffect(Unit) {
         priceViewModel.fetchCoinWatchlist()
@@ -75,14 +84,29 @@ fun HomeScreen(
             HomeTopBar()
         },
         content = { paddingValues ->
-            HomeContentWrapper(
-                paddingValues,
-                isLoading,
-                priceViewModel,
-                analysisViewModel
-            )
+            SwipeRefresh(
+                state = swipeRefreshState,
+                onRefresh = {
+                    isRefreshing = true
+                    priceViewModel.fetchCoinWatchlist()
+                    analysisViewModel.fetchAllAnalysisPostList()
+                }
+            ) {
+                HomeContentWrapper(
+                    paddingValues,
+                    isLoading,
+                    priceViewModel,
+                    analysisViewModel
+                )
+            }
         }
     )
+
+    LaunchedEffect(isLoading) {
+        if (!isLoading) {
+            isRefreshing = false
+        }
+    }
 }
 
 
@@ -129,7 +153,9 @@ fun HomeContent(
     analysisViewModel: AnalysisViewModel,
 ) {
     LazyColumn(
-        contentPadding = paddingValues
+        contentPadding = paddingValues,
+        modifier = Modifier
+            .fillMaxSize()
     ) {
         item {
             MemberCoinWatchlistItem(priceViewModel)
@@ -203,9 +229,10 @@ fun WatchCoinToAnalysisCard(
     Card(
         modifier = Modifier
             .width(350.dp)
-            .padding(5.dp),
-        shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(CoinkiriBackground),
+            .padding(5.dp)
+            .border(1.dp, CoinkiriBackground, RoundedCornerShape(15.dp)),
+        shape = RoundedCornerShape(15.dp),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
         elevation = CardDefaults.cardElevation(5.dp)
     ) {
         Column(

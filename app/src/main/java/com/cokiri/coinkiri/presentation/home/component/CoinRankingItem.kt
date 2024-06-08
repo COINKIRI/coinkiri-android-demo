@@ -1,6 +1,7 @@
 package com.cokiri.coinkiri.presentation.home.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -123,9 +124,10 @@ fun TextCoinChangeRateCard(
     Card(
         modifier = Modifier
             .width(250.dp)
-            .padding(10.dp),
-        colors = CardDefaults.cardColors(CoinkiriBackground),
-        elevation = CardDefaults.cardElevation(5.dp)
+            .padding(10.dp)
+            .border(1.dp, CoinkiriBackground, RoundedCornerShape(10.dp)),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
+        elevation = CardDefaults.cardElevation(3.dp)
     ) {
         Box(
             modifier = Modifier

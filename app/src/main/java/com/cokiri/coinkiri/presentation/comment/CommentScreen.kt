@@ -177,7 +177,7 @@ fun CommentBottomBar(
             )
             IconButton(
                 onClick = onSubmitClick,
-                enabled = value.isNotEmpty() // 텍스트 필드에 값이 있을 때만 버튼 활성화
+                enabled = value.isNotEmpty()
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_send),

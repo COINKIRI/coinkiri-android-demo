@@ -3,6 +3,7 @@ package com.cokiri.coinkiri.presentation.home.component
 import android.graphics.drawable.GradientDrawable
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -39,6 +41,7 @@ import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.data.remote.model.coin.WatchlistCoinPrice
 import com.cokiri.coinkiri.data.remote.model.coin.WatchlistPrice
 import com.cokiri.coinkiri.presentation.price.PriceViewModel
+import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.PretendardFont
 import com.cokiri.coinkiri.util.byteArrayToPainter
@@ -73,7 +76,8 @@ fun MemberCoinWatchlistItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 10.dp),
+            .padding(vertical = 10.dp)
+            .border(1.dp, CoinkiriBackground, RoundedCornerShape(10.dp)),
         colors = CardDefaults.cardColors(CoinkiriWhite),
         shape = CardDefaults.shape,
         elevation = CardDefaults.cardElevation(5.dp),
