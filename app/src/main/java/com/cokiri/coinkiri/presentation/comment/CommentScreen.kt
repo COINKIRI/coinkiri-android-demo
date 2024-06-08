@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
@@ -31,7 +32,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.data.remote.model.comment.CommentList
 import com.cokiri.coinkiri.presentation.comment.component.CommentCard
+import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
+import com.cokiri.coinkiri.ui.theme.PretendardFont
 
 @Composable
 fun CommentScreen(
@@ -94,6 +97,7 @@ fun CommentTopBar(
             title = {
                 Text(
                     text = "댓글",
+                    fontFamily = PretendardFont,
                     fontSize = 18.sp,
                 )
             },
@@ -103,7 +107,7 @@ fun CommentTopBar(
                     onClick = closeClick
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_navi_home),
+                        painter = painterResource(id = R.drawable.ic_close),
                         contentDescription = "닫기"
                     )
                 }
@@ -137,9 +141,9 @@ fun CommentContent(
  */
 @Composable
 fun CommentBottomBar(
-    value : String,
-    onValueChange : (String) -> Unit,
-    onSubmitClick : () -> Unit
+    value: String,
+    onValueChange: (String) -> Unit,
+    onSubmitClick: () -> Unit
 ) {
     BottomAppBar(
         containerColor = CoinkiriWhite,
@@ -166,14 +170,20 @@ fun CommentBottomBar(
                 placeholder = {
                     Text(
                         text = "댓글을 입력하세요.",
+                        fontFamily = PretendardFont,
                         fontSize = 12.sp,
                     )
                 },
             )
-            IconButton(onClick = onSubmitClick) {
+            IconButton(
+                onClick = onSubmitClick,
+                enabled = value.isNotEmpty() // 텍스트 필드에 값이 있을 때만 버튼 활성화
+            ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_navi_home),
-                    contentDescription = "전송"
+                    painter = painterResource(id = R.drawable.ic_send),
+                    tint = if (value.isNotEmpty()) CoinkiriPointGreen else Color.Gray, // 비활성화 시 회색으로 변경
+                    contentDescription = "전송",
+                    modifier = Modifier.size(100.dp)
                 )
             }
         }

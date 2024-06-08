@@ -27,7 +27,9 @@ import androidx.compose.ui.unit.sp
 import com.cokiri.coinkiri.data.remote.model.post.community.PostDetailResponseDto
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
+import com.cokiri.coinkiri.ui.theme.PretendardFont
 import com.cokiri.coinkiri.util.byteArrayToPainter
+import com.cokiri.coinkiri.util.formattedDate
 
 /**
  * 게시글(분석,커뮤니티) 상세화면의 제목 섹션
@@ -42,7 +44,7 @@ fun DetailTitleSection(
     val level = postDetailResponseDto.memberLevel
     val profileImageByteArray = postDetailResponseDto.memberPic
     val profileImage = byteArrayToPainter(profileImageByteArray)
-    val createDate = postDetailResponseDto.createdAt
+    val createDate = formattedDate(postDetailResponseDto.createdAt)
 
     Column(
         modifier = Modifier
@@ -52,14 +54,15 @@ fun DetailTitleSection(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp)
+                .padding(horizontal = 15.dp, vertical = 10.dp)
                 .background(CoinkiriWhite)
         ) {
             Text(
                 text = title,
-                fontSize = 20.sp,
+                fontFamily = PretendardFont,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(5.dp),
+                fontSize = 25.sp,
+                modifier = Modifier.padding(10.dp),
             )
         }
         Row(
@@ -83,15 +86,24 @@ fun DetailTitleSection(
                         painter = profileImage,
                         contentScale = ContentScale.Crop,
                         contentDescription = "프로필 사진",
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.size(50.dp)
                     )
                 }
                 Spacer(modifier = Modifier.size(5.dp))
                 Column(
                     modifier = Modifier.padding(5.dp)
                 ) {
-                    Text(text = "$level + $name", fontWeight = FontWeight.Bold)
-                    Text(text = createDate)
+                    Text(
+                        text = "Lv.$level $name",
+                        fontFamily = PretendardFont,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = createDate,
+                        fontFamily = PretendardFont,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 12.sp
+                    )
                 }
             }
             Button(

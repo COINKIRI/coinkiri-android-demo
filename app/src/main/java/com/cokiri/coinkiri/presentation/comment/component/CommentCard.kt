@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cokiri.coinkiri.data.remote.model.comment.CommentList
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
+import com.cokiri.coinkiri.ui.theme.PretendardFont
 import com.cokiri.coinkiri.util.byteArrayToPainter
+import com.cokiri.coinkiri.util.formattedDateTime
 
 @Composable
 fun CommentCard(
@@ -31,7 +33,7 @@ fun CommentCard(
 
     val level = comment.member.level
     val name = comment.member.nickname
-    val data = comment.createdAt
+    val data = formattedDateTime(comment.createdAt)
     val content = comment.content
     val profileImageByteArray = comment.member.pic
     val profileImage = byteArrayToPainter(profileImageByteArray)
@@ -65,14 +67,28 @@ fun CommentCard(
                     .padding(start = 5.dp, bottom = 3.dp),
                 verticalArrangement = Arrangement.spacedBy(1.dp)
             ) {
-                Text(
-                    text = "Lv.$level $name $data",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 10.sp
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Lv.$level $name",
+                        fontFamily = PretendardFont,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp
+                    )
+                    Text(
+                        text = data,
+                        fontFamily = PretendardFont,
+                        fontWeight = FontWeight.Thin,
+                        fontSize = 13.sp
+                    )
+                }
+
                 Text(
                     text = content,
-                    fontSize = 13.sp
+                    fontFamily = PretendardFont,
+                    fontSize = 15.sp
                 )
             }
         }

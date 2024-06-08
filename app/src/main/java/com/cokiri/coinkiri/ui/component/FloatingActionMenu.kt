@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 
 
 @Composable
@@ -30,6 +32,8 @@ fun FloatingActionMenu(
     if (!isMenuExpanded) {
         FloatingActionButton(
             onClick = onMenuToggle,
+            containerColor = CoinkiriPointGreen,
+            contentColor = CoinkiriWhite,
             elevation = FloatingActionButtonDefaults.elevation(5.dp)
         ) {
             Icon(
@@ -50,7 +54,9 @@ fun FloatingActionMenu(
                 )
             }
             FloatingActionButton(
-                onClick = onMenuToggle
+                onClick = onMenuToggle,
+                containerColor = CoinkiriPointGreen,
+                contentColor = CoinkiriWhite,
             ) {
                 Icon(
                     Icons.Default.Close,
@@ -77,7 +83,9 @@ fun FloatingActionButtonWithLabel(
             fontSize = 10.sp
         )
         FloatingActionButton(
-            onClick = onClick
+            onClick = onClick,
+            containerColor = CoinkiriPointGreen,
+            contentColor = CoinkiriWhite,
         ) {
             Icon(
                 icon,
