@@ -44,11 +44,11 @@ import com.cokiri.coinkiri.util.byteArrayToPainter
 import kotlinx.coroutines.delay
 
 /**
- * 코인 정보를 표시하는 Card Composable
+ * 코인 정보를 표시하는 Composable
  * 코인 이미지, 코인 정보, 가격, 변동률, 거래량을 표시
  */
 @Composable
-fun CoinCard(
+fun CoinItem(
     coinInfoDetail: CoinInfoDetail,
     onClick: () -> Unit
 ) {
@@ -120,7 +120,9 @@ fun CoinCard(
  * 코인 이미지를 표시하는 Composable
  */
 @Composable
-fun CoinImage(coinPainter: Painter) {
+fun CoinImage(
+    coinPainter: Painter
+) {
     Card(
         shape = CircleShape,
         border = BorderStroke(1.dp, color = Color.LightGray),

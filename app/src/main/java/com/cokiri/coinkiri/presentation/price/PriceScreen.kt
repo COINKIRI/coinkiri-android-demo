@@ -1,14 +1,11 @@
 package com.cokiri.coinkiri.presentation.price
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,15 +17,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.data.remote.model.coin.CoinInfoDetail
-import com.cokiri.coinkiri.presentation.price.component.CoinCard
-import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
+import com.cokiri.coinkiri.presentation.price.component.CoinItem
+import com.cokiri.coinkiri.ui.component.ErrorContent
+import com.cokiri.coinkiri.ui.component.LoadingContent
 import com.cokiri.coinkiri.ui.theme.CoinkiriBlack
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.util.COIN_DETAIL_SCREEN
 
 @Composable
@@ -114,7 +111,7 @@ fun PriceContent(
                 val coinMarket = coinInfoDetail.coin.krwMarket
                 val coinKoreanName = coinInfoDetail.coin.koreanName
                 val coinId = coinInfoDetail.coin.coinId
-                CoinCard(
+                CoinItem(
                     coinInfoDetail = coinInfoDetail,
                     onClick = {
                         onCoinClicked(coinMarket, coinId, coinKoreanName)
@@ -122,37 +119,5 @@ fun PriceContent(
                 )
             }
         }
-    }
-}
-
-
-/**
- * 로딩 상태일 때 로딩 인디케이터를 표시하는 Composable
- */
-@Composable
-fun LoadingContent(paddingValues: PaddingValues) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
-
-/**
- * 에러 상태일 때 에러 메시지를 표시하는 Composable
- */
-@Composable
-fun ErrorContent(paddingValues: PaddingValues, errorMessage: String?) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = errorMessage ?: "Unknown error", color = Color.Red)
     }
 }
