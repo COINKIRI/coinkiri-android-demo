@@ -261,8 +261,8 @@ class PriceViewModel @Inject constructor(
             val topCoins = getTopCoins()
             _topGainers.value = topCoins.first
             _topLosers.value = topCoins.second
-            logLongMessage("Top gainers updated", _topGainers.value.toString())
-            logLongMessage("Top losers updated", _topLosers.value.toString())
+//            logLongMessage("Top gainers updated", _topGainers.value.toString())
+//            logLongMessage("Top losers updated", _topLosers.value.toString())
         }
     }
 

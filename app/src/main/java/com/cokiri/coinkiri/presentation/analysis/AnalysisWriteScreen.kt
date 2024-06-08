@@ -39,6 +39,7 @@ import com.cokiri.coinkiri.presentation.analysis.component.SelectCoinItemContent
 import com.cokiri.coinkiri.presentation.analysis.component.SelectInvestmentOpinion
 import com.cokiri.coinkiri.presentation.analysis.component.TargetPeriodContent
 import com.cokiri.coinkiri.ui.component.CustomSnackbarHost
+import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.util.CREATE_POST_SCREEN_FOR_ANALYSIS
@@ -53,20 +54,20 @@ fun AnalysisWriteScreen(
 
     val selectedCoinId by analysisViewModel.selectedCoinId.collectAsState()
     val selectedCoinPrevClosingPrice by analysisViewModel.selectedCoinPrevClosingPrice.collectAsState()
-
     val selectedInvestmentOption by analysisViewModel.selectedInvestmentOption.collectAsState()
     val selectedTargetPrice by analysisViewModel.selectedTargetPrice.collectAsState()
-
     val selectedTargetPeriod by analysisViewModel.selectedTargetPeriod.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
-        topBar = { AnalysisWriteTopBar(
-            navController,
-            analysisViewModel = analysisViewModel
-        ) },
+        topBar = {
+            AnalysisWriteTopBar(
+                navController,
+                analysisViewModel = analysisViewModel
+            )
+        },
         content = { paddingValues ->
             AnalysisWriteContent(
                 paddingValues = paddingValues,
@@ -79,14 +80,16 @@ fun AnalysisWriteScreen(
                 analysisViewModel = analysisViewModel
             )
         },
-        bottomBar = { AnalysisWriteBottomBar(
-            enabled = selectedCoinId != 0L &&
-                    selectedCoinPrevClosingPrice.isNotEmpty() &&
-                    selectedInvestmentOption.isNotEmpty() &&
-                    selectedTargetPrice.isNotEmpty() &&
-                    selectedTargetPeriod.isNotEmpty(),
-            navController = navController
-        ) },
+        bottomBar = {
+            AnalysisWriteBottomBar(
+                enabled = selectedCoinId != 0L &&
+                        selectedCoinPrevClosingPrice.isNotEmpty() &&
+                        selectedInvestmentOption.isNotEmpty() &&
+                        selectedTargetPrice.isNotEmpty() &&
+                        selectedTargetPeriod.isNotEmpty(),
+                onCreatePostButtonClick = { navController.navigate(CREATE_POST_SCREEN_FOR_ANALYSIS) }
+            )
+        },
         snackbarHost = { CustomSnackbarHost(snackbarHostState) }
     )
 }
@@ -102,7 +105,6 @@ fun AnalysisWriteTopBar(
     analysisViewModel: AnalysisViewModel
 ) {
     var showDialog by remember { mutableStateOf(false) }
-
 
     if (showDialog) {
         AlertDialog(
@@ -132,9 +134,7 @@ fun AnalysisWriteTopBar(
         title = { /*TODO*/ },
         navigationIcon = {
             TextButton(
-                onClick = {
-                    showDialog = true
-                }
+                onClick = { showDialog = true }
             ) {
                 Text(text = "취소")
             }
@@ -161,7 +161,7 @@ fun AnalysisWriteContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(CoinkiriWhite)
+            .background(CoinkiriBackground)
             .padding(paddingValues)
     ) {
 
@@ -180,8 +180,7 @@ fun AnalysisWriteContent(
             }
         }
 
-        // 해당 분석에 대한 요약 정보 입력 필드
-
+        /* TODO:해당 분석에 대한 요약 정보 입력 필드 */
 
 
         // 목표 기간 선택(1개월, 3개월, 6개월, 1년, 직접입력)
@@ -203,8 +202,8 @@ fun AnalysisWriteContent(
 @Composable
 fun AnalysisWriteBottomBar(
     enabled: Boolean,
-    navController: NavHostController
-    ) {
+    onCreatePostButtonClick: () -> Unit,
+) {
 
     Column(
         modifier = Modifier
@@ -231,7 +230,7 @@ fun AnalysisWriteBottomBar(
             VerticalDivider()
 
             TextButton(
-                onClick = { navController.navigate(CREATE_POST_SCREEN_FOR_ANALYSIS) },
+                onClick = onCreatePostButtonClick,
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(1f),

@@ -100,7 +100,7 @@ fun InfoRow(
             Text(text = data)
             VerticalDivider(thickness = 1.dp, color = CoinkiriPointGreen,modifier = Modifier.size(1.dp, 20.dp))
             InfoIconWithText(
-                iconResId = R.drawable.ic_post_baseline_thumb_up,
+                iconResId = R.drawable.ic_post_filled_thumb_up,
                 text = likeCnt,
                 tint = CoinkiriPointGreen,
             )

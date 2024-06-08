@@ -19,15 +19,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cokiri.coinkiri.R
+import com.cokiri.coinkiri.data.remote.model.post.community.PostDetailResponseDto
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.PretendardFont
+import com.cokiri.coinkiri.util.byteArrayToPainter
 
 @Composable
-fun DetailAuthorProfile(){
+fun DetailAuthorProfile(
+    postDetailResponseDto: PostDetailResponseDto
+) {
+
+    val authorName = postDetailResponseDto.memberNickname
+    val authorLevel = postDetailResponseDto.memberLevel
+    val authorProfileImageUrl = postDetailResponseDto.memberPic
+    val authorProfileImage = byteArrayToPainter(authorProfileImageUrl)
 
     Column(
         modifier = Modifier
@@ -46,26 +54,26 @@ fun DetailAuthorProfile(){
         ) {
             Card(
                 shape = CircleShape,
-                elevation = CardDefaults.cardElevation(5.dp),
+                elevation = CardDefaults.cardElevation(4.dp),
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    painter = authorProfileImage,
                     contentScale = ContentScale.Crop,
                     contentDescription = "Profile Image",
                     modifier = Modifier
-                        .size(75.dp)
+                        .size(100.dp)
                 )
             }
-            Spacer(modifier = Modifier.size(25.dp))
+            Spacer(modifier = Modifier.size(15.dp))
             Text(
-                text = "유저 레벨",
+                text = "Lv.$authorLevel",
                 fontFamily = PretendardFont,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 20.sp
+                fontSize = 18.sp
             )
             Spacer(modifier = Modifier.size(5.dp))
             Text(
-                text = "Author Name",
+                text = authorName,
                 fontFamily = PretendardFont,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp

@@ -73,7 +73,6 @@ class CoinRepositoryImpl @Inject constructor(
             throw AuthException("로그인이 필요합니다.")
         }
 
-        // PostApi를 사용하여 글 작성 요청
         val response = coinApi.addCoinToWatchlist("Bearer $accessToken", coinId)
         Log.d(TAG, "submitPost: $response")
 
@@ -96,7 +95,6 @@ class CoinRepositoryImpl @Inject constructor(
             throw AuthException("로그인이 필요합니다.")
         }
 
-        // PostApi를 사용하여 글 작성 요청
         val response = coinApi.deleteCoinFromWatchlist("Bearer $accessToken", coinId)
         Log.d(TAG, "submitPost: $response")
 

@@ -19,7 +19,9 @@ import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
  */
 @Composable
 fun DetailBottomAppBar(
-    clickComment: () -> Unit
+    clickComment: () -> Unit,
+    clickLike: () -> Unit,
+    isLiked: Boolean
 ) {
     BottomAppBar(
         modifier = Modifier
@@ -32,18 +34,20 @@ fun DetailBottomAppBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = { /*TODO*/ }
+                onClick = clickLike
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_post_baseline_thumb_up),
-                    contentDescription = "좋아요"
+                    painter = painterResource(
+                        id = if (isLiked) R.drawable.ic_post_filled_thumb_up else R.drawable.ic_post_baseline_thumb_up
+                    ),
+                    contentDescription = if (isLiked) "좋아요 취소" else "좋아요"
                 )
             }
             IconButton(
                 onClick = clickComment
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_post_baseline_visibility),
+                    painter = painterResource(id = R.drawable.ic_chat),
                     contentDescription = "댓글"
                 )
             }

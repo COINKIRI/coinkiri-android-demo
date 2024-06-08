@@ -39,14 +39,6 @@ fun DetailTopAppBar(
                         contentDescription = "뒤로가기"
                     )
                 }
-            },
-            actions = {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_post_baseline_visibility),
-                        contentDescription = "더보기"
-                    )
-                }
             }
         )
     }

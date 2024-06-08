@@ -6,17 +6,20 @@ import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
 import com.cokiri.coinkiri.data.remote.api.CoinApi
 import com.cokiri.coinkiri.data.remote.api.CommentApi
+import com.cokiri.coinkiri.data.remote.api.LikeApi
 import com.cokiri.coinkiri.data.remote.api.PostApi
 import com.cokiri.coinkiri.data.repository.AnalysisRepositoryImpl
 import com.cokiri.coinkiri.data.repository.CoinRepositoryImpl
 import com.cokiri.coinkiri.data.repository.CommentRepositoryImpl
 import com.cokiri.coinkiri.data.repository.KakaoLoginRepositoryImpl
+import com.cokiri.coinkiri.data.repository.LikeRepositoryImpl
 import com.cokiri.coinkiri.data.repository.PostRepositoryImpl
 import com.cokiri.coinkiri.data.repository.UserRepositoryImpl
 import com.cokiri.coinkiri.domain.repository.AnalysisRepository
 import com.cokiri.coinkiri.domain.repository.CoinRepository
 import com.cokiri.coinkiri.domain.repository.CommentRepository
 import com.cokiri.coinkiri.domain.repository.KakaoLoginRepository
+import com.cokiri.coinkiri.domain.repository.LikeRepository
 import com.cokiri.coinkiri.domain.repository.PostRepository
 import com.cokiri.coinkiri.domain.repository.UserRepository
 import dagger.Module
@@ -101,5 +104,15 @@ object RepositoryModule {
         preferencesManager: PreferencesManager
     ): AnalysisRepository {
         return AnalysisRepositoryImpl(analysisApi, preferencesManager)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideLikeRepository(
+        likeApi: LikeApi,
+        preferencesManager: PreferencesManager
+    ): LikeRepository {
+        return LikeRepositoryImpl(likeApi, preferencesManager)
     }
 }

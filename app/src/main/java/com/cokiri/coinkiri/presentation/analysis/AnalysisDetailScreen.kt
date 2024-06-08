@@ -1,6 +1,7 @@
 package com.cokiri.coinkiri.presentation.analysis
 
 import android.content.Context
+import android.util.Log
 import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.compose.foundation.Image
@@ -28,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,6 +57,7 @@ import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.PretendardFont
 import com.cokiri.coinkiri.util.byteArrayToPainter
+import com.cokiri.coinkiri.viewmodel.LikeViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,7 +65,8 @@ import kotlinx.coroutines.launch
 fun AnalysisDetailScreen(
     navController: NavHostController,
     stringPostId: String,
-    analysisViewModel: AnalysisViewModel = hiltViewModel()
+    analysisViewModel: AnalysisViewModel = hiltViewModel(),
+    likeViewModel: LikeViewModel = hiltViewModel()
 ) {
 
     val postId = stringPostId.toLong()
@@ -73,12 +77,19 @@ fun AnalysisDetailScreen(
         analysisViewModel.fetchAnalysisDetail(postId)
     }
 
+    // 초기에 좋아요 상태를 확인
+    LaunchedEffect(postId) {
+        likeViewModel.checkLike(postId) { }
+    }
+
+    val isLiked by likeViewModel.isLiked.collectAsState()
+    Log.d("AnalysisDetailScreen", "isLiked: $isLiked")
+
     val analysisDetailResponseDto by analysisViewModel.analysisDetail.collectAsStateWithLifecycle()
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutineScope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
-
 
     if (showBottomSheet) {
         LaunchedEffect(Unit) {
@@ -115,7 +126,6 @@ fun AnalysisDetailScreen(
                     sheetState = sheetState,
                     containerColor = CoinkiriWhite,
                 ) {
-
                     /**
                      * 댓글 작성화면
                      */
@@ -123,17 +133,20 @@ fun AnalysisDetailScreen(
                         closeClick = { coroutineScope.launch { showBottomSheet = false } },
                         postId = postId
                     )
-
                 }
             }
         },
         bottomBar = {
             DetailBottomAppBar(
-                clickComment = { coroutineScope.launch { showBottomSheet = true } }
+                clickComment = { coroutineScope.launch { showBottomSheet = true } },
+                clickLike = { likeViewModel.toggleLike(postId) },
+                isLiked = isLiked,
             )
         }
     )
 }
+
+
 
 
 @Composable
@@ -166,7 +179,7 @@ fun AnalysisDetailContent(
                     DetailContentSection(postDetailResponseDto, context) {
                         webView(it)
                     }
-                    DetailAuthorProfile()
+                    DetailAuthorProfile(postDetailResponseDto)
                 }
             }
         }

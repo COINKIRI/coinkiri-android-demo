@@ -17,6 +17,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +39,7 @@ import com.cokiri.coinkiri.ui.component.detail.DetailContentSection
 import com.cokiri.coinkiri.ui.component.detail.DetailTitleSection
 import com.cokiri.coinkiri.ui.component.detail.DetailTopAppBar
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
+import com.cokiri.coinkiri.viewmodel.LikeViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,7 +47,8 @@ import kotlinx.coroutines.launch
 fun CommunityDetailScreen(
     navController: NavHostController,
     postViewModel: PostViewModel = hiltViewModel(),
-    stringPostId: String
+    stringPostId: String,
+    likeViewModel: LikeViewModel = hiltViewModel()
 ) {
 
     val postId = stringPostId.toLong()
@@ -55,6 +58,15 @@ fun CommunityDetailScreen(
     LaunchedEffect(postId) {
         postViewModel.fetchCommunityPostDetails(postId)
     }
+
+
+
+    // 초기에 좋아요 상태를 확인
+    LaunchedEffect(postId) {
+        likeViewModel.checkLike(postId) { }
+    }
+
+    val isLiked by likeViewModel.isLiked.collectAsState()
 
     DisposableEffect(Unit) {
         onDispose {
@@ -123,7 +135,9 @@ fun CommunityDetailScreen(
         },
         bottomBar = {
             DetailBottomAppBar(
-                clickComment = { coroutineScope.launch { showBottomSheet = true } }
+                clickComment = { coroutineScope.launch { showBottomSheet = true } },
+                clickLike = { likeViewModel.toggleLike(postId) },
+                isLiked = isLiked,
             )
         }
     )
@@ -155,7 +169,7 @@ fun CommunityContent(
                     DetailContentSection(postDetailResponseDto, context) {
                         webView(it)
                     }
-                    DetailAuthorProfile()
+                    DetailAuthorProfile(postDetailResponseDto)
                 }
             }
         }
@@ -172,4 +186,3 @@ fun CommunityContent(
         }
     }
 }
-

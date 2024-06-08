@@ -22,6 +22,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -72,6 +73,9 @@ fun AnalysisListItemCard(
     val memberPic = byteArrayToPainter(memberPicByteArray)
     val memberName = analysisResponseDto.postResponseDto.memberNickname
     val formattedDate = analysisResponseDto.postResponseDto.formattedDate
+
+    val likeCnt = analysisResponseDto.postResponseDto.likeCount
+    val commentCnt = analysisResponseDto.postResponseDto.commentCount
 
     LaunchedEffect(coinMarket) {
         analysisViewModel.observeCoinTickerContinuously(coinMarket)
@@ -282,17 +286,17 @@ fun AnalysisListItemCard(
             }
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 5.dp)
-        ) {
-            Text(
-                text = "분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약",
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(horizontal = 20.dp, vertical = 5.dp)
+//        ) {
+//            Text(
+//                text = "분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약분석글 내용 2줄 요약",
+//                maxLines = 2,
+//                overflow = TextOverflow.Ellipsis
+//            )
+//        }
 
         Row(
             modifier = Modifier
@@ -347,25 +351,30 @@ fun AnalysisListItemCard(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_post_baseline_thumb_up),
-                        contentDescription = "",
-                        modifier = Modifier.size(25.dp)
-                    )
-                }
-                Text(text = "1")
+                Icon(
+                    painter = painterResource(R.drawable.ic_post_baseline_thumb_up),
+                    contentDescription = "",
+                    modifier = Modifier.size(25.dp)
+                )
+                Spacer(modifier = Modifier.padding(horizontal = 2.dp))
+                Text(
+                    text = "$likeCnt",
+                    fontFamily = PretendardFont,
+                )
 
-                IconButton(onClick = { /*TODO*/ }) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_post_baseline_thumb_up),
-                        contentDescription = "",
-                        modifier = Modifier.size(25.dp)
-                    )
-                }
-                Text(text = "1")
+                Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+
+                Image(
+                    painter = painterResource(R.drawable.ic_chat),
+                    contentDescription = "",
+                    modifier = Modifier.size(25.dp)
+                )
+                Text(
+                    text = " $commentCnt",
+                    fontFamily = PretendardFont,
+                )
             }
 
             Column(

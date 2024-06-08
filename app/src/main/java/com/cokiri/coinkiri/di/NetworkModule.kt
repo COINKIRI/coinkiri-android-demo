@@ -10,6 +10,7 @@ import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import com.cokiri.coinkiri.data.remote.api.AuthApi
 import com.cokiri.coinkiri.data.remote.api.CoinApi
 import com.cokiri.coinkiri.data.remote.api.CommentApi
+import com.cokiri.coinkiri.data.remote.api.LikeApi
 import com.cokiri.coinkiri.data.remote.api.PostApi
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -179,5 +180,15 @@ object NetworkModule {
     @Singleton
     fun provideAnalysisApi(retrofit: Retrofit): AnalysisApi {
         return retrofit.create(AnalysisApi::class.java)
+    }
+
+
+    /**
+     * LikeApi를 제공하는 함수
+     */
+    @Provides
+    @Singleton
+    fun provideLikeApi(retrofit: Retrofit): LikeApi {
+        return retrofit.create(LikeApi::class.java)
     }
 }
