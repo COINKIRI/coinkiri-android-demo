@@ -10,5 +10,5 @@ import com.cokiri.coinkiri.util.HOME
 fun NavGraphBuilder.homeNavGraph(
     navController: NavHostController
 ) {
-    composable(HOME) { HomeScreen(navController = navController) }
+    composable(HOME) { HomeScreen() }
 }

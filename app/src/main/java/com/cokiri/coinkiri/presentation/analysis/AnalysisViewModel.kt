@@ -58,7 +58,8 @@ class AnalysisViewModel @Inject constructor(
 
     // 선택한 코인의 전일 종가
     private val _selectedCoinPrevClosingPrice = MutableStateFlow("")
-    val selectedCoinPrevClosingPrice: StateFlow<String> = _selectedCoinPrevClosingPrice.asStateFlow()
+    val selectedCoinPrevClosingPrice: StateFlow<String> =
+        _selectedCoinPrevClosingPrice.asStateFlow()
 
     // 목표기간 설정(1개월, 3개월, 6개월, 1년)
     private val _selectedTargetPeriod = MutableStateFlow("")
@@ -78,7 +79,8 @@ class AnalysisViewModel @Inject constructor(
 
     // 목표가격의 변동률
     private val _selectedTargetPriceChangeRate = MutableStateFlow("")
-    val selectedTargetPriceChangeRate: StateFlow<String> = _selectedTargetPriceChangeRate.asStateFlow()
+    val selectedTargetPriceChangeRate: StateFlow<String> =
+        _selectedTargetPriceChangeRate.asStateFlow()
 
     // 분석글 목록을 관리하는 MutableStateFlow
     private val _analysisPostList = MutableStateFlow<List<AnalysisResponseDto>>(emptyList())
@@ -97,12 +99,29 @@ class AnalysisViewModel @Inject constructor(
     val loadingStates: StateFlow<Map<String, Boolean>> = _loadingStates.asStateFlow()
 
 
+    // 선택한 코인의 아이디 목록
+    private val _selectedCoinIds = MutableStateFlow<List<Long>>(emptyList())
+    val selectedCoinIds: StateFlow<List<Long>> = _selectedCoinIds.asStateFlow()
+
+    // 필터링된 분석글 목록을 관리하는 MutableStateFlow
+    private val _filteredAnalysisPostList = MutableStateFlow<List<AnalysisResponseDto>>(emptyList())
+    val filteredAnalysisPostList: StateFlow<List<AnalysisResponseDto>> = _filteredAnalysisPostList.asStateFlow()
+
+
     /**
      * 초기화 블록
      */
     init {
         // 초기 데이터 로드(분석글 목록)
         fetchAllAnalysisPostList()
+
+        // _selectedCoinIds 변경 시 필터링된 분석글 목록 업데이트
+        viewModelScope.launch {
+            _selectedCoinIds.collect { coinIds ->
+                _filteredAnalysisPostList.value =
+                    _analysisPostList.value.filter { it.coin.id in coinIds }
+            }
+        }
     }
 
 
@@ -114,6 +133,9 @@ class AnalysisViewModel @Inject constructor(
             block = { fetchAllAnalysisPostsUseCase() },
             onSuccess = { analysisPostList ->
                 _analysisPostList.value = analysisPostList
+                // 선택된 코인 ID 목록에 따라 필터링된 분석글 목록 갱신
+                _filteredAnalysisPostList.value =
+                    analysisPostList.filter { it.coin.id in _selectedCoinIds.value }
             }
         )
     }
@@ -175,23 +197,33 @@ class AnalysisViewModel @Inject constructor(
 
     // 특정 코인의 티커를 반환하는 메서드
     fun getCoinTicker(coinMarketId: String): StateFlow<Ticker?> {
-        return _coinTickers.map { it[coinMarketId] }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+        return _coinTickers.map { it[coinMarketId] }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null)
     }
 
     // 특정 코인의 로딩 상태를 반환하는 메서드
     fun isLoading(coinMarketId: String): StateFlow<Boolean> {
-        return _loadingStates.map { it[coinMarketId] ?: false }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+        return _loadingStates.map { it[coinMarketId] ?: false }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, false)
     }
 
     /**
      * 선택된 코인의 정보(아이디, 마켓아이디, 이름, 심볼이미지)를 저장
      */
-    fun setSelectedCoin(coinId: Long, coinMarketId: String, coinName: String, coinSymbolImage: Painter) {
+    fun setSelectedCoin(
+        coinId: Long,
+        coinMarketId: String,
+        coinName: String,
+        coinSymbolImage: Painter
+    ) {
         _selectedCoinId.value = coinId
         _selectedCoinMarketId.value = coinMarketId
         _selectedCoinName.value = coinName
         _selectedCoinImagePainter.value = coinSymbolImage
-        Log.d("AnalysisViewModel", "coinId: $coinId, coinMarketId: $coinMarketId, coinName: $coinName")
+        Log.d(
+            "AnalysisViewModel",
+            "coinId: $coinId, coinMarketId: $coinMarketId, coinName: $coinName"
+        )
     }
 
 
@@ -202,7 +234,6 @@ class AnalysisViewModel @Inject constructor(
         _selectedInvestmentOption.value = option
         Log.d("AnalysisViewModel", "투자의견: $option")
     }
-
 
 
     /**

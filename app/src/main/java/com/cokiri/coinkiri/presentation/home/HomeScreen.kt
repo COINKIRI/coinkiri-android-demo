@@ -1,11 +1,13 @@
 package com.cokiri.coinkiri.presentation.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,39 +16,39 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.R
-import com.cokiri.coinkiri.data.remote.model.coin.CoinInfoDetail
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisResponseDto
+import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
+import com.cokiri.coinkiri.presentation.analysis.component.InvestmentOptionCard
+import com.cokiri.coinkiri.presentation.home.component.CoinRankingItem
 import com.cokiri.coinkiri.presentation.home.component.MemberCoinWatchlistItem
 import com.cokiri.coinkiri.presentation.price.PriceViewModel
-import com.cokiri.coinkiri.ui.theme.CoinkiriBlack
+import com.cokiri.coinkiri.presentation.price.component.CoinImage
+import com.cokiri.coinkiri.ui.component.LoadingContent
+import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.PretendardFont
 import com.cokiri.coinkiri.util.byteArrayToPainter
@@ -54,7 +56,7 @@ import com.cokiri.coinkiri.util.byteArrayToPainter
 @Composable
 fun HomeScreen(
     priceViewModel: PriceViewModel = hiltViewModel(),
-    navController: NavHostController,
+    analysisViewModel: AnalysisViewModel = hiltViewModel()
 ) {
     val isLoading by priceViewModel.isLoading.collectAsStateWithLifecycle()
 
@@ -76,11 +78,13 @@ fun HomeScreen(
             HomeContentWrapper(
                 paddingValues,
                 isLoading,
-                priceViewModel
+                priceViewModel,
+                analysisViewModel
             )
         }
     )
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,176 +102,211 @@ fun HomeTopBar() {
     )
 }
 
+
 @Composable
 fun HomeContentWrapper(
     paddingValues: PaddingValues,
     isLoading: Boolean,
-    priceViewModel: PriceViewModel
+    priceViewModel: PriceViewModel,
+    analysisViewModel: AnalysisViewModel,
 ) {
     if (isLoading) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
+        LoadingContent(paddingValues)
     } else {
-        HomeContent(paddingValues, priceViewModel)
+        HomeContent(
+            paddingValues,
+            priceViewModel,
+            analysisViewModel
+        )
     }
 }
+
 
 @Composable
 fun HomeContent(
     paddingValues: PaddingValues,
     priceViewModel: PriceViewModel,
+    analysisViewModel: AnalysisViewModel,
 ) {
     LazyColumn(
         contentPadding = paddingValues
     ) {
         item {
             MemberCoinWatchlistItem(priceViewModel)
+            WatchCoinToAnalysisItem(priceViewModel, analysisViewModel)
             CoinRankingItem(priceViewModel)
         }
     }
 }
 
+
 @Composable
-fun CoinRankingItem(
-    priceViewModel: PriceViewModel
+fun WatchCoinToAnalysisItem(
+    priceViewModel: PriceViewModel,
+    analysisViewModel: AnalysisViewModel
 ) {
-    LaunchedEffect(Unit) {
-        priceViewModel.observeKrwMarketString()
-    }
 
-    val topChangeRate by priceViewModel.topGainers.collectAsStateWithLifecycle()
-    val bottomChangeRate by priceViewModel.topLosers.collectAsStateWithLifecycle()
+    val watchlistCoinIds by priceViewModel.watchlistCoinIds.collectAsStateWithLifecycle()
+    Log.d("HomeScreen", "watchlistCoinIds: $watchlistCoinIds")
 
-    Surface(
-        color = CoinkiriWhite,
+
+    val filteredAnalysisPostList = analysisViewModel.analysisPostList.collectAsStateWithLifecycle()
+        .value.filter { it.coin.id in watchlistCoinIds }
+
+    Card(
         shape = RoundedCornerShape(10.dp),
-        shadowElevation = 5.dp
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp),
+        colors = CardDefaults.cardColors(CoinkiriWhite),
+        elevation = CardDefaults.cardElevation(3.dp)
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "관심코인 분석",
+                fontFamily = PretendardFont,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(15.dp)
+            )
+            LazyRow(
+                contentPadding = PaddingValues(5.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(filteredAnalysisPostList.size) { index ->
+                    val analysisPost = filteredAnalysisPostList[index]
+                    WatchCoinToAnalysisCard(
+                        analysisPost = analysisPost
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun WatchCoinToAnalysisCard(
+    analysisPost: AnalysisResponseDto
+) {
+
+    val authorName = analysisPost.postResponseDto.memberNickname
+    val analysisCoinName = analysisPost.coin.koreanName
+
+    val investmentOption = analysisPost.investmentOption
+    val targetPrice = analysisPost.targetPrice
+
+    val coinImage = byteArrayToPainter(analysisPost.coin.symbolImage)
+    val authorProfile = byteArrayToPainter(analysisPost.memberPic)
+
+
+    Card(
+        modifier = Modifier
+            .width(350.dp)
+            .padding(5.dp),
+        shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.cardColors(CoinkiriBackground),
+        elevation = CardDefaults.cardElevation(5.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp)
         ) {
-            Column(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(5.dp)
+                    .padding(top = 10.dp, start = 15.dp, end = 15.dp, bottom = 5.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = "상승률 Top 5",
-                    fontFamily = PretendardFont,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+                CoinImage(
+                    coinPainter = authorProfile,
+                    modifier = Modifier
+                        .size(35.dp)
+                        .background(CoinkiriWhite)
                 )
-                LazyRow {
-                    items(topChangeRate.size) {
-                        val coin = topChangeRate[it]
-                        TextCoinChangeRateCard(coin)
-                    }
-                }
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp),
-            ) {
                 Text(
-                    text = "하락률 Top 5",
+                    text = "$authorName 님의 $analysisCoinName 분석",
                     fontFamily = PretendardFont,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 18.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
-                LazyRow {
-                    items(bottomChangeRate.size) {
-                        val coin = bottomChangeRate[it]
-                        TextCoinChangeRateCard(coin)
-                    }
-                }
+                CoinImage(
+                    coinPainter = coinImage,
+                    modifier = Modifier
+                        .size(35.dp)
+                        .background(CoinkiriWhite)
+                )
             }
-        }
-    }
-}
 
-@Composable
-fun TextCoinChangeRateCard(
-    coin: CoinInfoDetail
-) {
-    val coinName = coin.coin.koreanName
-    val coinMarket = coin.coin.market
-    val coinSymbol = byteArrayToPainter(coin.coin.symbolImage)
-    val coinChangeRate = coin.ticker?.formattedSignedChangeRate
-    val singCoinChangeRate = coinChangeRate?.let {
-        if (it.contains("-")) it else "+$it"
-    } ?: "0.00%"
-    val singCoinChangeRateColor = coinChangeRate?.let {
-        if (it.contains("-")) Color.Blue else Color.Red
-    } ?: CoinkiriBlack
-
-    Card(
-        modifier = Modifier
-            .width(300.dp)
-            .padding(15.dp),
-        colors = CardDefaults.cardColors(),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(15.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.Center
+                    .padding(horizontal = 5.dp)
+                    .height(85.dp)
             ) {
-                Card(
-                    shape = CircleShape,
-                    elevation = CardDefaults.cardElevation(5.dp),
-                ) {
-                    Image(
-                        painter = coinSymbol,
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "coin symbol",
-                        modifier = Modifier.size(50.dp)
+                when (investmentOption) {
+                    "강력매수" -> InvestmentOptionCard(
+                        investmentOption = investmentOption,
+                        colors = Color.Red
+                    )
+
+                    "매수" -> InvestmentOptionCard(
+                        investmentOption = investmentOption,
+                        colors = Color.Red
+                    )
+
+                    "중립" -> InvestmentOptionCard(
+                        investmentOption = investmentOption,
+                        colors = Color.Black
+                    )
+
+                    "매도" -> InvestmentOptionCard(
+                        investmentOption = investmentOption,
+                        colors = Color.Blue
+                    )
+
+                    "강력매도" -> InvestmentOptionCard(
+                        investmentOption = investmentOption,
+                        colors = Color.Blue
                     )
                 }
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = coinMarket,
-                    fontFamily = PretendardFont,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 15.sp
-                )
-                Text(
-                    text = coinName,
-                    fontFamily = PretendardFont,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 15.sp
-                )
-            }
 
-            Spacer(modifier = Modifier.padding(10.dp))
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = singCoinChangeRate,
-                    fontFamily = PretendardFont,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 28.sp,
-                    textAlign = TextAlign.End,
-                    modifier = Modifier.fillMaxWidth(),
-                    color = singCoinChangeRateColor
-                )
+                Row(
+                    modifier = Modifier
+                        .padding(vertical = 10.dp, horizontal = 5.dp),
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(1f),
+                        colors = CardDefaults.cardColors(Color.LightGray),
+                        shape = RoundedCornerShape(20.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = targetPrice,
+                                fontSize = 18.sp,
+                                fontFamily = PretendardFont,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            Text(
+                                text = "목표가",
+                                fontSize = 12.sp,
+                                fontFamily = PretendardFont,
+                                fontWeight = FontWeight.Normal
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 }
+

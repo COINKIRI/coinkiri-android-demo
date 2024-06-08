@@ -96,6 +96,11 @@ class PriceViewModel @Inject constructor(
     private val _submitCoinTalkResult = MutableStateFlow<Result<ApiResponse>?>(null)
 
 
+    // 관심목록에 있는 코인 ID만을 저장하는 StateFlow
+    private val _watchlistCoinIds = MutableStateFlow<List<Long>>(emptyList())
+    val watchlistCoinIds: StateFlow<List<Long>> = _watchlistCoinIds.asStateFlow()
+
+
     // ViewModel 초기화 시 코인 목록을 로드
     init {
         loadCoins()
@@ -248,6 +253,8 @@ class PriceViewModel @Inject constructor(
             block = { fetchCoinWatchlistUseCase() },
             onSuccess = { coinWatchlist ->
                 _coinWatchlist.value = coinWatchlist
+                // 관심목록에서 coinId를 추출
+                _watchlistCoinIds.value = coinWatchlist.map { it.coinId }
             }
         )
     }

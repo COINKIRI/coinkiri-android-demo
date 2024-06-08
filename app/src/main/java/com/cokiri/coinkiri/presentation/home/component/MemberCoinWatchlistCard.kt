@@ -56,7 +56,6 @@ fun MemberCoinWatchlistItem(
     val coinWatchlist by priceViewModel.coinWatchlist.collectAsStateWithLifecycle()
     val coinWatchlistSize = coinWatchlist.size
     val coinMarketList = coinWatchlist.map { it.market }.toList()
-    Log.d("ProfileScreen", "coinMarketList: $coinMarketList")
 
     LaunchedEffect(coinMarketList) {
         priceViewModel.getTickers(coinMarketList)

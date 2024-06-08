@@ -80,7 +80,12 @@ fun CoinItem(
                     .weight(1f)
             ) {
                 // 코인 이미지를 표시하는 Composable 추가
-                CoinImage(coinPainter)
+                CoinImage(
+                    coinPainter,
+                    Modifier
+                        .size(30.dp)
+                        .background(CoinkiriWhite),
+                    )
                 Spacer(modifier = Modifier.width(8.dp))
                 // 코인 정보를 표시하는 Composable 추가
                 CoinInfo(coinInfoDetail)
@@ -121,7 +126,8 @@ fun CoinItem(
  */
 @Composable
 fun CoinImage(
-    coinPainter: Painter
+    coinPainter: Painter,
+    modifier: Modifier
 ) {
     Card(
         shape = CircleShape,
@@ -131,9 +137,8 @@ fun CoinImage(
         Image(
             painter = coinPainter,
             contentDescription = "coin symbol image",
-            modifier = Modifier
-                .size(30.dp)
-                .background(CoinkiriWhite),
+            modifier = modifier,
+
             contentScale = ContentScale.Crop
         )
     }
