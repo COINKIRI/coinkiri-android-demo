@@ -3,6 +3,8 @@ package com.cokiri.coinkiri.data.repository
 import android.util.Log
 import com.cokiri.coinkiri.data.remote.api.LikeApi
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisResponseDto
+import com.cokiri.coinkiri.data.remote.model.post.community.CommunityResponseDto
 import com.cokiri.coinkiri.data.remote.service.preferences.PreferencesManager
 import com.cokiri.coinkiri.domain.repository.LikeRepository
 import javax.inject.Inject
@@ -12,7 +14,14 @@ class LikeRepositoryImpl @Inject constructor(
     private val preferencesManager: PreferencesManager
 ) : LikeRepository {
 
+    private var cachedLikeCommunityList : List<CommunityResponseDto>? = null // 캐시된 좋아요한 커뮤니티 게시물 목록
+    private var cachedLikeAnalysisList : List<AnalysisResponseDto>? = null // 캐시된 좋아요한 분석글 목록
+    private var lastFetchTimeLikeCommunityList : Long = 0 // 마지막으로 좋아요한 커뮤니티 게시물 목록을 가져온 시간
+    private var lastFetchTimeLikeAnalysisList : Long = 0 // 마지막으로 좋아요한 분석글 목록을 가져온 시간
+
     companion object {
+        private const val CACHE_VALIDITY_DURATION_LIKE_COMMUNITY = 5 * 60 * 1000 // 캐시 유효 기간 (5분)
+        private const val CACHE_VALIDITY_DURATION_LIKE_ANALYSIS = 5 * 60 * 1000 // 캐시 유효 기간 (5분)
         private const val TAG = "LikeRepositoryImpl"
     }
 
@@ -77,5 +86,49 @@ class LikeRepositoryImpl @Inject constructor(
         } else {
             throw ApiException("응답이 실패하였습니다.")
         }
+    }
+
+
+    /**
+     * 좋아요 한 게시물 리스트 조회
+     */
+    override suspend fun fetchLikeCommunityList(forceRefresh: Boolean) : List<CommunityResponseDto> {
+        val accessToken = preferencesManager.getAccessToken()
+        if (accessToken.isNullOrEmpty()) {
+            throw AuthException("로그인이 필요합니다.")
+        }
+
+        val currentTime = System.currentTimeMillis()
+        return if (forceRefresh || cachedLikeCommunityList.isNullOrEmpty() || currentTime - lastFetchTimeLikeCommunityList > CACHE_VALIDITY_DURATION_LIKE_COMMUNITY) {
+            val response = likeApi.fetchLikeCommunityList("Bearer $accessToken")
+            cachedLikeCommunityList = response.result
+            lastFetchTimeLikeCommunityList = currentTime
+            cachedLikeCommunityList!!
+        } else {
+            cachedLikeCommunityList!!
+        }
+
+    }
+
+
+    /**
+     * 좋아요 한 분석글 리스트 조회
+     */
+    override suspend fun fetchLikeAnalysisList(forceRefresh: Boolean) : List<AnalysisResponseDto> {
+        val accessToken = preferencesManager.getAccessToken()
+        if (accessToken.isNullOrEmpty()) {
+            throw AuthException("로그인이 필요합니다.")
+        }
+
+        val currentTime = System.currentTimeMillis()
+        return if (forceRefresh || cachedLikeAnalysisList.isNullOrEmpty() || currentTime - lastFetchTimeLikeAnalysisList > CACHE_VALIDITY_DURATION_LIKE_ANALYSIS) {
+            val response = likeApi.fetchLikeAnalysisList("Bearer $accessToken")
+            cachedLikeAnalysisList = response.result
+            lastFetchTimeLikeAnalysisList = currentTime
+            cachedLikeAnalysisList!!
+        } else {
+            cachedLikeAnalysisList!!
+        }
+
     }
 }

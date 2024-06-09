@@ -17,7 +17,6 @@ class PostRepositoryImpl @Inject constructor(
 ) : PostRepository {
 
     private var cachedCommunityPostList : List<CommunityResponseDto>? = null     // 캐시된 커뮤니티 게시물 목록
-
     private var cachedNewsList : List<NewsList>? = null                          // 캐시된 뉴스 목록
     private var lastFetchTimeCommunity: Long = 0                                 // 마지막으로 게시물 목록을 가져온 시간
     private var lastNewsFetchTime: Long = 0                                      // 마지막으로 뉴스 목록을 가져온 시간

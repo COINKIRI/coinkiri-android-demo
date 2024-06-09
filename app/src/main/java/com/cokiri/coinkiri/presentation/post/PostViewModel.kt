@@ -1,9 +1,11 @@
 package com.cokiri.coinkiri.presentation.post
 
 import android.util.Log
+import androidx.lifecycle.viewModelScope
 import com.cokiri.coinkiri.data.remote.model.post.community.CommunityDetailResponseDto
 import com.cokiri.coinkiri.data.remote.model.post.community.CommunityResponseDto
 import com.cokiri.coinkiri.data.remote.model.post.news.NewsList
+import com.cokiri.coinkiri.domain.usecase.like.FetchLikeCommunityListUseCase
 import com.cokiri.coinkiri.domain.usecase.post.FetchAllCommunityPostsUseCase
 import com.cokiri.coinkiri.domain.usecase.post.FetchAllNewsUseCase
 import com.cokiri.coinkiri.domain.usecase.post.FetchCommunityPostDetailsUseCase
@@ -11,13 +13,15 @@ import com.cokiri.coinkiri.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
     private val fetchAllCommunityPostsUseCase: FetchAllCommunityPostsUseCase,
     private val fetchCommunityPostDetailsUseCase: FetchCommunityPostDetailsUseCase,
-    private val fetchAllNewsUseCase: FetchAllNewsUseCase
+    private val fetchAllNewsUseCase: FetchAllNewsUseCase,
+    private val fetchLikeCommunityListUseCase: FetchLikeCommunityListUseCase
 ) : BaseViewModel() {
 
     // 커뮤니티 게시글 목록을 관리하는 MutableStateFlow
@@ -27,6 +31,10 @@ class PostViewModel @Inject constructor(
     // 커뮤니티 게시글 상세 정보를 관리하는 MutableStateFlow
     private val _communityDetail = MutableStateFlow<CommunityDetailResponseDto?>(null)
     val communityDetail: StateFlow<CommunityDetailResponseDto?> = _communityDetail
+
+    // 좋아요 목록을 관리하는 MutableStateFlow
+    private val _likeList = MutableStateFlow<List<CommunityResponseDto>>(emptyList())
+    val likeList: StateFlow<List<CommunityResponseDto>> = _likeList
 
     // 뉴스 목록을 관리하는 MutableStateFlow
     private val _newsList = MutableStateFlow<List<NewsList>>(emptyList())
@@ -46,6 +54,20 @@ class PostViewModel @Inject constructor(
                 _communityPostList.value = emptyList()
             }
         )
+    }
+
+
+    /**
+     * 좋아요한 커뮤니티 게시글 목록을 가져오는 함수
+     */
+    fun fetchLikeCommunityList() {
+        viewModelScope.launch {
+            fetchLikeCommunityListUseCase.execute { result ->
+                if (result.isSuccess) {
+                    _likeList.value = result.getOrNull() ?: emptyList()
+                }
+            }
+        }
     }
 
 

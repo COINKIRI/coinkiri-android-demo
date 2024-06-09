@@ -129,7 +129,6 @@ fun CoinDetailScreen(
                     when (selectedTabIndex) {
                         0 -> CoinChartScreen(coinDaysInfo, singleCoinTicker)
                         1 -> CoinTalkScreen(
-                            coinId = coinId.toLong(),
                             coinTalkList = coinTalkList,
                             coinTalkContent = coinTalkContent,
                             onCoinTalkContentChanged = priceViewModel::onCoinTalkContentChanged,

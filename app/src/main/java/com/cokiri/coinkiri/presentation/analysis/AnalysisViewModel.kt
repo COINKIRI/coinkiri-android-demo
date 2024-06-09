@@ -11,6 +11,7 @@ import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
 import com.cokiri.coinkiri.domain.usecase.analysis.FetchAllAnalysisPostsUseCase
 import com.cokiri.coinkiri.domain.usecase.analysis.FetchAnalysisDetailUseCase
 import com.cokiri.coinkiri.domain.usecase.coin.GetCoinsUseCase
+import com.cokiri.coinkiri.domain.usecase.like.FetchLikeAnalysisListUseCase
 import com.cokiri.coinkiri.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,8 +29,9 @@ import javax.inject.Inject
 class AnalysisViewModel @Inject constructor(
     private val getCoinsUseCase: GetCoinsUseCase,
     private val webSocketUseCase: WebSocketUseCase,
+    private val fetchAnalysisDetailUseCase: FetchAnalysisDetailUseCase,
     private val fetchAllAnalysisPostsUseCase: FetchAllAnalysisPostsUseCase,
-    private val fetchAnalysisDetailUseCase: FetchAnalysisDetailUseCase
+    private val fetchLikeAnalysisListUseCase: FetchLikeAnalysisListUseCase
 ) : BaseViewModel() {
 
     // 코인 목록
@@ -86,6 +88,10 @@ class AnalysisViewModel @Inject constructor(
     private val _analysisPostList = MutableStateFlow<List<AnalysisResponseDto>>(emptyList())
     val analysisPostList: StateFlow<List<AnalysisResponseDto>> = _analysisPostList.asStateFlow()
 
+    // 좋아요한 분석글 목록을 관리하는 MutableStateFlow
+    private val _likeAnalysisList = MutableStateFlow<List<AnalysisResponseDto>>(emptyList())
+    val likeAnalysisList: StateFlow<List<AnalysisResponseDto>> = _likeAnalysisList.asStateFlow()
+
     // 선택한 분석글의 상세 정보를 관리하는 MutableStateFlow
     private val _analysisDetail = MutableStateFlow<AnalysisDetailResponseDto?>(null)
     val analysisDetail: StateFlow<AnalysisDetailResponseDto?> = _analysisDetail
@@ -120,6 +126,20 @@ class AnalysisViewModel @Inject constructor(
             _selectedCoinIds.collect { coinIds ->
                 _filteredAnalysisPostList.value =
                     _analysisPostList.value.filter { it.coin.id in coinIds }
+            }
+        }
+    }
+
+
+    /**
+     *  좋아요한 분석글 목록을 가져오는 함수
+     */
+    fun fetchLikeAnalysisList() {
+        viewModelScope.launch {
+            fetchLikeAnalysisListUseCase.execute { result ->
+                if (result.isSuccess) {
+                    _likeAnalysisList.value = result.getOrNull() ?: emptyList()
+                }
             }
         }
     }

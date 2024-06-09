@@ -1,6 +1,8 @@
 package com.cokiri.coinkiri.data.remote.api
 
 import com.cokiri.coinkiri.data.remote.model.ApiResponse
+import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisResponse
+import com.cokiri.coinkiri.data.remote.model.post.community.CommunityResponse
 import com.cokiri.coinkiri.data.remote.service.auth.AuthRequired
 import retrofit2.Response
 import retrofit2.http.DELETE
@@ -47,4 +49,25 @@ interface LikeApi {
         @Path("postId") postId: Long
     ): Response<ApiResponse>
 
+
+    /**
+     * 좋아요 한 게시물 리스트 API
+     */
+    @AuthRequired
+    @Headers("Content-Type: application/json")
+    @GET("/api/v1/like/community")
+    suspend fun fetchLikeCommunityList(
+        @Header("Authorization") accessToken: String
+    ): CommunityResponse
+
+
+    /**
+     * 좋아요 한 분석글 리스트 API
+     */
+    @AuthRequired
+    @Headers("Content-Type: application/json")
+    @GET("/api/v1/like/analysis")
+    suspend fun fetchLikeAnalysisList(
+        @Header("Authorization") accessToken: String
+    ): AnalysisResponse
 }

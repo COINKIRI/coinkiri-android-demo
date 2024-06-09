@@ -6,6 +6,7 @@ import com.cokiri.coinkiri.data.remote.model.coin.WatchlistCoinPrice
 import com.cokiri.coinkiri.domain.usecase.like.AddLikeUseCase
 import com.cokiri.coinkiri.domain.usecase.like.CheckLikeUseCase
 import com.cokiri.coinkiri.domain.usecase.like.DeleteLikeUseCase
+import com.cokiri.coinkiri.domain.usecase.like.FetchLikeCommunityListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +17,7 @@ import javax.inject.Inject
 class LikeViewModel @Inject constructor(
     private val addLikeUseCase: AddLikeUseCase,
     private val checkLikeUseCase: CheckLikeUseCase,
-    private val deleteLikeUseCase: DeleteLikeUseCase
+    private val deleteLikeUseCase: DeleteLikeUseCase,
 ) : BaseViewModel() {
 
     // 좋아요 목록에 게시글을 저장하는 StateFlow
