@@ -1,21 +1,14 @@
 package com.cokiri.coinkiri.presentation.profile
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -41,9 +34,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,19 +45,16 @@ import com.cokiri.coinkiri.data.local.entity.MemberInfoEntity
 import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisResponseDto
 import com.cokiri.coinkiri.data.remote.model.post.community.CommunityResponseDto
 import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
-import com.cokiri.coinkiri.presentation.analysis.component.AnalysisListItemCard
 import com.cokiri.coinkiri.presentation.login.LoginUiState
 import com.cokiri.coinkiri.presentation.login.LoginViewModel
 import com.cokiri.coinkiri.presentation.post.PostViewModel
-import com.cokiri.coinkiri.presentation.post.community.CommunityCard
 import com.cokiri.coinkiri.presentation.profile.component.MemberInfoCard
+import com.cokiri.coinkiri.presentation.profile.component.MemberLikedContent
+import com.cokiri.coinkiri.presentation.profile.component.MemberPostingContent
 import com.cokiri.coinkiri.presentation.profile.component.ProfileBottomSheet
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriBlack
-import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
-import com.cokiri.coinkiri.util.ANALYSIS_DETAIL_SCREEN
-import com.cokiri.coinkiri.util.COMMUNITY_DETAIL_SCREEN
 import com.cokiri.coinkiri.util.LOGIN
 import com.cokiri.coinkiri.util.PROFILE_MODIFY_SCREEN
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -297,191 +285,6 @@ fun MemberPostContent(
                 analysisViewModel,
                 navController
             )
-        }
-    }
-}
-
-
-@Composable
-fun MemberLikedContent(
-    likeList: List<CommunityResponseDto>,
-    analysisLikeList: List<AnalysisResponseDto>,
-    analysisViewModel: AnalysisViewModel,
-    navController: NavHostController
-) {
-
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("분석글", "게시글")
-
-    Log.d("MemberLikedContent", "likeList: $likeList")
-
-    Column {
-        Row(
-            modifier = Modifier
-                .padding(10.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            tabs.forEachIndexed { index, tab ->
-                Button(
-                    onClick = { selectedTabIndex = index },
-                    colors = ButtonDefaults.buttonColors(if (selectedTabIndex == index) CoinkiriPointGreen else Color.LightGray)
-                ) {
-                    Text(text = tab)
-                }
-            }
-        }
-
-        when (selectedTabIndex) {
-            0 -> AnalysisMemberCard(
-                analysisLikeList,
-                analysisViewModel,
-                navController
-            )
-            1 -> PostMemberCard(
-                likeList,
-                navController
-            )
-        }
-    }
-}
-
-
-
-
-@Composable
-fun MemberPostingContent(
-    navController: NavHostController,
-    postViewModel: PostViewModel,
-    analysisViewModel: AnalysisViewModel
-) {
-    LaunchedEffect(Unit) {
-        postViewModel.fetchUserCommunityList()
-    }
-
-    LaunchedEffect(Unit) {
-        analysisViewModel.fetchUserAnalysisList()
-    }
-
-    val isLoading by postViewModel.isLoading.collectAsStateWithLifecycle()
-    val userList by postViewModel.userCommunity.collectAsStateWithLifecycle()
-
-    val userAnalysisList by analysisViewModel.userAnalysisList.collectAsStateWithLifecycle()
-
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("분석글", "게시글")
-
-    Column {
-        Row(
-            modifier = Modifier
-                .padding(10.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            tabs.forEachIndexed { index, tab ->
-                Button(
-                    onClick = { selectedTabIndex = index },
-                    colors = ButtonDefaults.buttonColors(if (selectedTabIndex == index) CoinkiriPointGreen else Color.LightGray)
-                ) {
-                    Text(text = tab)
-                }
-            }
-        }
-
-        if (isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            when (selectedTabIndex) {
-                0 -> AnalysisMemberCard(
-                    userAnalysisList,
-                    analysisViewModel,
-                    navController
-                )
-                1 -> PostMemberCard(
-                    userList,
-                    navController
-                )
-            }
-        }
-    }
-}
-
-
-
-
-
-
-@Composable
-fun AnalysisMemberCard(
-    analysisLikeList: List<AnalysisResponseDto>,
-    analysisViewModel: AnalysisViewModel,
-    navController: NavHostController
-) {
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(350.dp)
-    ) {
-        if (analysisLikeList.isEmpty()) {
-            Text(
-                text = "분석글이 없습니다.",
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp)
-            )
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(analysisLikeList.size) { index ->
-                    val analysis = analysisLikeList[index]
-                    val postId = analysisLikeList[index].postResponseDto.id
-                    AnalysisListItemCard(
-                        analysisResponseDto = analysis,
-                        analysisViewModel = analysisViewModel,
-                        analysisCardClick = { navController.navigate("$ANALYSIS_DETAIL_SCREEN/$postId") }
-                    )
-                }
-            }
-        }
-    }
-}
-
-
-
-@Composable
-fun PostMemberCard(
-    likeList: List<CommunityResponseDto>,
-    navController: NavHostController
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(350.dp)
-    ) {
-        if (likeList.isEmpty()) {
-            Text(
-                text = "게시글이 없습니다.",
-                modifier = Modifier.padding(16.dp)
-            )
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(likeList.size) { index ->
-                    val community = likeList[index]
-                    val postId = likeList[index].postResponseDto.id
-                    CommunityCard(
-                        communityResponseDto = community,
-                        onclick =  { navController.navigate("$COMMUNITY_DETAIL_SCREEN/$postId") },
-                    )
-                }
-            }
         }
     }
 }
