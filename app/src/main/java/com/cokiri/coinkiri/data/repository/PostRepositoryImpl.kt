@@ -17,13 +17,16 @@ class PostRepositoryImpl @Inject constructor(
 ) : PostRepository {
 
     private var cachedCommunityPostList : List<CommunityResponseDto>? = null     // 캐시된 커뮤니티 게시물 목록
+    private var cachedUserCommunityList : List<CommunityResponseDto>? = null     // 캐시된 유저작성 커뮤니티 게시글 목록
     private var cachedNewsList : List<NewsList>? = null                          // 캐시된 뉴스 목록
     private var lastFetchTimeCommunity: Long = 0                                 // 마지막으로 게시물 목록을 가져온 시간
+    private var lastFetchTimeUserCommunity: Long = 0
     private var lastNewsFetchTime: Long = 0                                      // 마지막으로 뉴스 목록을 가져온 시간
 
 
     companion object {
         private const val CACHE_VALIDITY_DURATION_COMMUNITY = 5 * 60 * 1000   // 캐시 유효 기간 (5분)
+        private const val CACHE_VALIDITY_DURATION_USER_COMMUNITY = 5 * 60 * 1000
         private const val CACHE_VALIDITY_DURATION_NEWS = 5 * 60 * 1000        // 캐시 유효 기간 (5분)
         private const val TAG = "PostRepositoryImpl"                          // 로그 태그
     }
@@ -79,6 +82,25 @@ class PostRepositoryImpl @Inject constructor(
             // 유효한 캐시가 있는 경우 캐시된 목록 반환
             cachedCommunityPostList!!
         }
+    }
+
+
+    override suspend fun fetchUserCommunityList(forceRefresh: Boolean) : List<CommunityResponseDto> {
+        val accessToken = preferencesManager.getAccessToken()
+        if (accessToken.isNullOrEmpty()) {
+            throw AuthException("로그인이 필요합니다.")
+        }
+
+        val currentTime = System.currentTimeMillis()
+        return if (forceRefresh || cachedUserCommunityList.isNullOrEmpty() || currentTime - lastFetchTimeUserCommunity > CACHE_VALIDITY_DURATION_USER_COMMUNITY) {
+            val response = postApi.fetchUserCommunityList("Bearer $accessToken")
+            cachedUserCommunityList = response.result
+            lastFetchTimeUserCommunity = currentTime
+            cachedUserCommunityList!!
+        } else {
+            cachedUserCommunityList!!
+        }
+
     }
 
 

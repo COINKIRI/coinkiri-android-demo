@@ -9,6 +9,7 @@ import com.cokiri.coinkiri.domain.usecase.like.FetchLikeCommunityListUseCase
 import com.cokiri.coinkiri.domain.usecase.post.FetchAllCommunityPostsUseCase
 import com.cokiri.coinkiri.domain.usecase.post.FetchAllNewsUseCase
 import com.cokiri.coinkiri.domain.usecase.post.FetchCommunityPostDetailsUseCase
+import com.cokiri.coinkiri.domain.usecase.post.FetchUserCommunityListUseCase
 import com.cokiri.coinkiri.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,8 @@ class PostViewModel @Inject constructor(
     private val fetchAllCommunityPostsUseCase: FetchAllCommunityPostsUseCase,
     private val fetchCommunityPostDetailsUseCase: FetchCommunityPostDetailsUseCase,
     private val fetchAllNewsUseCase: FetchAllNewsUseCase,
-    private val fetchLikeCommunityListUseCase: FetchLikeCommunityListUseCase
+    private val fetchLikeCommunityListUseCase: FetchLikeCommunityListUseCase,
+    private val fetchUserCommunityListUseCase: FetchUserCommunityListUseCase
 ) : BaseViewModel() {
 
     // 커뮤니티 게시글 목록을 관리하는 MutableStateFlow
@@ -36,9 +38,18 @@ class PostViewModel @Inject constructor(
     private val _likeList = MutableStateFlow<List<CommunityResponseDto>>(emptyList())
     val likeList: StateFlow<List<CommunityResponseDto>> = _likeList
 
+    // 커뮤니티 작성글 목록을 관리하는 MutableStateFlow
+    private val _userCommunityList = MutableStateFlow<List<CommunityResponseDto>>(emptyList())
+    val userCommunity : StateFlow<List<CommunityResponseDto>> = _userCommunityList
+
+
+
     // 뉴스 목록을 관리하는 MutableStateFlow
     private val _newsList = MutableStateFlow<List<NewsList>>(emptyList())
     val newsList: StateFlow<List<NewsList>> = _newsList
+
+
+
 
     /**
      * 커뮤니티 게시글 목록을 가져오는 함수
@@ -65,6 +76,20 @@ class PostViewModel @Inject constructor(
             fetchLikeCommunityListUseCase.execute { result ->
                 if (result.isSuccess) {
                     _likeList.value = result.getOrNull() ?: emptyList()
+                }
+            }
+        }
+    }
+
+
+    /**
+     *  작성한 커뮤니티 게시글 목록을 가져오는 함수
+     */
+    fun fetchUserCommunityList() {
+        viewModelScope.launch {
+            fetchUserCommunityListUseCase.execute { result ->
+                if (result.isSuccess){
+                    _userCommunityList.value = result.getOrNull() ?: emptyList()
                 }
             }
         }

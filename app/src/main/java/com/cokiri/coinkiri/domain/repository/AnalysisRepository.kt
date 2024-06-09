@@ -17,6 +17,12 @@ interface AnalysisRepository {
      */
     suspend fun getAnalysisPostList(forceRefresh: Boolean = false): List<AnalysisResponseDto>
 
+
+    /**
+     * 작성한 분석글 목록 조회
+     */
+    suspend fun fetchUserAnalysisList(forceRefresh: Boolean = false): List<AnalysisResponseDto>
+
     /**
      * 분석 게시글 상세 조회
      */

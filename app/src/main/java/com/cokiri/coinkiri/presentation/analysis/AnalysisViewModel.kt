@@ -10,8 +10,10 @@ import com.cokiri.coinkiri.domain.model.Ticker
 import com.cokiri.coinkiri.domain.usecase.WebSocketUseCase
 import com.cokiri.coinkiri.domain.usecase.analysis.FetchAllAnalysisPostsUseCase
 import com.cokiri.coinkiri.domain.usecase.analysis.FetchAnalysisDetailUseCase
+import com.cokiri.coinkiri.domain.usecase.analysis.FetchUserAnalysisListUseCase
 import com.cokiri.coinkiri.domain.usecase.coin.GetCoinsUseCase
 import com.cokiri.coinkiri.domain.usecase.like.FetchLikeAnalysisListUseCase
+import com.cokiri.coinkiri.domain.usecase.post.FetchUserCommunityListUseCase
 import com.cokiri.coinkiri.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +33,8 @@ class AnalysisViewModel @Inject constructor(
     private val webSocketUseCase: WebSocketUseCase,
     private val fetchAnalysisDetailUseCase: FetchAnalysisDetailUseCase,
     private val fetchAllAnalysisPostsUseCase: FetchAllAnalysisPostsUseCase,
-    private val fetchLikeAnalysisListUseCase: FetchLikeAnalysisListUseCase
+    private val fetchLikeAnalysisListUseCase: FetchLikeAnalysisListUseCase,
+    private val fetchUserAnalysisListUseCase: FetchUserAnalysisListUseCase
 ) : BaseViewModel() {
 
     // 코인 목록
@@ -92,6 +95,10 @@ class AnalysisViewModel @Inject constructor(
     private val _likeAnalysisList = MutableStateFlow<List<AnalysisResponseDto>>(emptyList())
     val likeAnalysisList: StateFlow<List<AnalysisResponseDto>> = _likeAnalysisList.asStateFlow()
 
+    // 작성한 분석글 목록을 관리하는 MutableStateFlow
+    private val _userAnalysisList  = MutableStateFlow<List<AnalysisResponseDto>>(emptyList())
+    val userAnalysisList: StateFlow<List<AnalysisResponseDto>> = _userAnalysisList.asStateFlow()
+
     // 선택한 분석글의 상세 정보를 관리하는 MutableStateFlow
     private val _analysisDetail = MutableStateFlow<AnalysisDetailResponseDto?>(null)
     val analysisDetail: StateFlow<AnalysisDetailResponseDto?> = _analysisDetail
@@ -139,6 +146,19 @@ class AnalysisViewModel @Inject constructor(
             fetchLikeAnalysisListUseCase.execute { result ->
                 if (result.isSuccess) {
                     _likeAnalysisList.value = result.getOrNull() ?: emptyList()
+                }
+            }
+        }
+    }
+
+    /**
+     *  작성한 분석글 목록을 가져오는 함수
+     */
+    fun fetchUserAnalysisList() {
+        viewModelScope.launch {
+            fetchUserAnalysisListUseCase.execute { result ->
+                if (result.isSuccess) {
+                    _userAnalysisList.value = result.getOrNull() ?: emptyList()
                 }
             }
         }

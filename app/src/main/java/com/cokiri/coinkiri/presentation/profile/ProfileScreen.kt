@@ -44,7 +44,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -114,7 +113,10 @@ fun ProfileScreen(
         postViewModel.fetchLikeCommunityList()
     }
 
+
     val likeList by postViewModel.likeList.collectAsStateWithLifecycle()
+
+
 
     /**
      *  좋아요 분석글 목록을 가져옴
@@ -124,7 +126,6 @@ fun ProfileScreen(
     }
 
     val analysisLikeList by analysisViewModel.likeAnalysisList.collectAsStateWithLifecycle()
-    Log.d("analysisLikeList", "analysisLikeList : $analysisLikeList" )
 
 
     if (showBottomSheet) {
@@ -181,6 +182,7 @@ fun ProfileScreen(
                         likeList = likeList,
                         analysisLikeList = analysisLikeList,
                         analysisViewModel = analysisViewModel,
+                        postViewModel = postViewModel
                     )
                 }
             }
@@ -215,6 +217,7 @@ fun ProfileScreenContent(
     likeList: List<CommunityResponseDto>,
     analysisLikeList: List<AnalysisResponseDto>,
     analysisViewModel: AnalysisViewModel,
+    postViewModel: PostViewModel,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -231,7 +234,8 @@ fun ProfileScreenContent(
                 likeList = likeList,
                 analysisLikeList = analysisLikeList,
                 analysisViewModel = analysisViewModel,
-                navController = navController
+                navController = navController,
+                postViewModel = postViewModel
             )
         }
     }
@@ -245,7 +249,8 @@ fun MemberPostContent(
     likeList: List<CommunityResponseDto>,
     analysisLikeList: List<AnalysisResponseDto>,
     analysisViewModel: AnalysisViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    postViewModel: PostViewModel
 ) {
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
@@ -281,7 +286,11 @@ fun MemberPostContent(
             }
         }
         when (selectedTabIndex) {
-            0 -> MemberPostingContent()
+            0 -> MemberPostingContent(
+                navController,
+                postViewModel,
+                analysisViewModel
+            )
             1 -> MemberLikedContent(
                 likeList,
                 analysisLikeList,
@@ -342,8 +351,22 @@ fun MemberLikedContent(
 
 @Composable
 fun MemberPostingContent(
+    navController: NavHostController,
+    postViewModel: PostViewModel,
+    analysisViewModel: AnalysisViewModel
+) {
+    LaunchedEffect(Unit) {
+        postViewModel.fetchUserCommunityList()
+    }
 
-){
+    LaunchedEffect(Unit) {
+        analysisViewModel.fetchUserAnalysisList()
+    }
+
+    val isLoading by postViewModel.isLoading.collectAsStateWithLifecycle()
+    val userList by postViewModel.userCommunity.collectAsStateWithLifecycle()
+
+    val userAnalysisList by analysisViewModel.userAnalysisList.collectAsStateWithLifecycle()
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf("분석글", "게시글")
@@ -365,12 +388,30 @@ fun MemberPostingContent(
             }
         }
 
-        when (selectedTabIndex) {
-//            0 -> AnalysisMemberCard(analysisLikeList, analysisViewModel)
-//            1 -> PostMemberCard(likeList = emptyList())
+        if (isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            when (selectedTabIndex) {
+                0 -> AnalysisMemberCard(
+                    userAnalysisList,
+                    analysisViewModel,
+                    navController
+                )
+                1 -> PostMemberCard(
+                    userList,
+                    navController
+                )
+            }
         }
     }
 }
+
+
 
 
 
@@ -381,6 +422,7 @@ fun AnalysisMemberCard(
     analysisViewModel: AnalysisViewModel,
     navController: NavHostController
 ) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -388,7 +430,7 @@ fun AnalysisMemberCard(
     ) {
         if (analysisLikeList.isEmpty()) {
             Text(
-                text = "좋아요한 분석글이 없습니다.",
+                text = "분석글이 없습니다.",
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(16.dp)
             )
@@ -424,7 +466,7 @@ fun PostMemberCard(
     ) {
         if (likeList.isEmpty()) {
             Text(
-                text = "좋아요한 게시글이 없습니다.",
+                text = "게시글이 없습니다.",
                 modifier = Modifier.padding(16.dp)
             )
         } else {

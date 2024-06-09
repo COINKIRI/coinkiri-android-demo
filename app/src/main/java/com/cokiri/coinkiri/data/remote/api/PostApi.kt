@@ -43,6 +43,17 @@ interface PostApi {
 
 
     /**
+     * 유저 작성 커뮤니티 게시글 조회
+     */
+    @AuthRequired
+    @Headers("Content-Type: application/json")
+    @GET("/api/v1/post/community/member")
+    suspend fun fetchUserCommunityList(
+        @Header("Authorization") accessToken: String
+    ): CommunityResponse
+
+
+    /**
      * 뉴스 조회 API
      */
     @GET("/api/v1/news/list")

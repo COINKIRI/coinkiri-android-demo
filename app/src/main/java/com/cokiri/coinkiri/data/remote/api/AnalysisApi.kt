@@ -39,4 +39,15 @@ interface AnalysisApi {
      */
     @GET("/api/v1/analysis/{postId}")
     suspend fun getAnalysisPostDetail(@Path("postId") postId : Long) : AnalysisDetailResponse
+
+
+    /**
+     * 유저 작성 분석글 리스트
+     */
+    @AuthRequired
+    @Headers("Content-Type: application/json")
+    @GET("/api/v1/analysis/member")
+    suspend fun fetchUserAnalysisList(
+        @Header("Authorization") accessToken: String
+    ): AnalysisResponse
 }

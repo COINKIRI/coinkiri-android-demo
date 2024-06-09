@@ -16,11 +16,14 @@ class AnalysisRepositoryImpl @Inject constructor(
 ) : AnalysisRepository {
 
     private var cachedAnalysisPostList : List<AnalysisResponseDto>? = null     // 캐시된 분석 게시물 목록
+    private var cachedUserAnalysisPostList : List<AnalysisResponseDto>? = null
     private var lastFetchTimeAnalysis: Long = 0                                // 마지막으로 분석 게시물 목록을 가져온 시간
+    private var lastFetchTimeUserAnalysis: Long = 0
 
 
     companion object {
         private const val CACHE_VALIDITY_DURATION_ANALYSIS = 5 * 60 * 1000     // 캐시 유효 기간 (5분)
+        private const val CACHE_VALIDITY_DURATION_USER_ANALYSIS = 5 * 60 * 1000     // 캐시 유효 기간 (5분)
         private const val TAG = "AnalysisRepositoryImpl"                       // 로그 태그
     }
 
@@ -73,6 +76,27 @@ class AnalysisRepositoryImpl @Inject constructor(
 
 
     /**
+     *  작성한 분석글 목록 요청 (GET)
+     */
+    override suspend fun fetchUserAnalysisList(forceRefresh: Boolean) : List<AnalysisResponseDto> {
+        val accessToken = preferencesManager.getAccessToken()
+        if (accessToken.isNullOrEmpty()) {
+            throw LikeRepositoryImpl.AuthException("로그인이 필요합니다.")
+        }
+
+        val currentTime = System.currentTimeMillis()
+        return if (forceRefresh || cachedUserAnalysisPostList.isNullOrEmpty() || currentTime - lastFetchTimeUserAnalysis > CACHE_VALIDITY_DURATION_USER_ANALYSIS) {
+            val response = analysisApi.fetchUserAnalysisList("Bearer $accessToken")
+            cachedUserAnalysisPostList = response.result
+            lastFetchTimeUserAnalysis = currentTime
+            cachedUserAnalysisPostList!!
+        } else {
+            cachedUserAnalysisPostList!!
+        }
+    }
+
+
+    /**
      * 분석글 상세 요청 (GET)
      * @param postId 요청할 글의 ID
      * @return AnalysisDetailResponseDto 글 상세 정보
@@ -96,7 +120,9 @@ class AnalysisRepositoryImpl @Inject constructor(
      */
     private fun clearCache() {
         cachedAnalysisPostList = null
+        cachedUserAnalysisPostList = null
         lastFetchTimeAnalysis = 0
+        lastFetchTimeUserAnalysis = 0
     }
 
     class AuthException(message: String) : Exception(message)  // 로그인 관련 예외 클래스

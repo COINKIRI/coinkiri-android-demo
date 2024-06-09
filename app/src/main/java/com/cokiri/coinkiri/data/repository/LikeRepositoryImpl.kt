@@ -107,7 +107,6 @@ class LikeRepositoryImpl @Inject constructor(
         } else {
             cachedLikeCommunityList!!
         }
-
     }
 
 
@@ -129,6 +128,5 @@ class LikeRepositoryImpl @Inject constructor(
         } else {
             cachedLikeAnalysisList!!
         }
-
     }
 }

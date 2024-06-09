@@ -19,6 +19,11 @@ interface PostRepository {
     suspend fun getCommunityPostList(forceRefresh: Boolean = false): List<CommunityResponseDto>
 
     /**
+     * 작성한 커뮤니티 게시글 목록 조회
+     */
+    suspend fun fetchUserCommunityList(forceRefresh: Boolean = false): List<CommunityResponseDto>
+
+    /**
      * 뉴스 전체 목록 조회
      */
     suspend fun getNewsList(forceRefresh: Boolean = false): List<NewsList>
