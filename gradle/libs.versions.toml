@@ -16,6 +16,14 @@ androidxLifecycle = "2.7.0"
 # https://github.com/JetBrains/kotlin
 kotlin = "1.9.0"
 
+## Network
+# okhttp
+okhttp = "4.12.0"
+# Retrofit
+retrofit = "2.11.0"
+# Moshi
+moshi = "1.15.1"
+
 
 ## Hilt
 # https://github.com/google/dagger/releases
@@ -23,6 +31,10 @@ hilt = "2.51.1"
 # https://developer.android.com/jetpack/androidx/releases/hilt
 hiltNavigationCompose = "1.2.0"
 
+
+## Room
+# https://developer.android.com/jetpack/androidx/releases/room
+room = "2.6.1"
 
 ## Compose
 # https://developer.android.com/develop/ui/compose/bom/bom-mapping
@@ -32,7 +44,7 @@ androidxActivity = "1.9.0"
 # https://developer.android.com/jetpack/androidx/releases/compose-material3
 androidxComposeMaterial3 = "1.2.1"
 # https://developer.android.com/jetpack/androidx/releases/compose-material
-androidxComposeMaterial1 = "1.6.6"
+androidxComposeMaterial1 = "1.6.7"
 
 
 ## license
@@ -47,6 +59,10 @@ junit4 = "4.13.2"
 # https://developer.android.com/jetpack/androidx/releases/test
 androidxTestExt = "1.1.5"
 androidxEspresso = "3.5.1"
+
+
+## MpAndroidChart
+mpAndroidChart = "3.1.0"
 
 
 ## Kakao
@@ -80,11 +96,35 @@ hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-comp
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 
 
+## Room
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+
+
+## Network
+#Retrofit
+retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+retrofit-converter-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofit" }
+retrofit-kotlin-serialization = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "retrofit" }
+
+#OkHttp
+okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+
+#Moshi
+moshi-core = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi" }
+moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
+
+
 ## Test
 junit = { group = "junit", name = "junit", version.ref = "junit4" }
 androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
 
+
+## MpAndroidChart
+mpAndroidChart = { group = "com.github.PhilJay", name = "mpAndroidChart", version.ref = "mpAndroidChart" }
 
 oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "ossLicenses" }
 

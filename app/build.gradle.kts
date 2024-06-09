@@ -39,6 +39,12 @@ android {
             properties["kakao_native_app_key"] as String
         )
 
+        buildConfigField(
+            "String",
+            "LOCAL_URL",
+            properties["local_url"] as String
+        )
+
         resValue(
             "string",
             "kakao_oauth_host",
@@ -89,6 +95,16 @@ dependencies {
     implementation(libs.androidx.compose.material1)
     implementation(libs.androidx.compose.material3)
 
+    // MPAndroidChart
+    implementation(libs.mpAndroidChart)
+
+    // Retrofit
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.moshi)
+
+    // Moshi
+    implementation(libs.moshi.core)
+    implementation(libs.moshi.kotlin)
 
     // 카카오 로그인 API 모듈
     implementation(libs.kakao.sdk.v2.user)
@@ -97,6 +113,14 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     kapt(libs.hilt.android.compiler)
+
+    // Room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    kapt(libs.room.compiler)
+
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.24.13-rc")
+    implementation("io.coil-kt:coil:2.1.0")
 
 
     /* testImplementation */

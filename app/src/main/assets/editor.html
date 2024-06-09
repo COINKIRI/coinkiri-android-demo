@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 작성</title>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #F8F8F8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        #editor-container {
+            flex: 1;
+        }
+        #editor {
+            width: 100%;
+            min-height: 500px;
+            background-color: #F8F8F8;
+        }
+        .ql-toolbar {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="editor-container">
+    <div id="editor"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+    // quill editor 툴바 옵션
+    const toolbarOptions = [
+        [{'size': ['small', false, 'large', 'huge']}],    // 글자 크기
+        ['bold', 'italic', 'underline', 'strike'],        // 텍스트 스타일
+        [{'color': []}, {'background': []}],              // 글자색, 배경색
+        [{'align': []}],                                  // 텍스트 정렬
+        ['link', 'image'],                                // 링크, 이미지
+    ];
+
+    // quill editor 생성
+    const quill = new Quill('#editor', {
+        modules: {
+            toolbar: toolbarOptions
+        },
+        theme: 'snow'
+    });
+
+    function extractImages(content) {
+        let images = [];
+        let regex = /<img src="data:image\/[^;]+;base64,[^"]+">/g;
+        let paragraphRegex = /<\/?p>/gi;
+        let paragraphs = content.split(paragraphRegex);
+        let match;
+        let currentParagraph = 0;
+        let position = 0;
+
+        while ((match = regex.exec(content)) !== null) {
+            while (position + paragraphs[currentParagraph].length < match.index) {
+                position += paragraphs[currentParagraph].length + 3;
+                currentParagraph++;
+            }
+
+            images.push({
+                base64: match[0],
+                position: currentParagraph
+            });
+        }
+        return images;
+    }
+
+
+    function removeBase64Images(content) {
+        return content.replace(/<img src="data:image\/[^;]+;base64,[^"]+">/g, '');
+    }
+
+    function prepareContent(content) {
+        let images = extractImages(content);
+        let cleanedContent = removeBase64Images(content);
+
+        return {
+            content: cleanedContent,
+            images: images
+        };
+    }
+
+    function sendContent() {
+        let content = quill.root.innerHTML;
+        let preparedContent = prepareContent(content);
+        AndroidInterface.receiveContent(JSON.stringify(preparedContent));
+        return preparedContent;
+    }
+
+
+    document.getElementById('editor').addEventListener('click', function() {
+        document.querySelector('.ql-toolbar').style.display = 'block';
+    });
+
+    document.addEventListener('click', function(event) {
+        var editorContainer = document.getElementById('editor-container');
+        var toolbar = document.querySelector('.ql-toolbar');
+        if (!editorContainer.contains(event.target)) {
+            toolbar.style.display = 'none';
+        }
+    });
+</script>
+</body>
+</html>
