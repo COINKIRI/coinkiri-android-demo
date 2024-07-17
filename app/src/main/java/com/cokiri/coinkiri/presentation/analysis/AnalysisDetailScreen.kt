@@ -261,13 +261,13 @@ fun CoinCard(
                     .padding(start = 20.dp)
             ) {
                 Text(
-                    "11,000",
+                    "36,180",
                     fontFamily = PretendardFont,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
                 Text(
-                    "증가율",
+                    "-1.42%",
                     fontFamily = PretendardFont,
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp
@@ -362,7 +362,7 @@ fun OptionCard(
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp
                 )
-                Text("11,111")
+                Text("+2%")
             }
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
@@ -397,7 +397,7 @@ fun OptionCard(
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp
                 )
-                Text("11,111")
+                Text("-0.02%")
             }
         }
     }

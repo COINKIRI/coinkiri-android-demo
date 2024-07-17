@@ -88,7 +88,7 @@ fun FollowScreen(
 @Composable
 fun FollowersList() {
     LazyColumn {
-        items(30) {
+        items(2) {
             FollowItem()
         }
     }
@@ -97,7 +97,7 @@ fun FollowersList() {
 @Composable
 fun FollowingList() {
     LazyColumn {
-        items(30) {
+        items(1) {
             FollowItem()
         }
     }
@@ -147,7 +147,7 @@ fun FollowItem(
                 ) {
 
                     Text(
-                        text = "Lv",
+                        text = "Lv. 1",
                         fontFamily = PretendardFont,
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp

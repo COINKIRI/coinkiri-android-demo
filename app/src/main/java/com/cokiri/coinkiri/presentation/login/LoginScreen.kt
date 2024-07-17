@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Surface
@@ -17,12 +18,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.cokiri.coinkiri.R
+import com.cokiri.coinkiri.ui.theme.PretendardFont
 import com.cokiri.coinkiri.ui.theme.kakaoColor
 import com.cokiri.coinkiri.util.HOME
 import com.cokiri.coinkiri.util.LOGIN
@@ -53,10 +58,17 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(16.dp)
         ) {
-            Text(text = "coinkiri")
+            Text(
+                text = "coinkiri",
+                fontFamily = PretendardFont,
+                fontWeight = FontWeight.Bold,
+                fontSize = 60.sp
+            )
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                painter = painterResource(id = R.drawable.ic_logo_coinkiri),
                 contentDescription = "",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.size(155.dp)
             )
             Column(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -85,7 +97,12 @@ fun KakaoLoginBtn(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
-            Text(text = "Kakao 로그인")
+            Text(
+                text = "Kakao 로그인",
+                fontFamily = PretendardFont,
+                fontWeight = FontWeight.Medium,
+                fontSize = 18.sp
+            )
         }
     }
 }
