@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.presentation.screens.home
+package com.cokiri.coinkiri.presentation.screens.main
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -46,8 +46,8 @@ import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisResponseDto
 import com.cokiri.coinkiri.presentation.screens.analysis.AnalysisViewModel
 import com.cokiri.coinkiri.presentation.screens.analysis.component.InvestmentOptionCard
-import com.cokiri.coinkiri.presentation.screens.home.component.CoinRankingItem
-import com.cokiri.coinkiri.presentation.screens.home.component.MemberCoinWatchlistItem
+import com.cokiri.coinkiri.presentation.screens.main.component.CoinRankingItem
+import com.cokiri.coinkiri.presentation.screens.main.component.MemberCoinWatchlistItem
 import com.cokiri.coinkiri.presentation.screens.price.PriceViewModel
 import com.cokiri.coinkiri.presentation.screens.price.component.CoinImage
 import com.cokiri.coinkiri.ui.component.LoadingContent
@@ -59,7 +59,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
-fun HomeScreen(
+fun MainScreen(
     priceViewModel: PriceViewModel = hiltViewModel(),
     analysisViewModel: AnalysisViewModel = hiltViewModel()
 ) {

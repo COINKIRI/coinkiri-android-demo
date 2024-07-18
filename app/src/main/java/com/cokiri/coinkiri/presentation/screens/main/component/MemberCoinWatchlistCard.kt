@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.presentation.screens.home.component
+package com.cokiri.coinkiri.presentation.screens.main.component
 
 import android.graphics.drawable.GradientDrawable
 import androidx.compose.foundation.Image

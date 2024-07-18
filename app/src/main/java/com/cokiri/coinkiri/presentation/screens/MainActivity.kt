@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.presentation.screens.main
+package com.cokiri.coinkiri.presentation.screens
 
 import android.net.Uri
 import android.os.Bundle

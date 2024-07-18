@@ -1,4 +1,4 @@
-package com.cokiri.coinkiri.presentation.screens.home.component
+package com.cokiri.coinkiri.presentation.screens.main.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
