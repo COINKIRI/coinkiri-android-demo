@@ -16,9 +16,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import com.cokiri.coinkiri.presentation.post.PostViewModel
-import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
+import com.cokiri.coinkiri.presentation.screens.post.PostViewModel
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.util.COMMUNITY_DETAIL_SCREEN
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator

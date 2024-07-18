@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.data.remote.model.post.community.CommunityResponseDto
-import com.cokiri.coinkiri.presentation.post.community.CommunityCard
+import com.cokiri.coinkiri.presentation.screens.post.community.CommunityCard
 import com.cokiri.coinkiri.util.COMMUNITY_DETAIL_SCREEN
 
 @Composable

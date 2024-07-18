@@ -3,8 +3,8 @@ package com.cokiri.coinkiri.ui.navigation
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.cokiri.coinkiri.presentation.price.CoinDetailScreen
-import com.cokiri.coinkiri.presentation.price.PriceScreen
+import com.cokiri.coinkiri.presentation.screens.price.CoinDetailScreen
+import com.cokiri.coinkiri.presentation.screens.price.PriceScreen
 import com.cokiri.coinkiri.util.COIN_DETAIL_SCREEN
 import com.cokiri.coinkiri.util.PRICE
 

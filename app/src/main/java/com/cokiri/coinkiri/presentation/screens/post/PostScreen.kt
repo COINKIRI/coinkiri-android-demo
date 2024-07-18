@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -30,11 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.cokiri.coinkiri.presentation.post.community.CommunityList
-import com.cokiri.coinkiri.presentation.post.news.NewsList
+import com.cokiri.coinkiri.presentation.screens.post.community.CommunityList
+import com.cokiri.coinkiri.presentation.screens.post.news.NewsList
 import com.cokiri.coinkiri.ui.component.FloatingActionMenu
-import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.util.CREATE_POST_SCREEN_FOR_COMMUNITY
 
 @SuppressLint("RememberReturnType")

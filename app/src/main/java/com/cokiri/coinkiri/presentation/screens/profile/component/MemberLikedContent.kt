@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisResponseDto
 import com.cokiri.coinkiri.data.remote.model.post.community.CommunityResponseDto
-import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
+import com.cokiri.coinkiri.presentation.screens.analysis.AnalysisViewModel
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 
 @Composable

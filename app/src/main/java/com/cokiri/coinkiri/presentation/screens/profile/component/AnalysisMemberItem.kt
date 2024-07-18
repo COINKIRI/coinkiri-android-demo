@@ -13,8 +13,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisResponseDto
-import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
-import com.cokiri.coinkiri.presentation.analysis.component.AnalysisListItemCard
+import com.cokiri.coinkiri.presentation.screens.analysis.AnalysisViewModel
+import com.cokiri.coinkiri.presentation.screens.analysis.component.AnalysisListItemCard
 import com.cokiri.coinkiri.util.ANALYSIS_DETAIL_SCREEN
 
 @Composable

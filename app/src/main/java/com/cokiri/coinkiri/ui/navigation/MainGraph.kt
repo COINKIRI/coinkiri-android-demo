@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.cokiri.coinkiri.presentation.login.LoginViewModel
-import com.cokiri.coinkiri.presentation.post.PostViewModel
+import com.cokiri.coinkiri.presentation.screens.login.LoginViewModel
+import com.cokiri.coinkiri.presentation.screens.post.PostViewModel
 import com.cokiri.coinkiri.util.ANALYSIS
 import com.cokiri.coinkiri.util.HOME
 import com.cokiri.coinkiri.util.POST

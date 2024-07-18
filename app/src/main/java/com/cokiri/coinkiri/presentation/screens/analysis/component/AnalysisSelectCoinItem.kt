@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.domain.model.Coin
-import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
+import com.cokiri.coinkiri.presentation.screens.analysis.AnalysisViewModel
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.PretendardFont
 import com.cokiri.coinkiri.util.byteArrayToPainter

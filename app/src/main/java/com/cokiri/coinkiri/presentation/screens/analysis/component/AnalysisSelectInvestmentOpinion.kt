@@ -41,7 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cokiri.coinkiri.R
-import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
+import com.cokiri.coinkiri.presentation.screens.analysis.AnalysisViewModel
 import com.cokiri.coinkiri.ui.component.OpinionCard
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.util.calculateTargetPriceOptions

@@ -1,7 +1,6 @@
 package com.cokiri.coinkiri.presentation.screens.home.component
 
 import android.graphics.drawable.GradientDrawable
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cokiri.coinkiri.R
 import com.cokiri.coinkiri.data.remote.model.coin.WatchlistCoinPrice
 import com.cokiri.coinkiri.data.remote.model.coin.WatchlistPrice
-import com.cokiri.coinkiri.presentation.price.PriceViewModel
+import com.cokiri.coinkiri.presentation.screens.price.PriceViewModel
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.PretendardFont

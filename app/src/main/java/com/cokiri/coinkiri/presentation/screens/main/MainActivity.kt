@@ -10,9 +10,9 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
-import com.cokiri.coinkiri.presentation.login.LoginUiState
-import com.cokiri.coinkiri.presentation.login.LoginViewModel
-import com.cokiri.coinkiri.presentation.post.PostViewModel
+import com.cokiri.coinkiri.presentation.screens.login.LoginUiState
+import com.cokiri.coinkiri.presentation.screens.login.LoginViewModel
+import com.cokiri.coinkiri.presentation.screens.post.PostViewModel
 import com.cokiri.coinkiri.ui.navigation.LogInNavGraph
 import com.cokiri.coinkiri.ui.navigation.MainGraph
 import com.cokiri.coinkiri.ui.theme.CoinkiriandroidTheme

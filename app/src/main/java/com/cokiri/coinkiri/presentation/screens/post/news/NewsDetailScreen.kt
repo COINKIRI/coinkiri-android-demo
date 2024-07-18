@@ -24,7 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.R
-import com.cokiri.coinkiri.presentation.post.PostViewModel
+import com.cokiri.coinkiri.presentation.screens.post.PostViewModel
 
 @Composable
 fun NewsDetailScreen(

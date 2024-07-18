@@ -2,7 +2,7 @@ package com.cokiri.coinkiri.presentation.screens.createpost.component
 
 import android.util.Log
 import android.webkit.JavascriptInterface
-import com.cokiri.coinkiri.presentation.createpost.CreatePostViewModel
+import com.cokiri.coinkiri.presentation.screens.createpost.CreatePostViewModel
 import org.json.JSONException
 import org.json.JSONObject
 

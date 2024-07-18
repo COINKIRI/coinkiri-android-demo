@@ -23,8 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
-import com.cokiri.coinkiri.presentation.post.PostViewModel
+import com.cokiri.coinkiri.presentation.screens.analysis.AnalysisViewModel
+import com.cokiri.coinkiri.presentation.screens.post.PostViewModel
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
 
 @Composable

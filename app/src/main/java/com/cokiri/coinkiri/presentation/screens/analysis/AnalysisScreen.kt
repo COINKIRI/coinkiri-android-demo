@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.data.remote.model.analysis.AnalysisResponseDto
-import com.cokiri.coinkiri.presentation.analysis.component.AnalysisListItemCard
+import com.cokiri.coinkiri.presentation.screens.analysis.component.AnalysisListItemCard
 import com.cokiri.coinkiri.ui.component.ErrorContent
 import com.cokiri.coinkiri.ui.component.FloatingActionMenu
 import com.cokiri.coinkiri.ui.component.LoadingContent

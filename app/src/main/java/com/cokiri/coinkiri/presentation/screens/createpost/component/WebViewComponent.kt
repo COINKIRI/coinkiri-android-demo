@@ -13,8 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.cokiri.coinkiri.presentation.createpost.CreatePostViewModel
-import com.cokiri.coinkiri.presentation.main.MainActivity
+import com.cokiri.coinkiri.presentation.screens.createpost.CreatePostViewModel
+import com.cokiri.coinkiri.presentation.screens.main.MainActivity
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 
 /**

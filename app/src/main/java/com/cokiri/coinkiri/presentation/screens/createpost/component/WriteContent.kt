@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.cokiri.coinkiri.presentation.createpost.CreatePostViewModel
+import com.cokiri.coinkiri.presentation.screens.createpost.CreatePostViewModel
 import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 
 /**

@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.cokiri.coinkiri.data.remote.model.coin.CoinInfoDetail
-import com.cokiri.coinkiri.presentation.price.component.CoinItem
+import com.cokiri.coinkiri.presentation.screens.price.component.CoinItem
 import com.cokiri.coinkiri.ui.component.ErrorContent
 import com.cokiri.coinkiri.ui.component.LoadingContent
 import com.cokiri.coinkiri.ui.theme.CoinkiriBlack

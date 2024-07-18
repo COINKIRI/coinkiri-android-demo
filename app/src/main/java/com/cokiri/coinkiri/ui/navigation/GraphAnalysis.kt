@@ -6,11 +6,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.cokiri.coinkiri.presentation.analysis.AnalysisDetailScreen
-import com.cokiri.coinkiri.presentation.analysis.AnalysisScreen
-import com.cokiri.coinkiri.presentation.analysis.AnalysisViewModel
-import com.cokiri.coinkiri.presentation.analysis.AnalysisWriteScreen
-import com.cokiri.coinkiri.presentation.createpost.CreatePostScreenForAnalysis
+import com.cokiri.coinkiri.presentation.screens.analysis.AnalysisDetailScreen
+import com.cokiri.coinkiri.presentation.screens.analysis.AnalysisScreen
+import com.cokiri.coinkiri.presentation.screens.analysis.AnalysisViewModel
+import com.cokiri.coinkiri.presentation.screens.analysis.AnalysisWriteScreen
+import com.cokiri.coinkiri.presentation.screens.createpost.CreatePostScreenForAnalysis
 import com.cokiri.coinkiri.util.ANALYSIS
 import com.cokiri.coinkiri.util.ANALYSIS_DETAIL_SCREEN
 import com.cokiri.coinkiri.util.ANALYSIS_WRITE_SCREEN

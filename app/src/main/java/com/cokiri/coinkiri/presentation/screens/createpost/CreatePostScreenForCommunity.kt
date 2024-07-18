@@ -9,7 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.cokiri.coinkiri.presentation.createpost.component.WriteContent
+import com.cokiri.coinkiri.presentation.screens.createpost.component.WriteContent
 import com.cokiri.coinkiri.util.POST
 import org.json.JSONException
 import org.json.JSONObject

@@ -35,13 +35,13 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.cokiri.coinkiri.presentation.analysis.component.SelectCoinItemContent
-import com.cokiri.coinkiri.presentation.analysis.component.SelectInvestmentOpinion
-import com.cokiri.coinkiri.presentation.analysis.component.TargetPeriodContent
+import com.cokiri.coinkiri.presentation.screens.analysis.component.SelectCoinItemContent
+import com.cokiri.coinkiri.presentation.screens.analysis.component.SelectInvestmentOpinion
+import com.cokiri.coinkiri.presentation.screens.analysis.component.TargetPeriodContent
 import com.cokiri.coinkiri.ui.component.CustomSnackbarHost
 import com.cokiri.coinkiri.ui.theme.CoinkiriBackground
-import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.ui.theme.CoinkiriPointGreen
+import com.cokiri.coinkiri.ui.theme.CoinkiriWhite
 import com.cokiri.coinkiri.util.CREATE_POST_SCREEN_FOR_ANALYSIS
 import kotlinx.coroutines.launch
 
